@@ -1,9 +1,43 @@
 # Configuration
 
-Configuration relies on environment variables and `.env` files.
+The governance framework uses environment variables and configuration files for customization.
 
-- `.env.example` – base template.
-- `.env.development.example` – development overrides.
-- Set `CORTEX_OS_HOME` to control workspace directory.
+## MCP Client Configuration
 
-Package-specific configs live in `config/` using JSON or TOML. Adjust via `pnpm run config:<name>` scripts.
+Add MCP servers to your client configuration:
+
+```json
+{
+  "mcpServers": {
+    "cortex-aegis": {
+      "command": "npx",
+      "args": ["@brainwav/cortex-aegis-mcp@latest", "--port", "2091"]
+    },
+    "local-memory": {
+      "command": "local-memory-mcp",
+      "args": ["--port", "3002"]
+    }
+  }
+}
+```
+
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `TASK_SLUG` | — | Current task identifier for commands |
+| `LOCAL_MEMORY_BASE_URL` | `http://localhost:3002/api/v1` | Local Memory API endpoint |
+| `CORTEX_AEGIS_PORT` | `2091` | Cortex Aegis MCP port |
+
+## Governance Index
+
+The governance index at `brainwav/governance/90-infra/governance-index.json` pins SHA-256 hashes for all binding documents. Update hashes when governance documents change:
+
+```bash
+# Recompute governance index hashes
+sha256sum brainwav/governance/00-core/*.md
+```
+
+## Task Folder Configuration
+
+Task folders follow the structure defined in `brainwav/governance/10-flow/agentic-coding-workflow.md` §3. Customize the base path via `CORTEX_OS_HOME` environment variable.

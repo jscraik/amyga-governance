@@ -64,6 +64,12 @@ Every new session must execute these steps in order:
 
 ```yaml
 startup_sequence:
+  0_recall_context:
+    action: "Run /recall command"
+    command: "/recall <task-slug>"
+    purpose: "Retrieve prior session context from Local Memory"
+    reference: "commands/recall.md"
+    
   1_read_progress:
     action: "Read implementation-log.md"
     path: "tasks/<slug>/work/implementation-log.md"
@@ -188,6 +194,12 @@ shutdown_sequence:
   3_checkpoint:
     action: "Create checkpoint"
     type: "session_end"
+    
+  3b_memorize:
+    action: "Run /memorize command"
+    command: "/memorize update <task-slug>"
+    purpose: "Persist session decisions to Local Memory"
+    reference: "commands/memorize.md"
     
   4_update_status:
     action: "Update task-status.json"

@@ -189,11 +189,13 @@ CI jobs must fail closed; waivers recorded in `governance/waivers/` with expiry 
 ### G1 – Discover / Research
 
 - [ ] Repo/project scan + Local Memory `/recall` executed; findings logged in `context/research.md`.
+- [ ] `/gather` run to structure discovery questions; responses captured in `context/requirements.md`.
 - [ ] Academic connectors (Wikidata 3029, arXiv 3041, Semantic Scholar, OpenAlex, Context7) health-checked; log under `research/connectors-health.log`.
 - [ ] RAIDs/assumptions documented; North-Star acceptance test path recorded.
 
 ### G2 – Plan / Design
 
+- [ ] `/reframe` run to confirm understanding before Aegis vibe check; confirmation logged in `work/implementation-log.md`.
 - [ ] `plan/PLAN.md`, `plan/tdd-plan.md`, `plan/risk-register.md` updated (≤7 steps per arc).
 - [ ] Cortex-Aegis executed when required (see §7); `evidence/aegis-report.json` stored.
 - [ ] Feature flags + quality gates defined; reuse ledger entries planned.
@@ -236,9 +238,11 @@ CI jobs must fail closed; waivers recorded in `governance/waivers/` with expiry 
 
 - [ ] Logs/metrics/traces monitored; alert tuning documented; `logs/models/*` updated if models changed.
 - [ ] Reuse telemetry + tier escalation metrics pushed to `ops/observability/*` dashboards.
+- [ ] For SEV ≥ 2 incidents, run `/incident-review` to structure postmortem; store in `ops/postmortem.md`.
 
 ### G10 – Archive
 
+- [ ] Run `/memorize` to persist session context to Local Memory; verify entry IDs in `json/memory-ids.json`.
 - [ ] `SUMMARY.md`, `lessons-learned.md`, `archive.json` completed; Local Memory entries recorded (`json/memory-ids.json`).
 - [ ] Review checklist snapshot mirrored to `governance/audit/reviews/<PR>-<sha>.md`.
 

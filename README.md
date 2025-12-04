@@ -1,152 +1,195 @@
 # brAInwav Agentic Governance Framework
 
-> **A project-neutral governance framework for AI-assisted development workflows**
+> **Neutral, portable governance for AI-assisted delivery teams**
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
-## Overview
+The brAInwav framework packages policies, workflows, templates, and automation for governing human + AI collaboration. It is intentionally project-neutral: copy it into any repository to inherit ArcTDD gates, Cortex-Aegis oversight, reuse-first delivery checks, and SHA-pinned policy validation.
 
-The brAInwav Agentic Governance Framework provides a comprehensive set of policies, templates, and operational guidelines for managing AI agent workflows in software development projects. This framework is designed to be adopted by any project requiring structured governance for human-AI collaboration.
+---
 
-## Key Features
+## Why Teams Adopt This Framework
 
-- **ArcTDD Workflow**: Test-driven development methodology with structured vertical slices
-- **Phase Machine**: R→G→F→REVIEW workflow ensuring quality gates at each stage
-- **Evidence Triplet**: Mandatory documentation of milestone tests, contract snapshots, and reviewer approvals
-- **Preflight Guards**: Academic research, license validation, connector health, and identity verification
-- **Governance Index**: SHA-pinned document verification for policy integrity
+- **ArcTDD + Phase Machine** – Standardized G0–G10 workflow (R→G→F→REVIEW) with ≤7-step plans, failing-first tests, and evidence capture at every gate.
+- **Evidence Triplet & Run Manifests** – Mandatory pointers to (1) milestone test red→green proof, (2) contract snapshot, (3) reviewer disposition JSON.
+- **Cortex-Aegis Oversight** – Live MCP/CLI gate that enforces academic research, license validation, and vibe checks before any side-effecting work.
+- **Security & Compliance** – OWASP Top 10 2025 RC1 + OWASP ASVS 5.0.0 alignment, Semgrep/Gitleaks/OSV/Trivy/SBOM/Cosign requirements (see `SECURITY.md`).
+- **Governance Integrity** – `brainwav/governance/90-infra/governance-index.json` pins SHA-256 hashes for every normative doc; CI blocks mismatches.
+- **MCP-First Tooling** – RepoPrompt, Context7, Local Memory, and Cortex-Aegis MCP servers with run-manifest logging, plus Local Memory parity rules.
 
-## Quick Start
+---
 
-### 1. Copy the Framework
+## Getting Started
 
-Copy the `.cortex/` directory and governance files to your project:
+### Prerequisites
+
+- Node.js 24.11.x + pnpm 10.19.x (pinned in `.mise.toml`).
+- Security toolchain installed locally and in CI: `semgrep`, `gitleaks`, `trivy`, `cosign`, `cyclonedx`, plus OSV/pnpm audit support (`pnpm audit`, `osv-scanner`).
+- MCP clients (VS Code, Claude Desktop, RepoPrompt CLI) with access to Context7, Local Memory, and Cortex-Aegis servers.
+
+### Bootstrap Steps
 
 ```bash
-# Clone this repository
+# 1. Clone the framework
 git clone https://github.com/jscraik/brainwav-agentic-governance.git
 
-# Copy governance files to your project
-cp -r brainwav-agentic-governance/.cortex /path/to/your-project/
+# 2. Copy required governance artefacts into your repo root
+cp -R brainwav-agentic-governance/.cortex /path/to/your-project/
 cp brainwav-agentic-governance/AGENTS.md /path/to/your-project/
 cp brainwav-agentic-governance/CODESTYLE.md /path/to/your-project/
-```
+cp -R brainwav-agentic-governance/brainwav /path/to/your-project/
 
-### 2. Bootstrap Governance
+# 3. Install dependencies + security tools
+pnpm install
+pnpm ensure:tools        # installs repo-required CLIs (Semgrep, Gitleaks, etc.)
 
-Run the governance bootstrap in your project:
-
-```bash
+# 4. Run governance bootstrap (discover hashes, MCP config, governance index)
 pnpm cortex:governance-bootstrap
+
+# 5. (Optional) Validate MCP health + oversight
+pnpm oversight:vibe-check --goal "<task>" --plan "<≤7 steps>" --session "demo"
 ```
 
-### 3. Configure for Your Project
+Customize `AGENTS.md`, `brainwav/governance/00-core/constitution.md`, and templates under `brainwav/governance/templates/` with your maintainers, escalation paths, and brand wording. Update `.cortex/mcp.runtime.json` if you add or relocate MCP transports.
 
-Update the following files with your project-specific details:
+---
 
-- `AGENTS.md` - Update maintainer and contact information
-- `brainwav/governance/00-core/constitution.md` - Define your project's core principles
-- `brainwav/governance/templates/` - Customize templates as needed
-
-## Framework Structure
+## Repository Layout
 
 ```
 brainwav/governance/
-├── 00-core/                  # Foundational law (constitution, charters)
-│   ├── constitution.md       # Supreme governing document
-│   ├── AGENT_CHARTER.md      # Agent behavior + embedded charter fragment markers
-│   ├── vision.md             # Project vision and north star
-│   ├── RULES_OF_AI.md        # AI operational constraints
-│   ├── llm-threat-controls.md # LLM security controls
-│   └── skills-system-governance.md
-├── 10-flow/                  # Operational workflows
-│   ├── governance-quickstart.md      # Entry point for all workflows
-│   ├── agentic-coding-workflow.md    # G0-G10 gates + Phase Machine (§4.4) + Task Folder Layout (§3)
-│   └── assurance-system.md           # Validation system
-├── 20-checklists/            # Quality validation
-│   └── checklists.md         # Unified checklist source
-├── 90-infra/                 # Machine-readable configs
-│   └── governance-index.json # SHA-pinned document index
-├── templates/                # Standardized templates
-└── docs/                     # Extended documentation
+├── 00-core/                  # Constitution, charter, LLM threat controls, skills policy
+├── 10-flow/                  # Agentic coding workflow, assurance system, quickstart
+├── 20-checklists/            # Unified reviewer + gate checklists
+├── 30-compliance/            # e.g., EU AI Act mapping
+├── 90-infra/                 # governance-index.json, dependency guards, structure schemas
+├── commands/                 # Executable commands (memorize, recall, daily-summary, incident-review)
+├── context/                  # Curated research + "how to" references
+├── docs/                     # Extended documentation (Cortex-Aegis, accessibility, API ref)
+├── runbooks/                 # Incident + ops procedures
+└── templates/                # Feature, research, TDD plan templates
 
-AGENTS.md                     # Root agent operational instructions
-CODESTYLE.md                  # Code style enforcement rules
+AGENTS.md                     # Root operational policy (ArcTDD charter, Oversight rules)
+CODESTYLE.md                  # Code + architecture standards (named exports, ≤40-line funcs)
+SECURITY.md                   # Standards & References (Dec 2025) + CI gate expectations
+tasks/<slug>/                 # Per-task folders with run manifests + evidence triplets
 ```
 
-## Core Concepts
+---
+
+## Governance Commands
+
+The framework ships executable commands under `brainwav/governance/commands/`. Run them with Node.js:
+
+```bash
+# Recall context from Local Memory MCP
+TASK_SLUG=my-task node brainwav/governance/commands/recall.mjs "governance workflow" --limit=5
+
+# Store task context to memory
+TASK_SLUG=my-task node brainwav/governance/commands/memorize.mjs
+
+# Generate daily standup summary
+TASK_SLUG=my-task DAILY_FOCUS="observability" node brainwav/governance/commands/daily-summary.mjs
+
+# Prepare incident post-mortem
+INCIDENT_ID=INC-742 node brainwav/governance/commands/incident-review.mjs
+```
+
+| Command | Markdown Spec | Executable | Purpose |
+|---------|---------------|------------|---------|
+| `/memorize` | `memorize.md` | `memorize.mjs` | Store governance context to Local Memory |
+| `/recall` | `recall.md` | `recall.mjs` | Retrieve context via semantic search |
+| `/daily-summary` | `daily-summary.md` | `daily-summary.mjs` | Generate standup summary with git status |
+| `/incident-review` | `incident-review.md` | `incident-review.mjs` | Prepare structured post-incident review |
+| `/gather` | `gather.md` | — | LLM prompt for context collection |
+| `/reframe` | `reframe.md` | — | LLM prompt for plan validation |
+| `/truth` | `truth.md` | — | LLM prompt for factual audits |
+| `/sprint-goals` | `sprint-goals.md` | — | LLM prompt for sprint planning |
+
+---
+
+## Operational Pillars
 
 ### Hierarchy of Authority
 
-1. **Governance Pack** (`brainwav/governance/`) - Highest authority
-2. **CODESTYLE.md** - CI-enforced code standards
-3. **Root AGENTS.md** - Repository-wide agent rules
-4. **Package AGENTS.md** - May tighten but not weaken root rules
+1. **Governance Pack** – `brainwav/governance/**/*` (Constitution, Charter, workflows, checklists).
+2. **CODESTYLE.md** – Enforced coding and architectural rules.
+3. **Root `AGENTS.md`** – Repository-wide agent instructions.
+4. **Nearest package `AGENTS.md`** – May tighten rules, never weaken.
 
-### Agent Personas
+### ArcTDD + Phase Machine
 
-| Persona | Permitted Actions | Hard Limits |
-|---------|-------------------|-------------|
-| **Assistant** | Explain/summarize/answer | No source modifications |
-| **Analyst** | Scan repo, emit insights | No code changes |
-| **Generator** | Scaffold code/tests under TDD | Draft only; human reviews |
-| **Guardian** | Threat-model, security audits | Reports only |
-| **Refactorer** | Identify debt, produce plans | No direct code changes |
+- ArcTDD gates G0–G10 map to the R→G→F→REVIEW pipeline.
+- Plans MUST be ≤7 steps per arc, with Ask-First clarifications ≤3 per session.
+- Every task maintains `tasks/<slug>/json/run-manifest.json` with gate status, evidence pointers, and MCP session logs.
 
 ### Task & Evidence Contract
 
-Each task must produce:
+Each task produces a governed folder:
 
 ```
 tasks/<slug>/
-├── implementation-plan.md
-├── tdd-plan.md
-├── json/
-│   ├── run-manifest.json
-│   └── memory-ids.json
-├── logs/
-│   ├── vibe-check/
-│   └── academic-research/
-└── verification/
+├── context/ (research, connector health, requirements)
+├── plan/ (PLAN.md, risk register, tdd-plan)
+├── work/implementation-log.md
+├── evidence/ (tests.md, critic-review.json, confession-report.json, aegis-report.json)
+├── logs/vibe-check/*.json
+├── logs/academic-research/*.json
+├── json/run-manifest.json + memory-ids.json
+└── SUMMARY.md + session-retrospective
 ```
 
-## Integration
+### Oversight & Academic Research
 
-### CI/CD Integration
+- Cortex-Aegis MCP server (`@brainwav/cortex-aegis-mcp`, default port 2091) runs `vibe_check`, `connector_health`, `license_validate`, and `time_freshness` tools.
+- Agents must run research via Wikidata MCP (3029), arXiv MCP (3041), Semantic Scholar/OpenAlex APIs, and Context7 before calling Aegis.
+- Oversight gates: G2 (always) and G5 (when risk ≥ medium). Responses live in `logs/vibe-check/*.json` and `evidence/aegis-report.json`.
 
-The framework integrates with CI through:
+### Security & Compliance
 
-- Governance index verification
-- Charter SHA validation
-- Evidence triplet enforcement
-- Security scanning gates
+- Follow `SECURITY.md` for OWASP Top 10 2025 RC1, OWASP ASVS 5.0.0 targeting, OWASP LLM Top 10 2025, and MITRE ATLAS tagging.
+- CI gates: Semgrep (block on policy rules), Gitleaks (`ANY=block`), OSV/pnpm audit (block on high/critical runtime deps), Trivy (vuln/misconfig/secret/license), CycloneDX SBOM, Sigstore Cosign v3 attestation.
+- Evidence of each scanner runs during G5, and waivers must be recorded + time-boxed per `AGENTS.md` §27.
 
-### MCP Server Integration
+### MCP & Local Memory Integration
 
-Default ports for MCP services:
-- MCP Server: 3024
-- Local Memory: 3002
-- Oversight (Aegis): 2091
+- RepoPrompt handles context building, planning, and minimal diffs.
+- Context7 supplies up-to-date third-party documentation before each API touch.
+- Local Memory MCP enforces memory parity between `.github/instructions/memories.instructions.md` and the Qdrant-backed service.
+- Run manifests log every MCP session (server, transport, endpoint, evidence anchors).
 
-## Documentation
+---
 
-- [Governance Quickstart](brainwav/governance/10-flow/governance-quickstart.md) - Start here
-- [Governance Pack](brainwav/governance/) - Full policy documentation
-- [Templates](brainwav/governance/templates/) - Standardized templates
-- [Code Style](CODESTYLE.md) - Coding standards
+## Adopting in CI/CD
+
+- Wire `pnpm cortex:governance-bootstrap` into repo attach to refresh governance hashes.
+- Enforce `brainwav/governance/90-infra/governance-index.json` verification in CI (already included in `agents-guard`).
+- Run `pnpm readiness:check`, `pnpm lint:smart`, `pnpm test:smart`, `pnpm typecheck:smart`, and security gates before merging.
+- Attach Evidence Triplet artifacts to every pull request and require the unified checklist from `brainwav/governance/20-checklists/checklists.md`.
+
+---
+
+## Documentation Map
+
+- [AGENTS.md](AGENTS.md) – Operational policy, Oversight gate, Reuse-first rules.
+- [CODESTYLE.md](CODESTYLE.md) – Architectural conventions, dependency boundaries.
+- [SECURITY.md](SECURITY.md) – Standards & References (Dec 2025), CI gate requirements.
+- [brainwav/governance/10-flow/agentic-coding-workflow.md](brainwav/governance/10-flow/agentic-coding-workflow.md) – Detailed G0–G10 guidance.
+- [brainwav/governance/docs/cortex-aegis.md](brainwav/governance/docs/cortex-aegis.md) – Oversight MCP installation and evidence expectations.
+- [brainwav/governance/templates/](brainwav/governance/templates/) – Feature, research, and TDD plan templates.
+
+---
 
 ## Contributing
 
-1. Fork this repository
-2. Create a feature branch
-3. Submit a PR following the governance workflow
-4. Ensure all CI checks pass
+1. Fork the repo (or create a feature branch if upstream contributor).
+2. Run `pnpm cortex:governance-bootstrap` to refresh governance hashes.
+3. Follow the ArcTDD workflow with task folders, Evidence Triplet, Cortex-Aegis oversight, and security gates.
+4. Open a PR referencing the relevant governance sections; ensure `agents-guard`, lint, typecheck, tests, and security pipelines pass.
 
-## License
+---
 
-Apache 2.0 - See [LICENSE](LICENSE) for details.
+## License & Maintainer
 
-## Maintainer
-
-- GitHub: [@jamiescottcraik](https://github.com/jamiescottcraik)
-- Organization: brAInwav
+- License: [Apache 2.0](LICENSE)
+- Maintainer: [@jamiescottcraik](https://github.com/jamiescottcraik) · brAInwav

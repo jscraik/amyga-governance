@@ -1,50 +1,44 @@
 # Policy Configuration
 
-The ASBR-lite runtime enforces governance via a policy router. Policies are configured via YAML files under your governance framework config directory.
+The governance framework enforces policies through document-based rules and optional MCP tooling.
 
-## Locations
+## Policy Hierarchy
 
-- Default config home: `~/.config/cortex-os/`
-- Test/ephemeral override: `$CORTEX_OS_TMP/config`
+1. **Constitution** (`00-core/constitution.md`) – Highest authority
+2. **AGENTS.md** – Operational rules for agents and humans
+3. **CODESTYLE.md** – Code and architecture standards
+4. **Package AGENTS.md** – May tighten, never weaken root
 
-## Files
+## Governance Index
 
-- `policies.yaml` — high-level enable/disable and parameters
-- `mcp-allowlist.yaml` — list of allowed MCP tools/endpoints
+The canonical index at `brainwav/governance/90-infra/governance-index.json` pins SHA-256 hashes for all binding documents. CI verifies digests; agents refuse to act if hashes don't match.
 
-## Example: `policies.yaml`
+## MCP Policy Enforcement
 
-```yaml
-version: 1
-policies:
-  mcp-sandbox:
-    enabled: true
-    deny:
-      - exec:* # deny process execution by default
-  artifact-guard:
-    enabled: true
-    maxSizeBytes: 10485760 # 10MB
-```
+When using Cortex Aegis MCP:
 
-## Example: `mcp-allowlist.yaml`
+- **Vibe Check** – Validates plan against governance rules before action
+- **License Validation** – Checks academic/library license compliance
+- **Connector Health** – Verifies MCP server availability
 
-```yaml
-- provider: github
-  tools:
-    - search
-    - get_file
-- provider: web
-  tools:
-    - fetch
-```
+## Waiver Procedures
 
-## Operational Notes
+Temporary exceptions require:
 
-- Changes can be hot-reloaded by the runtime (subject to implementation).
-- Invalid YAML should fail fast and surface a structured error (code, message).
-- When a policy blocks an action, the API responds with `403` and an audit event is emitted.
+1. Waiver document at `.cortex/waivers/<waiver_id>.md`
+2. Maintainer approval via Apply Waiver workflow
+3. Expiry date (max 90 days)
+4. Link to workflow run showing approval
 
-## Next Steps
+See [AGENTS.md §27](../../../AGENTS.md) for waiver details.
 
-- Integrate policy checks in task creation and MCP tool execution paths.
-- Extend docs with per-policy schemas as the router evolves.
+## CI Enforcement
+
+| Rule ID | Description | Enforcement |
+|---------|-------------|-------------|
+| AGENTS-CHK-001 | Checklist token present | BLOCKER |
+| AGENTS-PRV-002 | Oversight logs attached | BLOCKER |
+| AGENTS-HMS-003 | Live model evidence present | BLOCKER |
+| AGENTS-DOC-005 | Docs validation (no ERROR) | BLOCKER |
+
+See [AGENTS-GOVERNANCE.md](../../../AGENTS-GOVERNANCE.md) for the full enforcement matrix.

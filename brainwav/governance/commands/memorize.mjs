@@ -1,8 +1,8 @@
-// .cortex/commands/memorize.mjs
+#!/usr/bin/env node
+// brainwav/governance/commands/memorize.mjs
 // Memory storage with basic recall integration
-// For comprehensive memory recall capabilities, see: /.cortex/commands/recall.md
+// For comprehensive memory recall capabilities, see: brainwav/governance/commands/recall.md
 
-import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 

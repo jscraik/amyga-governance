@@ -44,6 +44,7 @@
   - `10-flow/runtime-governance-service.md` (runtime enforcement, Trust Factor)
   - `10-flow/emergency-stop-protocol.md` (kill switches, safety triggers)
   - `20-checklists/checklists.md`
+  - `docs/documentation-governance.md` (documentation quality + mandatory JSDoc policy)
 
 ---
 
@@ -147,7 +148,7 @@ tasks/<task-slug>/
 | **G2 – Plan** | `plan/PLAN.md` (≤7-step arc plan, reuse candidates), `plan/risk-register.md`, `plan/tdd-plan.md` (BDD scenarios, test coverage goals), `analysis/reuse-evaluation.md` (from template). Optional: `context/design/` for diagrams. |
 | **G3 – Scaffold** | Initial failing tests created; contracts and feature flags wired; `meta/task.json` and `meta/tags.json` populated. |
 | **G4 – Implement** | `work/implementation-log.md` (real-time progress, decisions, deviations), `work/patches/` (optional diff bundles), `evidence/test-results/` (as tests pass). |
-| **G5 – Verify** | `evidence/tests.md` (coverage, mutation, perf, a11y, security), `context/design/` (final diagrams), `evidence/aegis-report.json`. |
+| **G5 – Verify** | `evidence/tests.md` (coverage, mutation, perf, a11y, security), `context/design/` (final diagrams), `evidence/aegis-report.json`, documentation changes validated against `docs/documentation-governance.md` (skimmability + JSDoc on touched JS/TS). |
 | **G6 – Review** | `evidence/review.json` (AI reviewer output), `evidence/review-notes.md` (human dispositions), `HITL-feedback.md` (if applicable). |
 | **G7 – Merge** | PR merged; all evidence committed; `run-manifest.json` finalized with Evidence Triplet pointers. |
 | **G8 – Deploy** | `ops/rollout-plan.md` (deploy steps, flags, migrations), `ops/validation/*.log` (CI/CD deployment validation). |
@@ -338,6 +339,8 @@ tasks/dashboard-metrics-widget/
 | **Local Memory** | `local-memory-mcp` | Cross-session decision persistence, semantic search | `json/memory-ids.json`, `.github/instructions/memories.instructions.md` |
 | **Cortex-Aegis** | `@brainwav/cortex-aegis-mcp` | Governance validation, risk assessment, time freshness | `evidence/aegis-report.json`, `logs/vibe-check/*.json` |
 | **Context7** | `@upstash/context7-mcp` | Up-to-date library docs, version-specific examples | `context/research.md`, `plan/PLAN.md` (cited sources) |
+
+> **Security Tooling (MANDATORY)** – Before running any gated flow, install and keep updated the security toolchain defined in `SECURITY.md` §“Standards & References (Dec 2025)” and §“Continuous Security”. At minimum every workstation/CI runner MUST have: Semgrep (SAST), Gitleaks (secret scan), OSV/pnpm audit tooling, Trivy (container/IaC scan), CycloneDX CLI for SBOM generation, and Sigstore Cosign v3 for attestation. Use package manager of choice (e.g., `brew install semgrep gitleaks aquasecurity/trivy/trivy cosign cyclonedx-cli`) and ensure `pnpm audit`/OSV client versions match the repo’s `.mise.toml`. Evidence of these tools running must appear at G5 per §4.3.
 
 #### Gate-by-Gate Tool Usage
 
@@ -538,7 +541,7 @@ just mcp-session-manifest <slug> <server> <transport> <endpoint> <session_log> <
 | G7   | Document            | Update docs, changelog, runbooks, arc manifests. |
 | G8   | Ship                | Deploy & flag management with rollback paths. |
 | G9   | Monitor             | Observe telemetry, model health, error budgets. |
-| G10  | Archive             | Preserve artefacts, update memory, close task. |
+| G10  | Archive             | Preserve artefacts, update memory via `/memorize`, close task. |
 
 ### 4.3 Gate Templates
 
@@ -559,8 +562,9 @@ just mcp-session-manifest <slug> <server> <transport> <endpoint> <session_log> <
   - Produce **handoff prompt** summarizing repo-aware context
   - Save Context Builder output summary to `context/research.md`
 - **Required artefacts** – `context/research.md` (including Repo Prompt context summary), `research/connectors-health.log`, `analysis/reuse-evaluation.md` (if reuse study already started).  
-- **Checks** – Agents call `/recall` commands, verify Wikidata + arXiv MCP endpoints, fetch academic research via MCP connectors, log license status, run Repo Prompt Context Builder for non-trivial tasks.  
+- **Checks** – Agents call `/recall` to retrieve prior work context, then run `/gather` to structure discovery questions for stakeholders. Verify Wikidata + arXiv MCP endpoints, fetch academic research via MCP connectors, log license status, run Repo Prompt Context Builder for non-trivial tasks.  
 - **Exit criteria** – RAID + feasibility documented; North-Star acceptance test path recorded; reuse candidates enumerated; repo context available for G2.
+- **Commands** – `/recall` (prior context), `/gather` (structured questions). See `commands/recall.md`, `commands/gather.md`.
 
 #### G2 – Plan / Design
 
@@ -572,8 +576,9 @@ just mcp-session-manifest <slug> <server> <transport> <endpoint> <session_log> <
   - Save Repo Prompt-generated plan to `plan/PLAN.md`
 - **Required artefacts** – `plan/PLAN.md` (Repo Prompt Plan or equivalent), `plan/tdd-plan.md`, `plan/risk-register.md`, updated `run-manifest.json`.  
 - **Cortex-Aegis usage** – Mandatory for Feature, Fix, and any Refactor touching contracts or security-critical code. Provide plan summary (including Repo Prompt context), research citations, risk tags, and tool health evidence.  
-- **Checks** – Plan references reuse candidates; connectors health still green; Cortex-Aegis JSON stored in `evidence/aegis-report.json`; Repo Prompt plan artifacts present.  
+- **Checks** – Run `/reframe` to confirm understanding with stakeholders before Aegis vibe check. Plan references reuse candidates; connectors health still green; Cortex-Aegis JSON stored in `evidence/aegis-report.json`; Repo Prompt plan artifacts present.  
 - **Exit criteria** – Plan approved (no Aegis `block`), tests identified, quality gates defined, plan grounded in repo realities.
+- **Commands** – `/reframe` (understanding confirmation), `/truth` (evidence-based responses). See `commands/reframe.md`, `commands/truth.md`.
 
 #### G3 – Scaffold
 
@@ -791,6 +796,7 @@ The phase machine maps onto ArcTDD gates as follows:
 - **Gate Path** – G0 → G1 → G2 → G3 → G4 → G5 → G6 → G7 → (G8/G9/G10).  
 - **Key Activities** – Capture reproducer; add failing regression test; small plan; implement minimal fix; rerun tests + security checks; produce postmortem for incidents; ensure rollback ready.  
 - **Mandatory Artefacts** – `context/requirements.md` (bug + repro), failing → passing test logs, `ops/postmortem.md` (if severity warrants), `evidence/aegis-report.json` for non-trivial risk tags.
+- **Commands** – Use `/incident-review` at G9 for SEV ≥ 2 incidents to structure postmortem evidence. See `commands/incident-review.md`.
 
 ### 5.4 Refactor / Cleanup Flow
 

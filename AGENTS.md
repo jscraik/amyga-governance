@@ -614,7 +614,7 @@ CI mirrors the filled checklist to `brainwav/governance/audit/reviews/<PR_NUMBER
 
 ## 30) Maintainers & Contact
 
-- GitHub: `@jamiescottcraik`
+- GitHub: `@jscraik`
 - Issues: open under the relevant package and label `governance`
 - Emergencies: see `brainwav/governance/00-core/constitution.md` escalation tree
 

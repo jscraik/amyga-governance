@@ -21,6 +21,7 @@
         "00-core/skills-system-governance.md",
         "90-infra/egress-governance.md",
         "CODESTYLE.md",
+        "docs/documentation-governance.md",
         "SECURITY.md"
     ],
     "docs": {
@@ -135,6 +136,11 @@
             "path": "90-infra/egress-governance.md",
             "sha256": "PENDING_RECALC",
             "required_tokens": ["egress", "allowlist", "rate limit"]
+        },
+        "documentation-governance.md": {
+            "path": "docs/documentation-governance.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["documentation governance", "JSDoc", "OpenAI Cookbook"]
         },
         "arxiv-agentic-governance-summary.md": {
             "path": "docs/research/arxiv-agentic-governance-summary.md",

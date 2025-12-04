@@ -1,12 +1,67 @@
-# Cortex Aegis MCP Server
++# Cortex Aegis MCP Server (Neutral Governance)
 
-> Oversight and assurance MCP server for agentic governance workflows.
+> Project-neutral oversight and assurance MCP server for all agentic governance workflows.
 
 ---
 
 ## Overview
 
-Cortex Aegis is an MCP (Model Context Protocol) server that provides oversight gates, plan validation, and assurance checks for AI agent workflows. It acts as a pre-flight checkpoint that agents must call before executing file writes, network calls, or long-running operations.
+Cortex Aegis is an MCP (Model Context Protocol) server that enforces the **Vibe Check Oversight Gate**. It provides mandatory human-in-the-loop verification before any agent or human operator performs side-effecting actions (file writes, network calls, or long-running jobs). The service is governance-neutral: organizations can embed it into any project that follows the ArcTDD / Phase Machine methodology or analogous governance flows.
+
+## Purpose & Scope
+
+- **Scope:** All planning → action executions (humans + AI agents).
+- **Inheritance:** Governance Pack documents (`AGENTS.md`, `brainwav/governance/10-flow/agentic-coding-workflow.md`, `CODESTYLE.md`).
+- **Goal:** Ensure every task captures a successful oversight exchange after planning and **before** acting. Missing or stale evidence blocks review and CI.
+
+## When to Run the Vibe Check
+
+- Trigger immediately after the implementation plan (`plan/PLAN.md` or `implementation-plan.md`) is drafted.
+- Run **before** touching the working tree, calling external services, or launching long jobs.
+- **Academic research + license validation** **must** be completed prior to calling `vibe_check`.
+- Re-run if:
+  - The plan changes materially (new steps, different risk owners).
+  - A new session/resume occurs (e.g., after `pnpm session:reset`).
+  - More than one build/reset cadence passes (> ~50 minutes) without execution.
+- Tier escalation guidance:
+  - **Tier 2 (feature)**: new vibe check per arc (≤7 steps per arc).
+  - **Tier 1 / Tier 3**: may reuse the most recent response if within session window and plan unchanged.
+
+All submitted plans MUST contain ≤ 7 discrete steps. Split larger efforts into multiple arcs and re-run oversight per arc.
+
+## Academic Research Integration (Mandatory)
+
+Before calling `vibe_check`, enhance the plan with academic/industry research and validate content licenses.
+
+### Available Academic MCP/HTTP Providers
+
+| Provider | Port / Channel | Purpose |
+|----------|----------------|---------|
+| **Wikidata MCP** | 3029 | Vector/entity search via `mcp_wikidata_*` tools |
+| **arXiv MCP** | 3041 | Semantic paper search via `mcp_arxiv_*` tools |
+| **Semantic Scholar API** | HTTPS | Identify proven solutions and citation graphs |
+| **OpenAlex API** | HTTPS | Surface collaboration patterns / metadata |
+| **Context7 MCP** | platform | Library/documentation retrieval via `mcp_context7_*` tools |
+
+### Research Workflow
+
+```ts
+await mcpClient.callTool('mcp_wikidata_vector_search', { query: '<concept>' });
+await mcpClient.callTool('mcp_arxiv_search', { query: '<topic>' });
+await mcpClient.callTool('mcp_context7_get-library-docs', { context7CompatibleLibraryID: '<lib>' });
+```
+
+- Store findings in `tasks/<slug>/logs/academic-research/findings.json`.
+- Record connector health in `tasks/<slug>/research/connectors-health.log`.
+
+### License Validation Requirements
+
+- Classify each source as SAFE / REVIEW / RESTRICTED / PROHIBITED.
+- Only SAFE + REVIEW content may influence the plan.
+- Document attribution requirements and store `license-validation.json` alongside findings.
+- Filter PROHIBITED/RESTRICTED content before generating plan steps.
+
+Plan steps should explicitly cite the research backing and note alternate approaches discovered through the literature review.
 
 ## Installation
 
@@ -141,9 +196,11 @@ Validate time-sensitive data and anchor timestamps.
 
 ---
 
-## CLI Wrapper
+## Oversight Invocation
 
-The governance framework provides a CLI wrapper for convenience:
+### CLI Wrapper (Recommended)
+
+The governance framework exposes a convenience CLI:
 
 ```bash
 pnpm oversight:vibe-check \
@@ -156,7 +213,46 @@ pnpm oversight:vibe-check \
   --license-validation "tasks/<slug>/logs/academic-research/license-validation.json"
 ```
 
----
+- `goal`: concise objective (≤140 chars).
+- `plan`: ordered steps (≤7) referencing control IDs when relevant (`brainwav/governance/00-core/llm-threat-controls.md`).
+- `session`: stable identifier (`<task-slug>-<timestamp>` recommended).
+
+### MCP Tool Invocation (Direct)
+
+```ts
+const response = await mcpClient.callTool('vibe_check', {
+  goal: '<task summary>',
+  plan: '1. Step one... 2. Step two... (≤7 steps)',
+  session: '<task-slug>-<timestamp>'
+});
+fs.writeFileSync('tasks/<slug>/logs/vibe-check/initial.json', JSON.stringify(response, null, 2));
+```
+
+### JSON-RPC / HTTP Fallback
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "<uuid>",
+  "method": "tools/call",
+  "params": {
+    "name": "vibe_check",
+    "arguments": {
+      "goal": "<task summary>",
+      "plan": "1. Step one. 2. Step two.",
+      "session": "<session-id>"
+    }
+  }
+}
+```
+
+POST to `${VIBE_CHECK_HTTP_URL:-http://127.0.0.1:2091}/mcp` with standard JSON headers when MCP transport is unavailable.
+
+### Connector Outage Protocol
+
+- Check `/health` endpoints for each academic MCP (Wikidata 3029, arXiv 3041, etc.).
+- If unavailable, document a waiver in `tasks/<slug>/logs/academic-research/<timestamp>-waiver.json` with `[brAInwav]` branding and link in `run-manifest.json`.
+- Re-run research + oversight within 72 hours or once services recover.
 
 ## Integration with ArcTDD Gates
 
@@ -260,7 +356,17 @@ Per governance policy, Cortex Aegis **MUST** be invoked for:
 
 ---
 
-## Observability
+## Evidence & Observability
+
+### Evidence Package Checklist
+
+1. Commit/store JSON response `tasks/<slug>/logs/vibe-check/<initial|final>.json`.
+2. Record the invocation command + timestamp in `work/implementation-log.md` or task notes.
+3. Reference evidence in PR description and reviewer notes; include link in `run-manifest.json.evidence`.
+4. Map each mitigation/finding to OWASP LLM Top 10 controls (see `brainwav/governance/00-core/llm-threat-controls.md`).
+5. Capture the proposed edit envelope (directories, file globs, max LOC) next to the JSON response so CI can validate patch budgets.
+
+### Observability Signals
 
 All Aegis responses include:
 

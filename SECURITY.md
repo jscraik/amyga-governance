@@ -9,6 +9,7 @@ For operational governance rules, see [AGENTS.md](AGENTS.md). For LLM-specific t
 ## Table of Contents
 
 - [Supported Versions](#supported-versions)
+- [Standards & References (Dec 2025)](#standards--references-dec-2025)
 - [Threat Model](#threat-model)
 - [Authentication & Authorization](#authentication--authorization)
 - [Reporting a Vulnerability](#reporting-a-vulnerability)
@@ -29,30 +30,96 @@ Only the latest release on the `main` branch receives security fixes. Governance
 
 ---
 
+## Standards & References (Dec 2025)
+
+We align governance controls and verification with the following public standards/frameworks:
+
+### OWASP Top 10 (Web/AppSec)
+- Primary reference: **OWASP Top 10:2025 (RC1)** (and **OWASP Top 10:2021** as the current “final” release while 2025 remains a release candidate).
+- We use it as a *risk taxonomy* and to drive secure coding training and scanning coverage.
+
+References:
+- https://owasp.org/Top10/
+- https://owasp.org/Top10/2025/0x00_2025-Introduction/
+
+### OWASP ASVS (Verification Standard)
+- Primary verification catalog: **OWASP ASVS 5.0.0** (May 2025).
+- Applies to runtime systems *and* developer tooling that processes untrusted inputs or touches production credentials.
+
+References:
+- https://owasp.org/www-project-application-security-verification-standard/
+- https://github.com/OWASP/ASVS
+
+**ASVS targeting rule**
+- “Internet-facing, multi-tenant, or handles authN/authZ”: meet **ASVS L2** minimum.
+- “Handles PII/financial data/secrets, or executes tools/actions”: meet **ASVS L2** + LLM controls below.
+- “Critical systems (payments, privileged infra, agent orchestration with broad access)”: meet **ASVS L3** where applicable.
+
+### OWASP Top 10 for LLMs / GenAI Apps (Agentic/LLM Security)
+- Primary reference: **OWASP Top 10 for LLMs 2025** (LLM01–LLM10).
+
+Reference: https://genai.owasp.org/llm-top-10/
+
+### MITRE ATLAS (AI Adversary TTPs)
+- Used for AI threat modeling and red-teaming scenarios.
+- Findings and mitigations SHOULD be tagged with relevant ATLAS tactics/techniques.
+
+Reference: https://atlas.mitre.org/
+
+---
+
 ## Threat Model
 
-brAInwav governance addresses the following threat categories (mapped to [OWASP LLM Top 10](https://owasp.org/www-project-top-10-for-large-language-model-applications/)):
+brAInwav governance addresses threats across:
+1. agent/LLM application behavior,
+2. traditional web/app risks,
+3. infrastructure and supply chain,
+4. governance integrity.
 
-### LLM & Agent Threats
+### LLM & Agent Threats (OWASP LLM Top 10 2025)
 
-| Threat | Mitigation | Reference |
-|--------|------------|-----------|
-| **LLM01 - Prompt Injection** | Structured prompts, schema validation, Cortex Aegis oversight | `llm-threat-controls.md` |
-| **LLM02 - Insecure Output Handling** | Output validation, branded logging, trace context | AGENTS.md §12 |
-| **LLM05 - Supply Chain** | SBOM (CycloneDX 1.6+), SLSA provenance, Sigstore signing | AGENTS.md §9 |
-| **LLM06 - Sensitive Info Disclosure** | 1Password CLI for secrets, no hardcoded credentials | AGENTS.md §9 |
-| **LLM07 - Insecure Plugin Design** | MCP connector health checks, tool allowlists | AGENTS.md §13 |
-| **LLM08 - Excessive Agency** | Step budgets (≤7), Ask-First limits (≤3), oversight gates | `AGENT_CHARTER.md` |
+| Threat | Minimum Mitigation | Reference |
+|--------|---------------------|-----------|
+| **LLM01:2025 Prompt Injection** | Strict tool schemas + allowlists; input/output validation; “no implicit tool execution”; audit trails | `llm-threat-controls.md` |
+| **LLM02:2025 Sensitive Information Disclosure** | Secret redaction; least-priv data access; prevent prompt/log leakage; no secrets in context by default | AGENTS.md (§Security + logging) |
+| **LLM03:2025 Supply Chain** | SBOMs; signed artifacts; pinned deps; scanner gates; model/dataset provenance | AGENTS.md §9 |
+| **LLM04:2025 Data and Model Poisoning** | Dataset lineage; checksums; training/eval provenance; retrieval corpus integrity checks | `llm-threat-controls.md` + ML docs |
+| **LLM05:2025 Improper Output Handling** | Treat outputs as untrusted; sanitize before rendering/executing; strict parsers; no eval | `llm-threat-controls.md` |
+| **LLM06:2025 Excessive Agency** | Capability budgets; step limits; human-in-the-loop for risky tools; scoped tokens | `AGENT_CHARTER.md` |
+| **LLM07:2025 System Prompt Leakage** | Prompt minimization; split secrets from prompts; prevent tool output echo; redaction | `llm-threat-controls.md` |
+| **LLM08:2025 Vector and Embedding Weaknesses** | Tenant isolation; ACLs on retrieval; poisoning detection; safe chunking; query filtering | `llm-threat-controls.md` |
+| **LLM09:2025 Misinformation** | Grounding policies; citations/evidence requirements; eval harness regressions block merges | Eval reports |
+| **LLM10:2025 Unbounded Consumption** | Quotas, budgets, rate limits; timeouts; bounded tool loops; cost guards | `AGENT_CHARTER.md` |
 
-### Infrastructure Threats
+### Web/Application Risks (OWASP Top 10:2025 RC1)
 
-| Threat | Mitigation | Reference |
-|--------|------------|-----------|
-| **Secrets Exposure** | Ephemeral injection via `op run`, no `.env` in repo | AGENTS.md §9 |
-| **Dependency Vulnerabilities** | OSV/Audit, Semgrep, gitleaks in CI | AGENTS.md §9 |
-| **Container Escape** | Minimal base, pinned digests, non-root, read-only FS, dropped caps | AGENTS.md §9 |
-| **Identity Spoofing** | OIDC/WIF authentication, no static cloud keys | AGENTS.md §9 |
-| **Supply Chain Attacks** | SBOM generation, in-toto/SLSA attestations, Cosign v3 signing | checklists.md §5 |
+We use the OWASP Top 10:2025 list as a baseline taxonomy for all runtime systems:
+
+- **A01:2025 Broken Access Control**
+- **A02:2025 Security Misconfiguration**
+- **A03:2025 Software Supply Chain Failures**
+- **A04:2025 Cryptographic Failures**
+- **A05:2025 Injection**
+- **A06:2025 Insecure Design**
+- **A07:2025 Authentication Failures**
+- **A08:2025 Software or Data Integrity Failures**
+- **A09:2025 Logging & Alerting Failures**
+- **A10:2025 Mishandling of Exceptional Conditions**
+
+### Infrastructure & Supply Chain Threats
+
+| Threat | Minimum Mitigation | Reference |
+|--------|---------------------|-----------|
+| **Secrets Exposure** | Ephemeral injection (`op run` or approved secret manager); pre-commit + CI scanning | AGENTS.md §9 |
+| **Dependency Vulnerabilities** | OSV + ecosystem audits; SBOM generation and scanning; patch SLAs | AGENTS.md §9 |
+| **Container & IaC Misconfig** | Scan images/IaC; pinned digests; non-root; read-only FS; drop caps | AGENTS.md §9 |
+| **Identity Spoofing** | OIDC/WIF; no long-lived cloud keys; scoped workload identity | AGENTS.md §9 |
+| **Supply Chain Attacks** | SLSA provenance; signed releases; artifact attestations; CI hardening | checklists.md §5 |
+
+### AI-Specific Adversary TTPs (MITRE ATLAS)
+
+- Threat modeling and red-team work SHOULD use MITRE ATLAS as the “AI ATT&CK-style” catalog.
+- Security issues and mitigations SHOULD include ATLAS technique tags when applicable (e.g., model theft, data poisoning, evasion, prompt injection).
 
 ### Governance-Specific Threats
 
@@ -60,7 +127,8 @@ brAInwav governance addresses the following threat categories (mapped to [OWASP 
 |--------|------------|
 | **Agent Charter Bypass** | CI enforcement via `charter-enforce` workflow, SHA-pinned governance index |
 | **Unauthorized Governance Changes** | Hash validation in `governance-index.json`, maintainer approval required |
-| **Fake Telemetry/Evidence** | Anti-patterns list (AGENTS.md §20), Evidence Triplet requirements |
+| **Fake Telemetry/Evidence** | Anti-patterns list (AGENTS.md), Evidence Triplet requirements |
+| **Disable-the-guardrail attacks** | Any security gate disable requires maintainer waiver + time-boxed expiry |
 
 ---
 
@@ -137,15 +205,36 @@ Expect acknowledgement within 48 hours; fixes are prioritized by severity.
 
 ## Continuous Security
 
-### CI Security Gates
+### CI Security Gates (Required)
 
-| Gate | Tool | Failure Policy |
+| Gate | Tool | Minimum Policy |
 |------|------|----------------|
-| Static Analysis | Semgrep | `ERROR=block` |
-| Secret Detection | gitleaks | `ANY=block` |
-| Dependency Audit | OSV/pnpm audit | Block on high/critical |
-| SBOM Generation | CycloneDX 1.6+ | Required for releases |
-| Attestation | Sigstore Cosign v3 | Required for releases |
+| SAST / Semgrep | Semgrep | Block on policy rules; block on High+ where configured |
+| Secret Detection | Gitleaks | `ANY=block` on PRs; allowlist only for rotated/inactive/false-positive secrets |
+| Dependency Audit | OSV + ecosystem audits | Block on High/Critical for runtime deps |
+| Container & IaC Scan | Trivy | Block on Critical/High vulns; block on High misconfig; block on detected secrets |
+| SBOM Generation | CycloneDX | Required for releases |
+| Attestation & Signing | Sigstore Cosign | Required for releases; verify before publish |
+
+### Tooling Notes & Expectations
+
+#### Semgrep
+- Semgrep rules MUST be run in CI.
+- Any “waiver” must be time-boxed and recorded (see waiver process).
+- Where Semgrep policies are used, rules can be set to “Block” for PR/MR gating.
+
+#### Trivy (containers / repos / IaC)
+- Trivy MUST scan:
+   - container images for vulns + secrets (+ misconfig where applicable),
+   - infrastructure-as-code (Dockerfiles, Kubernetes, Terraform, CloudFormation, Helm),
+   - and (where used) SBOMs or installed packages.
+- Use scanner selection explicitly when needed (`--scanners vuln,misconfig,secret,license`).
+
+#### Gitleaks
+- Run as:
+   - pre-commit (developer workstation) AND
+   - CI gate (PR and main)
+- Maintain a `.gitleaks.toml` allowlist for rotated/inactive/false positives; do not “hide” live secrets.
 
 ### Automated Checks
 
@@ -177,16 +266,6 @@ Expect acknowledgement within 48 hours; fixes are prioritized by severity.
 - Third-party services integrated via MCP (report to respective vendors)
 - Vulnerabilities in upstream dependencies (report to respective projects, note here for tracking)
 - Runtime systems implementing brAInwav governance (report to those projects)
-
----
-
-## Recognition
-
-We maintain a list of security researchers who have responsibly disclosed vulnerabilities:
-
-<!-- Add contributors here -->
-
-Thank you for helping keep brAInwav secure!
 
 ---
 
