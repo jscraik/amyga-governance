@@ -188,7 +188,7 @@ Generates `.cortex/agent-governance-context.json` containing:
 > - If health check results show errors, agents **should investigate** but may proceed with operation unless otherwise instructed by governance or security policy.  
 > - If no MCP servers are configured, health checks are **skipped** and a "not applicable" status is logged.  
 > - Health check logs are retained in `tasks/<slug>/logs/connector-health/` and are subject to standard log rotation and retention policies (see [brAInwav Log Lifecycle Guide](docs/log-lifecycle.md)).  
-> - For interpreting health check results, refer to the [Cortex Aegis documentation](https://github.com/jamiescottcraik/brAInwav/docs/cortex-aegis.md).  
+> - For interpreting health check results, refer to the [Cortex Aegis documentation](brainwav/governance/docs/cortex-aegis.md).  
 **Key Rules:**
 
 1. MUST run before deriving a system prompt or selecting a workflow.
@@ -313,6 +313,16 @@ no TODO/FIXME/HACK, no fake telemetry, no placeholder adapters.
 Agents MUST call **Oversight** after planning **and** academic research
 enhancement **and** license validation, **before** any file writes/network
 calls/long runs.
+
+**Installation:**
+
+```bash
+npm i -g @brainwav/cortex-aegis-mcp@latest
+```
+
+See [Cortex Aegis MCP documentation](brainwav/governance/docs/cortex-aegis.md) for full tool reference.
+
+**CLI Wrapper:**
 
 ```bash
 pnpm oversight:vibe-check \

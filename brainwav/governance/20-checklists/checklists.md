@@ -13,7 +13,7 @@
 - **Version**: `2025.12.0`
 - **Status**: `active`
 - **Owner**: `Governance & Reliability (GovOps)`
-- **Last Updated**: `2025-11-22`
+- **Last Updated**: `2025-12-04`
 
 ---
 
@@ -169,7 +169,7 @@
 | `CI:mutation` | `pnpm exec tsx scripts/ci/mutation.sh` | `mutation-results.json`, `reports/mutation/`. Threshold ≥90%. |
 | `CI:a11y` | `pnpm test:a11y` / Playwright axe run | axe/jest-axe reports; fails on critical issues. |
 | `CI:security` | `pnpm security:scan` + Semgrep/gitleaks/OSV | Scanner SARIF/JSON; SBOM (`sbom/*.cdx.json`), `pnpm sbom:generate`, `pnpm attest:sign` bundles. |
-| `CI:structure` | `pnpm structure:validate` + governance hash check | `structure-guard.json` output, `governance-index.json` hash, `export-freeze.snapshot.json` digest update per `GOVERNANCE_HASH_UPDATE.md`. |
+| `CI:structure` | `pnpm structure:validate` + governance hash check | `structure-guard.json` output, `governance-index.json` hash, `export-freeze.snapshot.json` digest update per `governance-hash-update.md`. |
 | `CI:charter` | `charter-enforce` workflow | `quality-report.json`, narrated diff, trace-context log, evidence of `run-manifest.json.reuseEvidence` pointers. |
 
 CI jobs must fail closed; waivers recorded in `governance/waivers/` with expiry ≤30 days and linked in PR/quality report.
@@ -184,7 +184,7 @@ CI jobs must fail closed; waivers recorded in `governance/waivers/` with expiry 
 
 - [ ] Task folder created; `meta/task.json` + `meta/tags.json` populated (type, tier, owners, risk tags, feature flags).
 - [ ] Flow selected and logged in `run-manifest.json`.
-- [ ] Time freshness anchor noted per `cortex-aegis.md`.
+- [ ] Time freshness anchor noted per [cortex-aegis.md](../docs/cortex-aegis.md).
 
 ### G1 – Discover / Research
 
@@ -247,6 +247,9 @@ CI jobs must fail closed; waivers recorded in `governance/waivers/` with expiry 
 ## 7. Cortex-Aegis Checklists
 
 > Assurance system hooking plan/evidence validation.
+>
+> **Installation:** `npm i -g @brainwav/cortex-aegis-mcp@latest`  
+> **Documentation:** [cortex-aegis.md](../docs/cortex-aegis.md)
 
 ### 7.1 When Aegis MUST Run
 
@@ -260,7 +263,7 @@ CI jobs must fail closed; waivers recorded in `governance/waivers/` with expiry 
 - [ ] `plan/PLAN.md` (≤7 steps) + `plan/tdd-plan.md` summarised in the Aegis request (`steps` field, ≤7 items).
 - [ ] `context/research.md` citations + connector health log references.
 - [ ] Risk tags + tier from `meta/task.json` / `meta/tags.json`.
-- [ ] Time freshness note (ISO date) referencing `cortex-aegis.md`.
+- [ ] Time freshness note (ISO date) referencing [cortex-aegis.md](../docs/cortex-aegis.md).
 
 ### 7.3 Outputs & Policy
 
@@ -284,10 +287,11 @@ CI jobs must fail closed; waivers recorded in `governance/waivers/` with expiry 
 ## 9. Change Management for This File
 
 - [ ] Updates reviewed/approved by GovOps maintainers.
-- [ ] `governance-index.json`, `structure-guard.json`, and `export-freeze.snapshot.json` updated to reference new sections; follow `GOVERNANCE_HASH_UPDATE.md`.
+- [ ] `governance-index.json`, `structure-guard.json`, and `export-freeze.snapshot.json` updated to reference new sections; follow `governance-hash-update.md`.
 - [ ] CI jobs referencing legacy checklist names updated to point here (`CHECKLIST_SECTION` tags).
 - [ ] Redundant checklist files (`ci-review-checklists.md`, `code-review-checklist.md`) either migrate content here or become stubs referencing this file.
 
 ### 9.1 Changelog
 
+- `[2025-12-04] v2025.12.0 – Added Cortex Aegis MCP installation info; fixed file path references (lowercase governance-hash-update.md); linked cortex-aegis.md documentation.`
 - `[2025-11-22] v2025.11.0 – Consolidated local, PR, review, CI, gate, and Aegis checklists into a single canonical source under 20-checklists/.`

@@ -29,6 +29,7 @@ Central entry point for governance framework documentation. Current features are
 - [Best practices](./best-practices.md)
 - [Providers and setup](./providers-setup.md)
 - [Security](./security.md)
+- [Cortex Aegis MCP](./cortex-aegis.md)
 - [Policy & terms](./policy-terms.md)
 - [FAQ](./faq.md)
 - [Roadmap](./roadmap.md)
