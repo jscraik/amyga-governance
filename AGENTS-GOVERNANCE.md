@@ -119,13 +119,13 @@ Cortex-OS aligns with industry standards. This mapping is **informational** (not
 
 | NIST Practice | Cortex-OS Implementation | Evidence |
 |---------------|-------------------------|----------|
-| **PO.1.1** Identify stakeholders | `.cortex/rules/constitution.md` escalation tree | Constitutional doc |
+| **PO.1.1** Identify stakeholders | `brainwav/governance/00-core/constitution.md` escalation tree | Constitutional doc |
 | **PO.3.2** Train developers | Mandatory governance pack reading | `AGENTS.md` acknowledgment |
 | **PS.1.1** Version control | Git with signed commits/tags | Commit signatures |
 | **PS.2.1** Threat modeling | `llm-threat-controls.md` | Threat controls map |
 | **PS.3.1** Dependency management | Lockfiles, SBOM, OSV scanning | `pnpm-lock.yaml` + SBOM |
 | **PW.1.1** Secure coding | `CODESTYLE.md` + ESLint security rules | `.eslintrc.js` configs |
-| **PW.4.1** Code review | Required PR reviews + checklist | `.cortex/rules/code-review-checklist.md` |
+| **PW.4.1** Code review | Required PR reviews + checklist | `brainwav/governance/20-checklists/checklists.md` |
 | **PW.7.1** Automated testing | 95% coverage + 90% mutation | CI test jobs |
 | **PW.8.1** SAST | Semgrep OWASP profiles | `.github/workflows/security-modern.yml` |
 | **RV.1.1** Vulnerability response | Dependabot + SECURITY.md | GitHub Security tab |
@@ -134,10 +134,10 @@ Cortex-OS aligns with industry standards. This mapping is **informational** (not
 
 | Control | Cortex-OS Implementation | Evidence |
 |---------|-------------------------|----------|
-| **5.2** AI policy | `.cortex/rules/RULES_OF_AI.md` | Governance pack |
+| **5.2** AI policy | `brainwav/governance/00-core/RULES_OF_AI.md` | Governance pack |
 | **6.2.3** Risk assessment | `llm-threat-controls.md` | OWASP LLM Top 10 mapping |
 | **7.2** Competence | Mandatory charter reading | AGENTS_MD_SHA logs |
-| **7.5** Documented information | Task folder structure | `TASK_FOLDER_STRUCTURE.md` |
+| **7.5** Documented information | Task folder structure | `agentic-coding-workflow.md` §3 |
 | **8.1** Operational planning | Phase machine (R→G→F→REVIEW) | `.cortex/run.yaml` |
 | **8.3** AI system lifecycle | ArcTDD workflow | Charter enforcement |
 | **9.1** Monitoring | OpenTelemetry + trace context | W3C traceparent logs |
@@ -323,7 +323,7 @@ Every task MUST produce an evidence package for audit purposes.
     }
   ],
   "governance": {
-    "rules_index": "/.cortex/rules/index.json",
+    "rules_index": "brainwav/governance/90-infra/governance-index.json",
     "AGENTS_MD_SHA": "abc123...",
     "llm_controls_map": "verification/llm-controls-map.md"
   },
@@ -462,7 +462,7 @@ pnpm quality:gate
 
 ### SHA-Pinned Rules
 
-**Index Location:** `/.cortex/rules/index.json`
+**Index Location:** `brainwav/governance/90-infra/governance-index.json`
 
 **Structure:**
 ```json
@@ -471,12 +471,12 @@ pnpm quality:gate
   "generated_at": "2025-11-17T10:00:00Z",
   "documents": [
     {
-      "path": ".cortex/rules/RULES_OF_AI.md",
+      "path": "brainwav/governance/00-core/RULES_OF_AI.md",
       "sha256": "abc123...",
       "mandatory": true
     },
     {
-      "path": ".cortex/rules/CHARTER_FRAGMENT.md",
+      "path": "brainwav/governance/00-core/AGENT_CHARTER.md",
       "sha256": "f08875...",
       "mandatory": true
     }
@@ -487,14 +487,14 @@ pnpm quality:gate
 ### Agent Bootstrap Verification
 
 **MUST (before any action):**
-1. Load `/.cortex/rules/index.json`
+1. Load `brainwav/governance/90-infra/governance-index.json`
 2. Compute SHA-256 of each listed document
 3. Compare against index
 4. **REFUSE to act if mismatch**
 
 **Log Evidence:**
 ```
-[brAInwav] Governance index verified | index_path=/.cortex/rules/index.json | docs_count=15 | all_sha_match=true
+[brAInwav] Governance index verified | index_path=brainwav/governance/90-infra/governance-index.json | docs_count=15 | all_sha_match=true
 ```
 
 ### CI Verification
@@ -527,7 +527,7 @@ pnpm quality:gate
 - Issues: Label with `governance`
 
 **Emergency Escalation:**
-See `.cortex/rules/constitution.md` escalation tree
+See `brainwav/governance/00-core/constitution.md` escalation tree
 
 ---
 

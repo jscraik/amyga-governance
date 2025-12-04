@@ -11,6 +11,8 @@
 
 This document defines session continuity requirements for agents executing multi-session tasks. Based on Anthropic's research on effective harnesses for long-running agents, it establishes patterns for session bridging, checkpoint management, and recovery from interruptions.
 
+> **Upstream Reference**: This protocol operates within the task folder structure defined in `10-flow/agentic-coding-workflow.md` §3. All checkpoint and session artefacts live under `tasks/<slug>/json/`.
+
 ---
 
 ## 1. Session Lifecycle
@@ -64,7 +66,7 @@ Every new session must execute these steps in order:
 startup_sequence:
   1_read_progress:
     action: "Read implementation-log.md"
-    path: "tasks/<slug>/implementation-log.md"
+    path: "tasks/<slug>/work/implementation-log.md"
     purpose: "Understand what was done in previous sessions"
     
   2_check_status:
@@ -174,7 +176,7 @@ shutdown_sequence:
     skip_if: "No uncommitted changes"
     
   2_update_progress:
-    action: "Append to implementation-log.md"
+    action: "Append to work/implementation-log.md"
     content: |
       ## Session <date> (<duration>)
       

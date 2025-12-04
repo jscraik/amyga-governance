@@ -1,7 +1,7 @@
 {
     "description": "Governance document index with precedence order and SHA verification",
-    "version": "2025.12.1",
-    "updated": "2025-12-04",
+    "version": "2025.12.2",
+    "updated": "2025-06-13",
     "precedence": [
         "00-core/constitution.md",
         "00-core/AGENT_CHARTER.md",
@@ -16,12 +16,9 @@
         "20-checklists/checklists.md",
         "30-compliance/eu-ai-act.md",
         "docs/research/arxiv-agentic-governance-summary.md",
-        "00-core/CHARTER_FRAGMENT.md",
         "00-core/vision.md",
         "00-core/llm-threat-controls.md",
         "00-core/skills-system-governance.md",
-        "10-flow/agentic-phase-policy.md",
-        "10-flow/TASK_FOLDER_STRUCTURE.md",
         "90-infra/egress-governance.md",
         "CODESTYLE.md",
         "SECURITY.md"
@@ -34,7 +31,7 @@
         },
         "AGENT_CHARTER.md": {
             "path": "00-core/AGENT_CHARTER.md",
-            "sha256": "PENDING_RECALC",
+            "sha256": "70953d4e7433e886150fcab9daa1dc8c7a735e5ec6877499fd8832720a3900f4",
             "required_tokens": ["[brAInwav]", "MODELS:LIVE:OK", "NORTH_STAR:RED_FIRST"]
         },
         "agent-verification-policy.md": {
@@ -43,8 +40,9 @@
             "required_tokens": ["AgentFacts", "trust score", "KYA"]
         },
         "CHARTER_FRAGMENT.md": {
-            "path": "00-core/CHARTER_FRAGMENT.md",
-            "sha256": "PENDING_RECALC",
+            "path": "00-core/AGENT_CHARTER.md",
+            "fragment_markers": ["<!-- BEGIN CHARTER_FRAGMENT -->", "<!-- END CHARTER_FRAGMENT -->"],
+            "sha256": "faf6254926f327ac182261de41f0f100b4c4ac24f2ca4700949c091a66cda13a",
             "required_tokens": ["Step Budget ≤ 7", "Ask-First ≤ 3", "Evidence Triplet"]
         },
         "vision.md": {
@@ -69,23 +67,14 @@
         },
         "agentic-coding-workflow.md": {
             "path": "10-flow/agentic-coding-workflow.md",
-            "sha256": "PENDING_RECALC",
-            "required_tokens": ["G0 Initialize", "Evidence Triplet"]
+            "sha256": "01ced3ee67dcbfdb31ad5f6a1baa1df301bcf43bbeb1c28cd51738567c5a9b7e",
+            "required_tokens": ["G0 Initialize", "Evidence Triplet", "PHASE_TRANSITION", "No HITL before REVIEW", "MCP Tool Integration Matrix", "Context Pruning", "Critic Subagent", "Just-in-Time Docs", "Session Retrospective", "Subagent Governance", "Confession Protocol"],
+            "note": "Consolidates Phase Machine (§4.4), Task Folder Layout (§3), Hard Rules (§6.1), Context Pruning (§6.2), Evidence Tokens (§6.3), Subagent Governance (§6.4), Confession Protocol (§6.5), MCP Integration Matrix (§4.1)"
         },
         "assurance-system.md": {
             "path": "10-flow/assurance-system.md",
             "sha256": "PENDING_RECALC",
             "required_tokens": ["Assurance System", "Time Freshness"]
-        },
-        "agentic-phase-policy.md": {
-            "path": "10-flow/agentic-phase-policy.md",
-            "sha256": "PENDING_RECALC",
-            "required_tokens": ["PHASE_TRANSITION", "No HITL before REVIEW"]
-        },
-        "TASK_FOLDER_STRUCTURE.md": {
-            "path": "10-flow/TASK_FOLDER_STRUCTURE.md",
-            "sha256": "PENDING_RECALC",
-            "required_tokens": ["task folder", "structure"]
         },
         "checklists.md": {
             "path": "20-checklists/checklists.md",
@@ -96,11 +85,6 @@
             "path": "90-infra/governance-maintainers.md",
             "sha256": "PENDING_RECALC",
             "required_tokens": ["hash sync", "maintainer"]
-        },
-        "TASK_MANAGEMENT_INDEX.md": {
-            "path": "10-flow/TASK_MANAGEMENT_INDEX.md",
-            "sha256": "PENDING_RECALC",
-            "required_tokens": ["task management", "workflow"]
         },
         "governance-index.json": {
             "path": "90-infra/governance-index.json",

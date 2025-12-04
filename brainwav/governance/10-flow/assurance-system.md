@@ -20,8 +20,6 @@
 
 ## 2. Time Freshness Policy
 
-> **Consolidated from _time-freshness.md for unified assurance documentation**
-
 ### 2.1 Context Anchoring
 
 The user's timezone is {{USER_TIMEZONE}}. Today's date is {{TODAY}}.

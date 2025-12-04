@@ -21,9 +21,8 @@ This consolidation eliminates duplication between charter and rules while mainta
 ### Governance Pack Files (mandatory reading)
 
 - **[Vision](./vision.md)**
-- **[Agentic Coding Workflow](../10-flow/agentic-coding-workflow.md)**
+- **[Agentic Coding Workflow](../10-flow/agentic-coding-workflow.md)** (includes Task Folder Layout §3)
 - **[Assurance System](../10-flow/assurance-system.md)**
-- **[Task Folder Structure](../10-flow/TASK_FOLDER_STRUCTURE.md)**
 - **[Checklists](../20-checklists/checklists.md)**
 - **[Constitution](./constitution.md)**
 - **[Governance Standards Mapping](../docs/standards-mapping.md)**
@@ -84,7 +83,7 @@ Never claim "production-ready/complete/operational" if any prod path contains:
 
 All agents follow the **7-phase** workflow. Full details: **`governance/10-flow/agentic-coding-workflow.md`** and **AGENTS.md**.
 
-**Task folder (mandatory)** — **`tasks/[feature]/`** per **`governance/10-flow/TASK_FOLDER_STRUCTURE.md`**.  
+**Task folder (mandatory)** — **`tasks/[feature]/`** per **`governance/10-flow/agentic-coding-workflow.md` §3**.  
 **Memory parity (mandatory)** — Persist decisions to `.github/instructions/memories.instructions.md` **and** via Local Memory **MCP/REST dual-mode**; reviewers confirm entries exist.
 
 ---
@@ -133,18 +132,32 @@ All agents follow the **7-phase** workflow. Full details: **`governance/10-flow/
 
 ---
 
-## 🧩 Agent Toolkit (mandatory)
+## 🧩 Fast Tools (MANDATORY)
 
-Use `packages/agent-toolkit` instead of ad-hoc `rg/grep/sed/awk`.
+<!-- FAST-TOOLS PROMPT v1 | codex-mastery | watermark:do-not-alter -->
 
-```ts
-import { createAgentToolkit } from '@brainwav/agent-toolkit';
-const tk = createAgentToolkit();
-await tk.multiSearch('pattern', './src');
-await tk.validateProject(['*.ts','*.py','*.rs']);
-```
+**CRITICAL: Use ripgrep, not grep**
 
-Deterministic output; attach logs as evidence.
+NEVER use grep for project-wide searches (slow, ignores .gitignore). ALWAYS use `rg`.
+
+- `rg "pattern"` — search content
+- `rg --files | rg "name"` — find files
+- `rg -t python "def"` — language filters
+
+**File finding:** Prefer `fd` (or `fdfind` on Debian/Ubuntu). Respects .gitignore.
+
+**JSON:** Use `jq` for parsing and transformations.
+
+**Install Guidance:**
+- macOS: `brew install ripgrep fd jq`
+- Debian/Ubuntu: `sudo apt update && sudo apt install -y ripgrep fd-find jq` (alias `fd=fdfind`)
+
+**Agent Instructions:**
+- Replace commands: `grep→rg`, `find→rg --files/fd`, `ls -R→rg --files`, `cat|grep→rg pattern file`
+- Cap reads at 250 lines; prefer `rg -n -A 3 -B 3` for context
+- Use `jq` for JSON instead of regex
+
+<!-- END FAST-TOOLS PROMPT v1 | codex-mastery -->
 
 ---
 

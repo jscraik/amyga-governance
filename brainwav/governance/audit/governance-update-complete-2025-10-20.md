@@ -9,9 +9,8 @@
 ## Files Updated
 
 ### Core Charter Documents
-1. **`.cortex/rules/CHARTER_FRAGMENT.md`** - v2.0.0 with 10 guardrails
-2. **`.cortex/rules/AGENT_CHARTER.md`** - Full specification (NEW)
-3. **`.cortex/rules/agentic-coding-workflow.md`** - Cross-references to Charter guardrails
+1. **`.cortex/rules/AGENT_CHARTER.md`** - Full specification + embedded charter fragment markers (v2.0.0)
+2. **`.cortex/rules/agentic-coding-workflow.md`** - Cross-references to Charter guardrails
 
 ### Agent Instruction Files (All Updated with Full v2.0.0 Quick Reference)
 4. **`CLAUDE.md`** - Charter SHA + 10 guardrails
@@ -47,14 +46,14 @@
 All agent instruction files now reference the same Charter SHA-256:
 
 ```bash
-$ grep -r "Charter SHA-256" CLAUDE.md AGENTS.md .github/copilot-instructions.md packages/agents/AGENTS.md .github/instructions/memories.instructions.md .cortex/rules/CHARTER_FRAGMENT.md
+$ grep -r "Charter SHA-256" CLAUDE.md AGENTS.md .github/copilot-instructions.md packages/agents/AGENTS.md .github/instructions/memories.instructions.md .cortex/rules/AGENT_CHARTER.md
 
 CLAUDE.md:                                **Charter SHA-256:** `dcccc3d13c45beb4b0a27f2285ca8479246a15cbc1c872076ef1eac21a64ae95`
 AGENTS.md:                                **Charter SHA-256:** `dcccc3d13c45beb4b0a27f2285ca8479246a15cbc1c872076ef1eac21a64ae95`
 .github/copilot-instructions.md:          **Charter SHA-256:** `dcccc3d13c45beb4b0a27f2285ca8479246a15cbc1c872076ef1eac21a64ae95`
 packages/agents/AGENTS.md:                **Charter SHA-256:** `dcccc3d13c45beb4b0a27f2285ca8479246a15cbc1c872076ef1eac21a64ae95`
 .github/instructions/memories.instructions.md: **Charter SHA-256:** `dcccc3d13c45beb4b0a27f2285ca8479246a15cbc1c872076ef1eac21a64ae95`
-.cortex/rules/CHARTER_FRAGMENT.md:        **Fragment SHA-256:** `dcccc3d13c45beb4b0a27f2285ca8479246a15cbc1c872076ef1eac21a64ae95`
+.cortex/rules/AGENT_CHARTER.md:           **Fragment SHA-256:** `dcccc3d13c45beb4b0a27f2285ca8479246a15cbc1c872076ef1eac21a64ae95`
 ```
 
 ✅ **All 6 files match**: `dcccc3d13...`
@@ -63,7 +62,7 @@ packages/agents/AGENTS.md:                **Charter SHA-256:** `dcccc3d13c45beb4
 
 ## What Changed
 
-### 1. CHARTER_FRAGMENT.md Enhancements
+### 1. Charter Fragment (embedded in AGENT_CHARTER.md) Enhancements
 - Added Guardrails #7–#10 (Arc Protocol, North-Star Test, Preflight Guards, Session Hygiene)
 - Expanded Enforcement Matrix with new CI checks
 - Added Workflow Integration Notes
@@ -193,7 +192,7 @@ $ pnpm --filter @cortex-os/agents charter:validate
 **Amendment Document:** `.cortex/audit/governance-amendments-2025-10-20.md`  
 **Amendment SHA-256:** `9aa063d69dec83b9c364c0974e7bb1d0eb70784eb78432dc3d91bf055355cbda`  
 
-**Charter Fragment:** `.cortex/rules/CHARTER_FRAGMENT.md`  
+**Charter Fragment:** `.cortex/rules/AGENT_CHARTER.md` (between `<!-- BEGIN/END CHARTER_FRAGMENT -->` markers)  
 **Charter SHA-256:** `dcccc3d13c45beb4b0a27f2285ca8479246a15cbc1c872076ef1eac21a64ae95`  
 
 **Full Specification:** `.cortex/rules/AGENT_CHARTER.md`  

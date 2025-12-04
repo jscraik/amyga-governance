@@ -115,12 +115,8 @@ Assurance system documentation:
 
 - When to invoke Cortex-Aegis
 - Academic research integration
-- Time Freshness Policy (consolidated from _time-freshness.md)
+- Time Freshness Policy
 - MCP tool usage patterns
-
-### _time-freshness.md → cortex-aegis.md
-
-**Status**: Consolidated stub pointing to cortex-aegis.md
 
 ---
 
@@ -197,7 +193,6 @@ When documents overlap or conflict:
 To reduce duplication and improve maintainability:
 
 - ✅ **RULES_OF_AI.md** → merged into AGENT_CHARTER.md § AI Behavioral Rules
-- ✅ **_time-freshness.md** → merged into cortex-aegis.md § Time Freshness Policy
 - ✅ **GOVERNANCE_HASH_UPDATE.md** → merged into governance-maintainers.md
 - ✅ **Multiple checklists** → unified into checklistsgovernance-os.md
 

@@ -4,7 +4,7 @@ alwaysApply: true
 ---
 <!-- governance/00-core/vision.md -->
 
-# Agentic Governance Vision Document (v1.2, 2025-12-03)
+# Agentic Governance Vision Document — Project-Neutral (v1.2, 2025-12-03)
 
 ## 0) North Star (End State)
 
@@ -13,15 +13,17 @@ This governance framework enables a self-contained, local-first **Agentic Develo
 1) orchestrates agent workflows with strict phase gates,  
 2) persists knowledge via a **Memory System** with MCP/REST **parity**,  
 3) exposes **only** controlled surfaces — **MCP**, **A2A**, **REST**, and **frontier adapters** — guarded by policy, and  
-4) ships an **A11y-first Ops Dashboard** for health, logs, metrics, traces, and manual controls.
+4) ships an **A11y-first Ops Dashboard** for health, logs, metrics, traces, and manual controls, and  
+5) applies uniformly across **every brAInwav project** so agents and developers share one contract regardless of repository.
 
-> **Governance is code.** The runtime acknowledges the nearest `AGENTS.md`, emits evidence tokens, runs a Vibe Check before acting, and treats **time freshness** as a first-class constraint.
+> **Governance is code.** The runtime acknowledges the nearest `AGENTS.md`, emits evidence tokens, runs a Vibe Check before acting, treats **time freshness** as a first-class constraint, and assumes every brAInwav codebase follows the same playbook.
 
 ---
 
 ## 1) Core Principles
 
 - **Local-first, vendor-neutral.** Ollama preferred; frontier APIs optional behind policy.
+- **Project-neutral governance.** Every brAInwav codebase inherits the same baseline contract; package `AGENTS.md` files may tighten rules but never fork process intent.
 - **Deterministic & evidence-backed.** Reproducible runs; artifacted logs, traces, SBOM/provenance.
 - **Single integration hub.** Exactly one MCP server; Tools/Resources/Prompts are **registered** (not embedded).
 - **Tight domain boundaries.** No cross-domain imports; communicate via A2A topics or declared contracts/schemas.
@@ -186,7 +188,24 @@ This governance framework enables a self-contained, local-first **Agentic Develo
 
 ---
 
-## 9) Glossary
+## 9) Project-Neutral Procedure & Steps
+
+> **Applies to every brAInwav repository.** Follow these numbered steps end-to-end; reference documents provide deeper detail but the order is fixed.
+
+1. **Bootstrap governance context** – Run `pnpm cortex:governance-bootstrap`, record hashes from `brainwav/governance/90-infra/governance-index.json`, and confirm the nearest `AGENTS.md` + package overrides. (Docs: `governance-quickstart.md`, `AGENT_CHARTER.md`).
+2. **Classify the work item** – Select task type (Feature/Research/Fix/Refactor/Review) and tier per `agentic-coding-workflow.md` §2. Capture metadata in `tasks/<slug>/meta/task.json` before touching code.
+3. **Create the task folder + context** – Populate the canonical structure from `agentic-coding-workflow.md` §3, run Repo Prompt Context Builder, and log connector health + academic research in `context/research.md`.
+4. **Plan and register risks** – Draft `plan/PLAN.md` (≤7 steps) + `plan/tdd-plan.md`, enumerate reuse candidates, and run Cortex-Aegis / Oversight (`logs/vibe-check/*.json`) prior to implementation.
+5. **Scaffold then implement** – Establish failing milestone tests, wire OpenFeature flags, then execute micro-TDD loops (G3→G4) while emitting phase tokens (`PHASE_TRANSITION:R->G`, etc.) and updating `work/implementation-log.md`.
+6. **Verify & evidence** – Run coverage/mutation/a11y/security suites (G5), attach SBOM + SLSA artifacts, capture contract snapshots, and update `evidence/tests.md` + `verification/*` outputs.
+7. **Review & document** – Execute AI + HITL reviews (G6/G7), complete the Code Review Checklist, refresh READMEs/runbooks, and ensure `implementation-plan.md#reuse-ledger` + `SUMMARY.md` are current.
+8. **Ship, monitor, archive** – Roll out per `ops/rollout-plan.md`, watch telemetry, finalize `archive.json`, sync Local Memory parity, and close the task with Evidence Triplet pointers recorded in the run manifest.
+
+Every step emits the mandated tokens in §8 and inherits the phase machine rules in §7, ensuring teams in any brAInwav project progress identically.
+
+---
+
+## 10) Glossary
 
 - **MCP:** Model Context Protocol — registry/invocation of Tools/Resources/Prompts.  
 - **ASBR:** Agentic Second Brain Runtime — governance framework orchestrator on LangGraph.  

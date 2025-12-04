@@ -35,7 +35,7 @@ assurance:
     file: 10-flow/assurance-system.md
     anchor: "PACK:assurance.aegis"
   timeFreshness:
-    file: 10-flow/_time-freshness.md
+    file: 10-flow/assurance-system.md
     anchor: "PACK:assurance.timeFreshness"
 
 qualityGates:
@@ -69,13 +69,15 @@ checklists:
 
 workflow:
   phases:
-    file: agentic-phase-policy.md
+    file: agentic-coding-workflow.md
+    section: "4.3 Phase Machine"
   gates:
     file: agentic-coding-workflow.md
   flows:
     file: agentic-coding-workflow.md
   transitions:
-    file: agentic-phase-policy.md
+    file: agentic-coding-workflow.md
+    section: "4.3 Phase Machine"
 
 governance:
   precedence:

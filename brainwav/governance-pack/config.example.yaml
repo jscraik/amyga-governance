@@ -33,18 +33,24 @@ runManifestPath: tasks/<slug>/json/run-manifest.json
 aegisLogPath: logs/vibe-check/
 vibeCheckLogPath: logs/vibe-check/
 modelsHealthLogPath: logs/models/health.log
-timeFreshnessDoc: .cortex/rules/10-flow/_time-freshness.md
+timeFreshnessDoc: .cortex/rules/10-flow/assurance-system.md
 
 docBaseUrl: https://governance.example.org/docs/
 docUrls:
   constitution: ${docBaseUrl}00-core/constitution.md
   agent_charter: ${docBaseUrl}00-core/AGENT_CHARTER.md
-  charter_fragment: ${docBaseUrl}00-core/CHARTER_FRAGMENT.md
+  # Charter fragment now lives inside AGENT_CHARTER.md between
+  # <!-- BEGIN/END CHARTER_FRAGMENT --> markers; expose it via the
+  # same canonical URL plus a fragment identifier so downstream
+  # tooling knows to extract the marked region.
+  charter_fragment: ${docBaseUrl}00-core/AGENT_CHARTER.md#fragment
   rules_of_ai: ${docBaseUrl}00-core/RULES_OF_AI.md
   agentic_coding_workflow: ${docBaseUrl}10-flow/agentic-coding-workflow.md
-  agentic_phase_policy: ${docBaseUrl}10-flow/agentic-phase-policy.md
+  # Phase policy (R→G→F→REVIEW) is now consolidated into agentic-coding-workflow.md §4.3
+  # Retained for backwards compatibility; points to same doc with section anchor
+  agentic_phase_policy: ${docBaseUrl}10-flow/agentic-coding-workflow.md#phase-machine
   cortex_aegis: ${docBaseUrl}10-flow/cortex-aegis.md
-  time_freshness: ${docBaseUrl}10-flow/_time-freshness.md
+  time_freshness: ${docBaseUrl}10-flow/assurance-system.md#time-freshness-policy
   checklists: ${docBaseUrl}20-checklists/checklists.cortex-os.md
   structure_guard: ${docBaseUrl}structure-guard.json
   export_freeze_snapshot: ${docBaseUrl}export-freeze.snapshot.json
@@ -54,7 +60,6 @@ docUrls:
   code_style: ${docBaseUrl}CODESTYLE.md
   security: ${docBaseUrl}SECURITY.md
   vision: ${docBaseUrl}00-core/vision.md
-  task_folder_structure: ${docBaseUrl}10-flow/TASK_FOLDER_STRUCTURE.md
   llm_threat_controls: ${docBaseUrl}00-core/llm-threat-controls.md
   skills_system_governance: ${docBaseUrl}00-core/skills-system-governance.md
 

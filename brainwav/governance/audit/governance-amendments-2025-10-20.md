@@ -17,7 +17,7 @@ Amended the brAInwav ArcTDD Charter (v2.0.0) and Agentic Coding Workflow to clos
 
 ## Changes Made
 
-### 1. CHARTER_FRAGMENT.md Amendments
+### 1. Charter Fragment (embedded in AGENT_CHARTER.md) Amendments
 
 #### Added Guardrails
 
@@ -373,7 +373,7 @@ shasum -a 256 .cortex/audit/governance-amendments-2025-10-20.md
 
 **Amended Files:**
 
-- `/.cortex/rules/CHARTER_FRAGMENT.md` (v2.0.0, SHA: `6b158d91437c302c14bf167eb52477c6e90e2604d88bf6e20a8698952feddb2e`)
+- `/.cortex/rules/AGENT_CHARTER.md` fragment region (v2.0.0, SHA: `6b158d91437c302c14bf167eb52477c6e90e2604d88bf6e20a8698952feddb2e`)
 - `/.cortex/rules/agentic-coding-workflow.md` (updated cross-references)
 - `/AGENTS.md` (added section 0.1)
 - `/CLAUDE.md` (updated Charter SHA-256)

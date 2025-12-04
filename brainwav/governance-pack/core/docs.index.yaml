@@ -85,11 +85,6 @@ docs:
     sha: ${doc:vision:sha}
     url: ${doc:vision:url}
     full_text: ${doc:vision:full_text}
-  - id: task_folder_structure
-    file: ${doc:task_folder_structure:file}
-    sha: ${doc:task_folder_structure:sha}
-    url: ${doc:task_folder_structure:url}
-    full_text: ${doc:task_folder_structure:full_text}
   - id: llm_threat_controls
     file: ${doc:llm_threat_controls:file}
     sha: ${doc:llm_threat_controls:sha}

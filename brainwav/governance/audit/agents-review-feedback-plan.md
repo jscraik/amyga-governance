@@ -138,7 +138,7 @@ Verify `.well-known/mcp.json` and port congruence (3024/3026/3028/39300) in PRs.
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
-const CHARTER_PATH = '.cortex/rules/CHARTER_FRAGMENT.md';
+const CHARTER_PATH = '.cortex/rules/AGENT_CHARTER.md';
 const AGENTS_FILES = [
   'CLAUDE.md',
   'AGENTS.md',

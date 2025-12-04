@@ -26,7 +26,7 @@ This consolidation provides:
 
 ```bash
 # 1. Make changes to governance docs
-vim 00-core/CHARTER_FRAGMENT.md
+vim 00-core/AGENT_CHARTER.md  # edit the fragment block between <!-- BEGIN/END CHARTER_FRAGMENT --> markers
 
 # 2. Sync hashes
 pnpm governance:sync-hashes
@@ -34,9 +34,9 @@ pnpm governance:sync-hashes
 # Output:
 # [brAInwav] Starting governance hash sync...
 # [brAInwav] Step 1: Updating governance-index.json...
-# [brAInwav] Updating CHARTER_FRAGMENT.md:
+# [brAInwav] Updating AGENT_CHARTER fragment block:
 #   Old: b1aad74cf8492c371bb4795e4720496facdbd06f4b6aa23b9a8c3483516c8d87
-#   New: f0887531e0d402b29460c945de4e34c9ee39dbe9a688bcd71646f4a763265bb3
+#   New: faf6254926f327ac182261de41f0f100b4c4ac24f2ca4700949c091a66cda13a
 # [brAInwav] ✅ Updated /home/user/Cortex-OS/governance/governance-index.json
 # ...
 # [brAInwav] ✅ Governance hash sync complete!
@@ -46,7 +46,7 @@ pnpm governance:sync-hashes
 
 # 4. Commit changes
 git add governance/
-git commit -m "docs: update CHARTER_FRAGMENT and sync governance hashes"
+git commit -m "docs: update AGENT_CHARTER fragment and sync governance hashes"
 ```
 
 ## Implementation Details
@@ -62,7 +62,7 @@ git commit -m "docs: update CHARTER_FRAGMENT and sync governance hashes"
    - Compute actual SHA-256 of the file
    - Compare with hash in index
    - Update index if mismatch found
-3. Extract CHARTER_FRAGMENT hash from updated index
+3. Extract the AGENT_CHARTER fragment hash from the updated index
 4. Update `AGENTS.md` with correct hash
 5. Update `CLAUDE.md` with correct hash
 
@@ -71,7 +71,7 @@ git commit -m "docs: update CHARTER_FRAGMENT and sync governance hashes"
 The script is idempotent - running it multiple times with no changes produces:
 
 ```
-[brAInwav] ✓ CHARTER_FRAGMENT.md hash is current
+[brAInwav] ✓ AGENT_CHARTER fragment hash is current
 [brAInwav] ✓ agentic-coding-workflow.md hash is current
 ...
 [brAInwav] ✓ AGENTS.md is current
@@ -94,7 +94,7 @@ Edit `governance/governance-index.json`:
 ```json
 {
   "precedence": [
-    "CHARTER_FRAGMENT.md",
+    "AGENT_CHARTER.md#fragment",
     "my-new-policy.md",  // Add to precedence list
     ...
   ],
@@ -122,7 +122,7 @@ The script will compute the correct SHA-256 and replace the placeholder.
 
 ## Troubleshooting
 
-### Error: Hash mismatch for CHARTER_FRAGMENT.md
+### Error: Hash mismatch for AGENT_CHARTER fragment
 
 **Cause:** The file was edited but hashes weren't updated.
 
@@ -132,9 +132,9 @@ The script will compute the correct SHA-256 and replace the placeholder.
 pnpm governance:sync-hashes
 ```
 
-### Error: Circular dependency in CHARTER_FRAGMENT self-reference
+### Error: Circular dependency in CHARTER_FRAGMENT marker self-reference
 
-**Note:** The CHARTER_FRAGMENT.md file contains a self-referencing hash. This is **informational only** and is NOT auto-updated to avoid circular dependencies. The authoritative hash is in `governance-index.json`.
+**Note:** The fragment now lives inside `AGENT_CHARTER.md` between the marker comments, and that region still carries a historical self-referencing hash. This marker line is **informational only** and is NOT auto-updated to avoid circular dependencies. The authoritative hash is in `governance-index.json`.
 
 ### CI failure: `agents-governance` job
 
@@ -171,7 +171,7 @@ fi
 - **Governance Index Schema:** `governance/governance-index.json`
 - **Loader Implementation:** `packages/agents/src/governance/loader.ts`
 - **CI Enforcement:** `.github/workflows/agents-governance.yml`
-- **Charter Fragment:** `governance/CHARTER_FRAGMENT.md`
+- **Charter Fragment:** `brainwav/governance/00-core/AGENT_CHARTER.md` (extract between `<!-- BEGIN/END CHARTER_FRAGMENT -->` markers)
 
 ## FAQ
 

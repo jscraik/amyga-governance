@@ -243,8 +243,7 @@ docs:
 
       **Canonical details** (tokens, artifacts, CI mapping) are defined in:  
 
-      `/.cortex/rules/agentic-phase-policy.md` (v2025.11) and
-      `/.cortex/rules/agentic-coding-workflow.md`.
+      `/.cortex/rules/agentic-coding-workflow.md` (§4.3 Phase Machine, §6.1 Hard Rules, §6.2 Evidence Tokens).
 
 
       ### Evidence Tokens (CI-Scanned)
@@ -346,7 +345,7 @@ docs:
       1. **Governance Pack** (`/.cortex/rules/*`) with precedence:
          - `AGENT_CHARTER.md` (immutable ethics; consolidates Rules of AI)
          - **This Constitution**
-         - `vision.md`, `agentic-coding-workflow.md`, `agentic-phase-policy.md`, `code-review-checklist.md`, `cortex-aegis.md` (Time Freshness Policy), `CHECKLIST.cortex-os.md`
+         - `vision.md`, `agentic-coding-workflow.md` (includes Phase Machine §4.3), `code-review-checklist.md`, `cortex-aegis.md` (Time Freshness Policy), `CHECKLIST.cortex-os.md`
       2. `CODESTYLE.md`  
 
       3. Root `AGENTS.md`  
@@ -380,7 +379,7 @@ docs:
       Co-authored-by: brAInwav Development Team
   - id: agent_charter
     file: .cortex/rules/00-core/AGENT_CHARTER.md
-    sha: d9a9ef1575b4e1c4555a36f8e63ef5e0b8cc124c79e5b78de62b2ba7d8723968
+    sha: 70953d4e7433e886150fcab9daa1dc8c7a735e5ec6877499fd8832720a3900f4
     url: https://governance.cortex-os.local/docs/00-core/AGENT_CHARTER.md
     full_text: >
       # brAInwav ArcTDD Charter (Full Specification v2.0.0)
@@ -1122,7 +1121,7 @@ docs:
       connector health log, SBOM attestation
 
       - Reference `CHARTER_SHA256:
-      1c8cbc194209f690ae9fd015c04223a1c619853190d6302a5ccfea6769ceac5f` in
+      faf6254926f327ac182261de41f0f100b4c4ac24f2ca4700949c091a66cda13a` in
       description
 
 
@@ -1157,9 +1156,9 @@ docs:
 
 
       **Fragment SHA-256:**
-      `3289664bc8ba94bec3d1418292b76558bcf2ec0eb974e7317f2fb437b5848067`
+      `faf6254926f327ac182261de41f0f100b4c4ac24f2ca4700949c091a66cda13a`
 
-      **Fragment Path:** `/.cortex/rules/CHARTER_FRAGMENT.md`
+      **Fragment Path:** `/.cortex/rules/AGENT_CHARTER.md` (extract between `<!-- BEGIN/END CHARTER_FRAGMENT -->` markers)
 
 
       ---
@@ -1444,8 +1443,8 @@ docs:
 
       shasum -a 256 .cortex/rules/AGENT_CHARTER.md
 
-      # 6b158d91437c302c14bf167eb52477c6e90e2604d88bf6e20a8698952feddb2e
-      (matches CHARTER_FRAGMENT.md)
+      # 70953d4e7433e886150fcab9daa1dc8c7a735e5ec6877499fd8832720a3900f4
+      (matches embedded CHARTER_FRAGMENT block)
 
       ```
 
@@ -1454,9 +1453,12 @@ docs:
 
       **Review Cycle:** Quarterly or upon major workflow changes
   - id: charter_fragment
-    file: .cortex/rules/00-core/CHARTER_FRAGMENT.md
-    sha: e766755420bf5b0466a83722340de170e487d6d055b1172cf9686add88c5e1d3
-    url: https://governance.cortex-os.local/docs/00-core/CHARTER_FRAGMENT.md
+    file: .cortex/rules/00-core/AGENT_CHARTER.md
+    sha: faf6254926f327ac182261de41f0f100b4c4ac24f2ca4700949c091a66cda13a
+    url: https://governance.cortex-os.local/docs/00-core/AGENT_CHARTER.md#fragment
+    fragment_markers:
+      - "<!-- BEGIN CHARTER_FRAGMENT -->"
+      - "<!-- END CHARTER_FRAGMENT -->"
     full_text: |
       # brAInwav ArcTDD Charter (Canonical Fragment)
 
@@ -1652,7 +1654,7 @@ docs:
       - Attach Evidence Triplet links (milestone test, contract snapshot, reviewer JSON)
       - Include narrated diff in body
       - Attach preflight logs: `logs/vibe-check/*.json`, model health output, connector health log, SBOM attestation
-      - Reference `CHARTER_SHA256: 1c8cbc194209f690ae9fd015c04223a1c619853190d6302a5ccfea6769ceac5f` in description
+      - Reference `CHARTER_SHA256: faf6254926f327ac182261de41f0f100b4c4ac24f2ca4700949c091a66cda13a` in description
 
       ---
 
@@ -1670,8 +1672,8 @@ docs:
       - Workflow MAY define task tiers (fix/feature/refactor) with differentiated gate requirements, provided all tiers enforce these core guardrails
       - Waivers policy detailed in lines 115–124 below
 
-      **Fragment SHA-256:** `f0887531...`  <!-- Updated to match governance-index.json -->
-      **Fragment Path:** `/.cortex/rules/CHARTER_FRAGMENT.md`
+      **Fragment SHA-256:** `faf6254926f327ac182261de41f0f100b4c4ac24f2ca4700949c091a66cda13a`  <!-- Updated to match governance-index.json -->
+      **Fragment Path:** `/.cortex/rules/AGENT_CHARTER.md` (extract between `<!-- BEGIN/END CHARTER_FRAGMENT -->` markers)
 
       ---
 
@@ -2718,238 +2720,15 @@ docs:
       ---
 
       **End of document.**
+  # agentic_phase_policy consolidated into agentic-coding-workflow.md §4.3
+  # Retained entry redirects to workflow for backwards compatibility
   - id: agentic_phase_policy
-    file: .cortex/rules/10-flow/agentic-phase-policy.md
-    sha: 753b47a9eaab75105e2da743980280cd5b5f16e63eb29ad003d7b4217e8663e0
-    url: https://governance.cortex-os.local/docs/10-flow/agentic-phase-policy.md
-    full_text: >
-      # Agentic Phase Policy (R→G→F→REVIEW) — ArcTDD-Compatible
-
-
-      **Goal:** Agents auto-progress through phases with zero HITL until
-      **REVIEW**.  
-
-      **Binding:** ArcTDD v2025.11 (G0–G7), Charter Guardrails (#1–#10)
-
-
-      ---
-
-
-      ## Phase machine
-
-
-      ### R (Red) — write failing tests; plan minimal pass
-
-
-      **Allowed**
-
-
-      - Planning & test authoring; minimal scaffold code
-
-      - Time Freshness Guard normalization
-
-      - Academic research enhancement via MCP/HTTP connectors
-
-      - Vibe Check (Oversight) after research, before any writes/long runs
-
-      - Local Memory parity updates
-
-
-      **Forbidden**
-
-
-      - `human_input` (except Ask-First ≤3 clarifications in **G0/G1**)
-
-      - Production deploys, merges
-
-
-      **Auto-advance → G when**
-
-
-      - New acceptance/unit tests **fail first**, then **pass** on the next
-      commit
-
-      - `TIME_FRESHNESS:OK tz=<IANA> today=<YYYY-MM-DD>` token present
-
-      - Oversight log (`brAInwav-vibe-check`) stored in `logs/vibe-check/`
-
-
-      ---
-
-
-      ### G (Green) — implement to pass
-
-
-      **Allowed**
-
-
-      - Code to satisfy tests; refactor strictly to green
-
-      - Live model probes: `pnpm models:health && pnpm models:smoke`
-      (Frontier/Ollama)
-
-      - Security scanners (Semgrep, OSV) and secret scans (gitleaks)
-
-      - **Structured outputs required** for any machine-consumed LLM result
-      (JSON-Schema or tool/function calling)
-
-
-      **Forbidden**
-
-
-      - `human_input` (Ask-First clarifications remain confined to G0/G1)
-
-
-      **Auto-advance → F when**
-
-
-      - `pnpm test` **passes**
-
-      - Coverage ≥ **90%** global & **95%** changed lines
-
-      - Mutation ≥ **90%** (where enabled)
-
-      - Latest model-health log includes engine, model IDs, vector dims/norms,
-      P95 latency
-
-
-      ---
-
-
-      ### F (Finished) — refactor, docs, a11y, supply-chain, structure
-
-
-      **Allowed**
-
-
-      - Non-behavioral refactors; documentation
-
-      - A11y audits (axe/jest-axe/Playwright)
-
-      - SBOM & provenance: **CycloneDX 1.7** + **SLSA v1.1**; **Cosign v3
-      bundle** verify
-
-      - Structure/contract guard, Observability checks
-
-
-      **Forbidden**
-
-
-      - `human_input` (Ask-First allowance does not apply here)
-
-
-      **Auto-advance → REVIEW when**
-
-
-      - A11y reports attached
-
-      - Security scanners: Semgrep (blockers), OSV clean, gitleaks zero secrets
-
-      - `pnpm structure:validate` **passes**
-
-      - `pnpm models:health && pnpm models:smoke` evidence attached (**live**
-      only)
-
-      - Local Memory parity entry appended (decisions/refactors)
-
-
-      ---
-
-
-      ### REVIEW — human-in-the-loop only here
-
-
-      **Allowed**
-
-
-      - `human_input` (HITL), reviewer checklist, approvals/waivers per
-      Constitution
-
-      - Merge only when **all BLOCKERs** pass and evidence pointers resolve
-
-
-      **Merge gate requires**
-
-
-      - Evidence Triplet (milestone red→green proof, contract snapshot, reviewer
-      JSON pointer)
-
-      - Trace Context proof (every governed log has `traceparent` + 32-hex
-      `trace_id`)
-
-      - SBOM (CycloneDX 1.7), SLSA v1.1 provenance, Cosign v3 **bundle** verify
-      logs
-
-      - A11y/security artifacts
-
-      - Reuse Ledger pointer
-
-
-      ---
-
-
-      ## Hard rules (normative)
-
-
-      1. **Ask-First ≤3 (G0/G1 only).** Each question must enumerate options +
-      consequences. All Ask-First events are logged as `human_input:ask_first`.
-
-      2. **No HITL before REVIEW.** Any other `human_input` pre-REVIEW is a
-      violation unless a time-boxed waiver exists.
-
-      3. **Structured outputs required.** Any model output that drives
-      tools/files/network **must** be function/tool-calling or conform to a
-      JSON-Schema, with validation on receipt.
-
-      4. **Observability.** All charter-governed logs carry `[brAInwav]`,
-      `brand:"brAInwav"`, ISO-8601 timestamp, `trace_id` (32 lower-hex), and
-      **HTTP `traceparent`** for correlation. Missing fields fail gates.
-
-      5. **Supply-chain.** Generate **CycloneDX 1.7** SBOM; produce **SLSA
-      v1.1** provenance; sign/verify with **Cosign v3 bundle**.
-
-      6. **Identity & secrets.** CI authenticates to cloud via **OIDC/WIF**
-      only. Secrets are fetched at runtime using the **1Password CLI** (`op`);
-      never persisted.
-
-      7. **Hybrid models — live only.** No stubs/recordings/dry-runs for
-      embeddings/rerankers/generation. Frontier/Ollama health logs required.
-
-      8. **A11y baseline.** WCAG 2.2 AA (ISO/IEC 40500:2025).
-
-
-      ---
-
-
-      ## Evidence tokens (CI scans logs for these)
-
-
-      - `AGENTS_MD_SHA:<sha>`  
-
-      - `PHASE_TRANSITION:<from>-><to>`  
-
-      - `brAInwav-vibe-check`  
-
-      - `TIME_FRESHNESS:OK tz=<tz> today=<yyyy-mm-dd>`  
-
-      - `MODELS:LIVE:OK engine=<ollama|frontier> model=<id> dims=<n>
-      norm≈<v> latency_ms=<n>`  
-
-      - `A11Y_REPORT:OK`  
-
-      - `STRUCTURE_GUARD:OK`  
-
-      - `COVERAGE:OK CHANGED_LINES:OK MUTATION:OK`  
-
-      - `MEMORY_PARITY:OK`  
-
-      - `TRACE_CONTEXT:OK`  
-
-      - `SUPPLY_CHAIN:OK sbom=cyclonedx@1.7 slsa=1.1 cosign=bundle`  
-
-
-      > **Phase rollback:** Requires a waiver; emit `PHASE_OVERRIDE:<from>-><to>
-      link=<waiver-url>`
+    file: .cortex/rules/10-flow/agentic-coding-workflow.md
+    section: "4.3 Phase Machine"
+    sha: null
+    url: https://governance.cortex-os.local/docs/10-flow/agentic-coding-workflow.md#phase-machine
+    deprecated: true
+    note: "Phase Machine (R→G→F→REVIEW) consolidated into agentic-coding-workflow.md §4.3, Hard Rules in §6.1, Evidence Tokens in §6.2"
   - id: cortex_aegis
     file: .cortex/rules/10-flow/cortex-aegis.md
     sha: cddf030cc8be93055bbd2493f90de926c28f58fd1859d99b416ff95fb1da22cd
@@ -2993,10 +2772,6 @@ docs:
 
 
       ## 2. Time Freshness Policy
-
-
-      > **Consolidated from _time-freshness.md for unified assurance
-      documentation**
 
 
       ### 2.1 Context Anchoring
@@ -3562,39 +3337,6 @@ docs:
 
 
       ---
-  - id: time_freshness
-    file: .cortex/rules/10-flow/_time-freshness.md
-    sha: ""
-    url: https://governance.cortex-os.local/docs/10-flow/_time-freshness.md
-    full_text: >
-      # Time Freshness Policy → cortex-aegis.md
-
-
-      **Status**: CONSOLIDATED (stub only; not in governance precedence) -
-      Content moved to canonical location
-
-      **New Location**: `/.cortex/rules/10-flow/cortex-aegis.md` § Time
-      Freshness Policy  
-
-      **Last Updated**: 2025-11-22
-
-
-      ---
-
-
-      ## 📋 Policy Consolidated
-
-
-      Time freshness rules and context anchoring requirements have been **merged
-      into** Cortex-Aegis for unified assurance:
-
-
-      👉 **See**: `/.cortex/rules/10-flow/cortex-aegis.md` § "Time Freshness
-      Policy"
-
-
-      This consolidation ensures time-freshness validation is integrated with
-      all governance and quality assurance workflows.
   - id: checklists
     file: .cortex/rules/20-checklists/checklists.cortex-os.md
     sha: ab1a82f3f5d7b52a4c7bc590596207b336c80186b173c7e648d1b5c2ed3eb144
@@ -4325,25 +4067,25 @@ docs:
               "10-flow/agentic-coding-workflow.md",
               "10-flow/cortex-aegis.md",
               "20-checklists/checklists.cortex-os.md",
-              "00-core/CHARTER_FRAGMENT.md",
+              "00-core/AGENT_CHARTER.md#fragment",
               "00-core/vision.md",
               "00-core/llm-threat-controls.md",
               "00-core/skills-system-governance.md",
-              "10-flow/agentic-phase-policy.md",
               "10-flow/TASK_FOLDER_STRUCTURE.md",
               "CODESTYLE.md",
               "SECURITY.md"
           ],
           "docs": {
-              "CHARTER_FRAGMENT.md": {
-                  "path": "/.cortex/rules/00-core/CHARTER_FRAGMENT.md",
-                  "sha256": "8fdd538b1acc51035b66dd3ac9481464c341b657a841ed2d6ed0ba696fb46e0e",
+                "AGENT_CHARTER fragment": {
+                  "path": "/.cortex/rules/00-core/AGENT_CHARTER.md",
+                  "fragment_markers": ["<!-- BEGIN CHARTER_FRAGMENT -->", "<!-- END CHARTER_FRAGMENT -->"],
+                  "sha256": "faf6254926f327ac182261de41f0f100b4c4ac24f2ca4700949c091a66cda13a",
                   "required_tokens": [
-                      "Step Budget ≤ 7",
-                      "Ask-First ≤ 3",
-                      "Evidence Triplet"
+                    "Step Budget ≤ 7",
+                    "Ask-First ≤ 3",
+                    "Evidence Triplet"
                   ]
-              },
+                },
               "AGENTIC_WORKFLOWS.cortex-os.md": {
                   "path": "/.cortex/rules/AGENTIC_WORKFLOWS.cortex-os.md",
                   "sha256": "f8aaf5fe1cfa9d700601dca4988a1fb87d58ee5724c58eee9b8494e734140f57",
@@ -4354,7 +4096,7 @@ docs:
               },
               "AGENT_CHARTER.md": {
                   "path": "/.cortex/rules/00-core/AGENT_CHARTER.md",
-                  "sha256": "d9a9ef1575b4e1c4555a36f8e63ef5e0b8cc124c79e5b78de62b2ba7d8723968",
+                  "sha256": "70953d4e7433e886150fcab9daa1dc8c7a735e5ec6877499fd8832720a3900f4",
                   "required_tokens": [
                       "[brAInwav]",
                       "MODELS:LIVE:OK",
@@ -4424,14 +4166,6 @@ docs:
                   "required_tokens": [
                       "Skills governance",
                       "Structured outputs"
-                  ]
-              },
-              "agentic-phase-policy.md": {
-                  "path": "/.cortex/rules/10-flow/agentic-phase-policy.md",
-                  "sha256": "753b47a9eaab75105e2da743980280cd5b5f16e63eb29ad003d7b4217e8663e0",
-                  "required_tokens": [
-                      "PHASE_TRANSITION",
-                      "No HITL before REVIEW"
                   ]
               },
               "README.md": {
@@ -4619,7 +4353,7 @@ docs:
       1. **`.cortex/rules/governance-index.json`** - Recomputes SHA-256 for all
       documents listed
 
-      2. **`AGENTS.md`** - Updates CHARTER_FRAGMENT SHA reference
+      2. **`AGENTS.md`** - Updates the embedded charter fragment SHA reference
 
       3. **`CLAUDE.md`** - Same updates as AGENTS.md
 
@@ -4697,10 +4431,10 @@ docs:
       3. Check JSON syntax validity
 
 
-      **Missing CHARTER_FRAGMENT References**:
+      **Missing charter fragment references**:
 
 
-      1. Ensure AGENTS.md includes SHA-256 reference
+      1. Ensure AGENTS.md includes the fragment SHA-256 reference
 
       2. Run hash sync to update references
 
@@ -4851,7 +4585,7 @@ docs:
 
       # 1. Make changes to governance docs
 
-      vim .cortex/rules/CHARTER_FRAGMENT.md
+      vim .cortex/rules/00-core/AGENT_CHARTER.md
 
 
       # 2. Sync hashes
@@ -4865,11 +4599,11 @@ docs:
 
       # [brAInwav] Step 1: Updating governance-index.json...
 
-      # [brAInwav] Updating CHARTER_FRAGMENT.md:
+      # [brAInwav] Updating AGENT_CHARTER fragment block:
 
       #   Old: b1aad74cf8492c371bb4795e4720496facdbd06f4b6aa23b9a8c3483516c8d87
 
-      #   New: f0887531e0d402b29460c945de4e34c9ee39dbe9a688bcd71646f4a763265bb3
+      #   New: faf6254926f327ac182261de41f0f100b4c4ac24f2ca4700949c091a66cda13a
 
       # [brAInwav] ✅ Updated
       /home/user/Cortex-OS/.cortex/rules/governance-index.json
@@ -4888,7 +4622,7 @@ docs:
 
       git add .cortex/rules/ AGENTS.md CLAUDE.md
 
-      git commit -m "docs: update CHARTER_FRAGMENT and sync governance hashes"
+      git commit -m "docs: update AGENT_CHARTER fragment and sync governance hashes"
 
       ```
 
@@ -4911,7 +4645,7 @@ docs:
          - Compute actual SHA-256 of the file
          - Compare with hash in index
          - Update index if mismatch found
-      3. Extract CHARTER_FRAGMENT hash from updated index
+      3. Extract AGENT_CHARTER fragment hash from updated index
 
       4. Update `AGENTS.md` with correct hash
 
@@ -4927,7 +4661,7 @@ docs:
 
       ```
 
-      [brAInwav] ✓ CHARTER_FRAGMENT.md hash is current
+      [brAInwav] ✓ AGENT_CHARTER fragment hash is current
 
       [brAInwav] ✓ agentic-coding-workflow.md hash is current
 
@@ -4965,7 +4699,7 @@ docs:
 
       {
         "precedence": [
-          "CHARTER_FRAGMENT.md",
+          "AGENT_CHARTER fragment",
           "my-new-policy.md",  // Add to precedence list
           ...
         ],
@@ -5001,7 +4735,7 @@ docs:
       ## Troubleshooting
 
 
-      ### Error: Hash mismatch for CHARTER_FRAGMENT.md
+      ### Error: Hash mismatch for AGENT_CHARTER fragment
 
 
       **Cause:** The file was edited but hashes weren't updated.
@@ -5017,10 +4751,10 @@ docs:
       ```
 
 
-      ### Error: Circular dependency in CHARTER_FRAGMENT self-reference
+      ### Error: Circular dependency in CHARTER_FRAGMENT marker self-reference
 
 
-      **Note:** The CHARTER_FRAGMENT.md file contains a self-referencing hash.
+      **Note:** The embedded charter fragment contains a self-referencing hash.
       This is **informational only** and is NOT auto-updated to avoid circular
       dependencies. The authoritative hash is in `governance-index.json`.
 
@@ -5080,7 +4814,7 @@ docs:
 
       - **CI Enforcement:** `.github/workflows/agents-governance.yml`
 
-      - **Charter Fragment:** `.cortex/rules/CHARTER_FRAGMENT.md`
+      - **Charter Fragment:** `.cortex/rules/AGENT_CHARTER.md` (extract between `<!-- BEGIN/END CHARTER_FRAGMENT -->` markers)
 
 
       ## FAQ
@@ -7109,7 +6843,7 @@ docs:
 
       * OWASP Top 10 for Large Language Model Applications (2025)
       * NIST AI RMF 1.0; NIST Generative AI Profile
-      * `/.cortex/rules/vibe-check.md` • `/.cortex/rules/agentic-coding-workflow.md` • `/.cortex/rules/CHARTER_FRAGMENT.md`
+      * `/.cortex/rules/vibe-check.md` • `/.cortex/rules/agentic-coding-workflow.md` • `/.cortex/rules/AGENT_CHARTER.md`
       * Supply chain: CycloneDX 1.7 • SLSA v1.1 • Cosign v3 bundle
       * Observability: W3C Trace Context • OpenTelemetry
   - id: skills_system_governance

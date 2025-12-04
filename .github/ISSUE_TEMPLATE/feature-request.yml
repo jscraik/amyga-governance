@@ -1,0 +1,141 @@
+name: "✨ Feature Request"
+description: "Propose a new feature or enhancement for the governance framework"
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Feature Request
+        
+        Thanks for suggesting an improvement! Please describe your idea clearly.
+        
+        **Governance Reference:**
+        - Feature requests should align with [vision.md](../brainwav/governance/00-core/vision.md)
+        - Use [feature-spec-template.md](../brainwav/governance/templates/feature-spec-template.md) for detailed specs
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: "Pre-flight Checks"
+      options:
+        - label: "I have searched existing issues and discussions for this feature"
+          required: true
+        - label: "I have reviewed the governance vision and constitution"
+          required: true
+        - label: "This feature aligns with brAInwav principles"
+          required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: "Feature Area"
+      description: "Which part of the framework does this affect?"
+      options:
+        - "Agent Governance (AGENTS.md, charter)"
+        - "Workflows (agentic-coding-workflow)"
+        - "Quality Gates (checklists, CI)"
+        - "Compliance (EU AI Act, OWASP)"
+        - "Templates & Scaffolding"
+        - "Tooling & Automation"
+        - "Documentation"
+        - "Developer Experience"
+        - "Security & Privacy"
+        - "Observability & Telemetry"
+        - "Other"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: "Problem Statement"
+      description: "What problem does this feature solve? Who is affected?"
+      placeholder: "As a [user type], I currently cannot... which causes..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: "Proposed Solution"
+      description: "Describe your proposed solution"
+      placeholder: |
+        I propose that...
+        
+        This would work by...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternatives Considered"
+      description: "What other solutions have you considered?"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: "Priority Suggestion"
+      description: "How important do you think this is?"
+      options:
+        - "P0 - Critical (blocking governance adoption)"
+        - "P1 - High (core functionality)"
+        - "P2 - Medium (significant improvement)"
+        - "P3 - Low (nice to have)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: "Acceptance Criteria"
+      description: "How will we know this feature is complete?"
+      placeholder: |
+        - [ ] When X happens, Y should occur
+        - [ ] Users should be able to...
+        - [ ] The system should...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: breaking
+    attributes:
+      label: "Breaking Changes"
+      description: "Would this require breaking changes?"
+      options:
+        - "No breaking changes"
+        - "Minor breaking changes (documentation update)"
+        - "Major breaking changes (migration required)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: "Implementation Ideas"
+      description: "Any thoughts on how this could be implemented?"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: "Contribution"
+      description: "Would you be willing to contribute to this feature?"
+      options:
+        - label: "I would like to implement this feature"
+        - label: "I can help test this feature"
+        - label: "I can help document this feature"
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: "Additional Context"
+      description: "Any other context, mockups, or references"
+    validations:
+      required: false

@@ -2,8 +2,8 @@
 file_path: "AGENTS.md"
 description: "Agent Operational Instructions for Cortex‑OS — Repository Root Reference (ArcTDD, Phase Machine, Governance-Index, Live-Only ML, Reuse-First, Academic License Validation)"
 maintainer: "brAInwav Development Team"
-last_updated: "2025-11-22"
-version: "1.6.2"
+last_updated: "2025-12-04"
+version: "1.7.0"
 status: "authoritative"
 license: "Apache-2.0"
 audit:
@@ -24,41 +24,51 @@ audit:
 
 ## Quick Navigation
 
-- [0) Purpose](#0-purpose)
-- [0.1) ArcTDD Charter (MANDATORY)](#01-arctdd-charter-mandatory)
-- [0.2) Glossary](#02-glossary)
-- [1) Hierarchy of Authority](#1-hierarchy-of-authority)
-- [2) Governance Index (SHA‑pinned)](#2-governance-index-sha-pinned)
-- [2.1) Governance Bootstrap (Repo Attach)](#21-governance-bootstrap-repo-attach)
-- [3) Mandatory Templates & Specs](#3-mandatory-templates--specs)
-- [4) Personas & Authority](#4-personas--authority)
-- [5) Boundaries & Interfaces 〔AGENTS‑BND‑005〕](#5-boundaries--interfaces-agentsbnd005)
-- [6) Build, Run, Verify (Smart Nx + Agent‑Toolkit)](#6-build-run-verify-smart-nx--agenttoolkit)
-- [7) Code Style Summary](#7-code-style-summary)
-- [8) Tests & Quality Gates](#8-tests--quality-gates)
-- [9) Security, Supply Chain, Compliance](#9-security-supply-chain-compliance)
-- [10) Accessibility (WCAG 2.2 AA)](#10-accessibility-wcag-22-aa)
-- [11) Oversight Gate (Cortex Aegis Check + Academic Licensing)](#11-oversight-gate-cortex-aegis-check--academic-licensing)
-- [12) Observability & Telemetry 〔AGENTS‑OBS‑006〕](#12-observability--telemetry-agentsobs006)
-- [13) Runtime Surfaces & Auth](#13-runtime-surfaces--auth)
-- [14) Inputs & Outputs](#14-inputs--outputs)
-- [15) Local Memory (operational default)](#15-local-memory-operational-default)
-- [16) Agent‑Toolkit (MANDATORY)](#16-agenttoolkit-mandatory)
-- [17) Commits, PRs, Branching](#17-commits-prs-branching)
-- [18) Monorepo Layout & Nested `AGENTS.md`](#18-monorepo-layout--nested-agentsmd)
-- [19) Environments, Ports, Bundling](#19-environments-ports-bundling)
-- [20) Anti‑Patterns (CI fails) 〔AGENTS‑STY‑007〕](#20-anti-patterns-ci-fails-agents-sty-007)
-- [21) Frontend Scope](#21-frontend-scope)
-- [22) Where to Look Next](#22-where-to-look-next)
-- [23) Time Freshness & Date Handling](#23-time-freshness--date-handling)
-- [24) Task & Evidence Contract](#24-task--evidence-contract)
-- [25) Hybrid Model Solution — Live Only 〔AGENTS‑HMS‑003〕](#25-hybrid-model-solution-live-only-agents-hms-003)
-- [26) Code Review Checklist — Enforcement](#26-code-review-checklist--enforcement)
-- [27) Waivers, Versioning & Change Control](#27-waivers-versioning--change-control)
-- [28) Human vs Agent Responsibilities](#28-human-vs-agent-responsibilities)
-- [29) Package `AGENTS.md` — Starter Template](#29-package-agentsmd--starter-template)
-- [30) Maintainers & Contact](#30-maintainers--contact)
-- [31) Changelog](#31-changelog)
+- [AGENTS — Cortex‑OS (authoritative)](#agents--cortexos-authoritative)
+  - [Quick Navigation](#quick-navigation)
+  - [0) Purpose](#0-purpose)
+  - [0.1) ArcTDD Charter (MANDATORY)](#01-arctdd-charter-mandatory)
+  - [0.2) Glossary](#02-glossary)
+  - [1) Hierarchy of Authority](#1-hierarchy-of-authority)
+    - [1.1) Operational Workflows (Unified)](#11-operational-workflows-unified)
+  - [2) Governance Index (SHA‑pinned)](#2-governance-index-shapinned)
+  - [2.1) Governance Bootstrap (Repo Attach)](#21-governance-bootstrap-repo-attach)
+  - [3) Mandatory Templates \& Specs](#3-mandatory-templates--specs)
+  - [4) Personas \& Authority](#4-personas--authority)
+  - [5) Boundaries \& Interfaces 〔AGENTS‑BND‑005〕](#5-boundaries--interfaces-agentsbnd005)
+  - [6) Build, Run, Verify](#6-build-run-verify)
+  - [7) Code Style Summary](#7-code-style-summary)
+  - [8) Tests \& Quality Gates](#8-tests--quality-gates)
+  - [9) Security, Supply Chain, Compliance](#9-security-supply-chain-compliance)
+  - [10) Accessibility (WCAG 2.2 AA)](#10-accessibility-wcag-22-aa)
+  - [11) Oversight Gate (Cortex Aegis Check + Academic Licensing)](#11-oversight-gate-cortex-aegis-check--academic-licensing)
+  - [12) Observability \& Telemetry 〔AGENTS‑OBS‑006〕](#12-observability--telemetry-agentsobs006)
+  - [13) Runtime Surfaces \& Auth](#13-runtime-surfaces--auth)
+  - [14) Inputs \& Outputs](#14-inputs--outputs)
+  - [15) Local Memory (operational default)](#15-local-memory-operational-default)
+  - [16) Fast Tools (MANDATORY)](#16-fast-tools-mandatory)
+  - [CRITICAL: Use ripgrep, not grep](#critical-use-ripgrep-not-grep)
+  - [File finding](#file-finding)
+  - [JSON](#json)
+  - [Install Guidance](#install-guidance)
+  - [Agent Instructions](#agent-instructions)
+  - [17) Commits, PRs, Branching](#17-commits-prs-branching)
+  - [18) Monorepo Layout \& Nested `AGENTS.md`](#18-monorepo-layout--nested-agentsmd)
+  - [19) Environments, Ports, Bundling](#19-environments-ports-bundling)
+  - [20) Anti‑Patterns (CI fails) 〔AGENTS‑STY‑007〕](#20-antipatterns-ci-fails-agentssty007)
+  - [21) Frontend Scope](#21-frontend-scope)
+  - [22) Where to Look Next](#22-where-to-look-next)
+  - [23) Time Freshness \& Date Handling](#23-time-freshness--date-handling)
+  - [24) Task \& Evidence Contract](#24-task--evidence-contract)
+  - [25) Hybrid Model Solution — **Live Only** (Ollama / Frontier) 〔AGENTS‑HMS‑003〕](#25-hybrid-model-solution--live-only-ollama--frontier-agentshms003)
+  - [26) Code Review Checklist — Enforcement](#26-code-review-checklist--enforcement)
+  - [27) Waivers, Versioning \& Change Control](#27-waivers-versioning--change-control)
+    - [27.1) CI Enforcement Matrix (excerpt)](#271-ci-enforcement-matrix-excerpt)
+  - [28) Human vs Agent Responsibilities](#28-human-vs-agent-responsibilities)
+  - [29) Package `AGENTS.md` — Starter Template](#29-package-agentsmd--starter-template)
+  - [30) Maintainers \& Contact](#30-maintainers--contact)
+  - [31) Changelog](#31-changelog)
+  - [General Guidelines for working with Nx](#general-guidelines-for-working-with-nx)
 
 ---
 
@@ -73,10 +83,10 @@ audit:
 ## 0.1) ArcTDD Charter (MANDATORY)
 
 > You MUST read and comply with the brAInwav ArcTDD Charter **before coding**.  
-> Canonical copy: `/.cortex/rules/CHARTER_FRAGMENT.md` (SHA‑256 recorded below).
+> Canonical copy: `brainwav/governance/00-core/AGENT_CHARTER.md` (use the `<!-- BEGIN/END CHARTER_FRAGMENT -->` markers to extract the compact fragment; SHA‑256 recorded below).
 
-- **Charter Location:** `/.cortex/rules/CHARTER_FRAGMENT.md`
-- **Charter SHA‑256:** `8fdd538b1acc51035b66dd3ac9481464c341b657a841ed2d6ed0ba696fb46e0e` *(recomputed by CI)*
+- **Charter Location:** `brainwav/governance/00-core/AGENT_CHARTER.md`
+- **Charter SHA‑256:** `faf6254926f327ac182261de41f0f100b4c4ac24f2ca4700949c091a66cda13a` *(fragment between `<!-- BEGIN/END CHARTER_FRAGMENT -->` markers; recomputed by CI)*
 - **Enforcement:** Violations block merge via CI (`charter` job).
 - **Waiver Activation Rule:** A waiver is **valid** only after `charter-enforce / danger` posts ✅ with a link to the **Apply Waiver** workflow run that recorded Maintainer approval.
 
@@ -95,22 +105,16 @@ audit:
 
 ## 1) Hierarchy of Authority
 
-1. **Governance Pack** (`/.cortex/rules/*`):
+1. **Governance Pack** (`brainwav/governance/*`):
 
-- `RULES_OF_AI.md`
-- `CHARTER_FRAGMENT.md`
-- `AGENT_CHARTER.md`
-- `agentic-coding-workflow.md` (G0–G10)
-- `agentic-phase-policy.md` (R→G→F→REVIEW)
-- `AGENTIC_WORKFLOWS.cortex-os.md` (unified operational task-type workflows;
-  bootstrap contract; run-manifest schema linkage; Cortex Aegis oversight;
-  RepoPrompt evidence mapping; SHA‑pinned for enforcement)
-- `constitution.md`
-- `llm-threat-controls.md` *(if LLM/tools)*
-- `skills-system-governance.md` *(if `skills/`)*
-- `10-flow/_time-freshness.md`
-- `vision.md`
-- `TASK_FOLDER_STRUCTURE.md`
+- `00-core/RULES_OF_AI.md`
+- `00-core/AGENT_CHARTER.md`
+- `10-flow/agentic-coding-workflow.md` (G0–G10, Phase Machine R→G→F→REVIEW in §4.4)
+- `00-core/constitution.md`
+- `00-core/llm-threat-controls.md` *(if LLM/tools)*
+- `00-core/skills-system-governance.md` *(if `skills/`)*
+- `10-flow/assurance-system.md` (includes time freshness policy)
+- `00-core/vision.md`
 
 2) `CODESTYLE.md` (CI‑enforced)
 3) **This** `AGENTS.md` (root)
@@ -119,7 +123,7 @@ audit:
 
 ### 1.1) Operational Workflows (Unified)
 
-`/.cortex/rules/AGENTIC_WORKFLOWS.cortex-os.md` consolidates task-type flows
+`brainwav/governance/10-flow/agentic-coding-workflow.md` consolidates task-type flows
 (feature, fix, refactor, research), the bootstrap contract, required
 run-manifest fields, Cortex Aegis oversight ordering, RepoPrompt evidence
 placement, time freshness integration, and threat-control mapping references.
@@ -132,13 +136,12 @@ Tasks MUST treat it as binding; its SHA is verified via the governance index.
 Agents and CI discover and verify rules via a canonical index:
 
 ```text
-Canonical index: /.cortex/rules/governance-index.json
-Alias (optional): /.cortex/rules/index.json (symlink for legacy tooling)
+Canonical index: brainwav/governance/90-infra/governance-index.json
 ```
 
 The index MUST list all binding docs with **paths and SHA‑256**. CI verifies
-digests; the **agent bootstrap** refuses to act if digests don’t match.
-`AGENTIC_WORKFLOWS.cortex-os.md` is SHA‑pinned in this index and enforced.
+digests; the **agent bootstrap** refuses to act if digests don't match.
+`agentic-coding-workflow.md` is SHA‑pinned in this index and enforced.
 Tasks MUST reference this index in their run manifest:
 
 ```json
@@ -152,9 +155,8 @@ Tasks MUST reference this index in their run manifest:
     "reviewer_pointer": "tasks/<slug>/json/reviewer.json"
   },
   "governance": {
-    "rules_index": "/.cortex/rules/governance-index.json",
+    "rules_index": "brainwav/governance/90-infra/governance-index.json",
     "AGENTS_MD_SHA": "<computed>",
-    "AGENTIC_WORKFLOWS_SHA": "<computed>",
     "llm_controls_map": "tasks/<slug>/verification/llm-controls-map.md"
   }
 }
@@ -174,7 +176,7 @@ Generates `.cortex/agent-governance-context.json` containing:
 
 - `repo_root`, `agents_md_path`, `AGENTS_MD_SHA`
 - `governance_index_path`
-- `workflows` mapping (`feature`, `fix`, `refactor`, `research`, `code_review`) → section hints in `AGENTIC_WORKFLOWS.cortex-os.md`
+- `workflows` mapping (`feature`, `fix`, `refactor`, `research`, `code_review`) → section hints in `brainwav/governance/10-flow/agentic-coding-workflow.md`
 - MCP client configs derived from the transport registry `.cortex/mcp.runtime.json`:
   - `.cortex/mcp.claude.json` (Claude/desktop)
   - `.cortex/mcp.vscode.json` (VS Code / Claude Code)
@@ -193,12 +195,12 @@ Generates `.cortex/agent-governance-context.json` containing:
 2. MUST NOT create `tasks/<slug>/` or modify existing manifests.
 3. SHOULD re‑run if `AGENTS.md` or any governance doc hash changes.
 4. MUST log branded line `[brAInwav] cortex-governance-bootstrap …` for audit.
-5. NOTE: Governance index hashes refresh when `/.cortex/rules/10-flow/agentic-coding-workflow.md` changes—rerun the bootstrap to cache the new digest.
+5. NOTE: Governance index hashes refresh when `brainwav/governance/10-flow/agentic-coding-workflow.md` changes—rerun the bootstrap to cache the new digest.
 
 **Preamble Injection Example:**
 
 ```text
-You are operating in Cortex-OS. Governance: AGENTS.md, governance-index.json, AGENTIC_WORKFLOWS.cortex-os.md. When user states a task type, select matching workflow section and follow it.
+You are operating in Cortex-OS. Governance: AGENTS.md, governance-index.json, agentic-coding-workflow.md. When user states a task type, select matching workflow section and follow it.
 ```
 
 **Difference vs Task Bootstrap (see §24):** No slug creation, no run‑manifest; pure discovery + metadata.
@@ -211,10 +213,10 @@ You are operating in Cortex-OS. Governance: AGENTS.md, governance-index.json, AG
 
 MUST use the official templates; deviations fail review:
 
-- `/.cortex/templates/feature-spec-template.md`
-- `/.cortex/templates/research-template.md`
-- `/.cortex/templates/tdd-plan-template.md`
-- `/.cortex/templates/constitution-template.md`
+- `brainwav/governance/templates/feature-spec-template.md`
+- `brainwav/governance/templates/research-template.md`
+- `brainwav/governance/templates/tdd-plan-template.md`
+- `brainwav/governance/templates/constitution-template.md`
 
 **Reuse‑First delivery:** Effective **2025‑11‑12** with grace to **2025‑12‑10**;
 after that, non‑compliant PRs are **BLOCKED** unless waived. Evidence lives in
@@ -244,7 +246,7 @@ If anything clashes with `RULES_OF_AI`, the *Constitution* wins.
 
 ---
 
-## 6) Build, Run, Verify (Smart Nx + Agent‑Toolkit)
+## 6) Build, Run, Verify
 
 ```bash
 ./scripts/dev-setup.sh
@@ -259,7 +261,7 @@ pnpm typecheck:smart
 ```
 
 - **Environment baseline:** Node 24.11.x; pnpm 10.19.x pinned in `.mise.toml`.
-- **Use Nx** (`nx run/affected`) and **Agent‑Toolkit** (see §16) for repo‑aware ops.
+- **Use Nx** (`nx run/affected`) for repo‑aware ops.
 
 ---
 
@@ -374,90 +376,35 @@ legacy agents.
 
 ---
 
-## 16) Agent‑Toolkit (MANDATORY)
-
-All agents MUST use **Agent‑Toolkit** (not individual tools) for repo‑aware work.
-
-```bash
-cd packages/agent-toolkit
-
-# Multi-tool search (ripgrep + semgrep + ast-grep)
-just scout "pattern" .
-
-# AST analysis
-just tsq "ast-query" src/
-
-# Structural patches
-just codemod 'find(:[x])' 'replace(:[x])' .
-
-# Validate changed files
-just verify changed-files.txt
-```
-
-- Outputs are **structured JSON**; attach to PR evidence.
-- All searches respect `.gitignore` and project boundaries.
-
-### 16.1) Fast Tools Prompt (codex-mastery)
+## 16) Fast Tools (MANDATORY)
 <!-- FAST-TOOLS PROMPT v1 | codex-mastery | watermark:do-not-alter -->
 
-Core fast tool usage mandates (supplements Agent‑Toolkit). Follow these rules
-for any repository‑wide discovery or JSON manipulation.
+## CRITICAL: Use ripgrep, not grep
 
-**Search (ALWAYS use ripgrep, never grep):**
+NEVER use grep for project-wide searches (slow, ignores .gitignore). ALWAYS use rg.
 
-```bash
-# Content search
-rg "pattern"
+- `rg "pattern"` — search content
+- `rg --files | rg "name"` — find files
+- `rg -t python "def"` — language filters
 
-# Find files by name (pipe from file list)
-rg --files | rg "name-fragment"
+## File finding
 
-# Language filtered search (example: Python defs)
-rg -t python "def "
-```
+- Prefer `fd` (or `fdfind` on Debian/Ubuntu). Respects .gitignore.
 
-**File finding:** Prefer `fd` (or `fdfind` on Debian/Ubuntu). Respects `.gitignore`.
+## JSON
 
-```bash
-# Find TypeScript files named config
-fd -e ts config
-```
+- Use `jq` for parsing and transformations.
 
-**JSON handling:** Use `jq` for parsing, filtering, transformation; avoid regex
-parsing of JSON.
+## Install Guidance
 
-```bash
-# Extract field
-jq -r '.field' file.json
+- macOS: `brew install ripgrep fd jq`
+- Debian/Ubuntu: `sudo apt update && sudo apt install -y ripgrep fd-find jq` (alias `fd=fdfind`)
 
-# Transform
-jq '{id:.id, name:.spec.name}' input.json > reduced.json
-```
+## Agent Instructions
 
-**Install guidance:**
-
-```bash
-# macOS
-brew install ripgrep fd jq
-
-# Debian/Ubuntu
-sudo apt update && sudo apt install -y ripgrep fd-find jq
-# (optional) alias
-echo 'alias fd=fdfind' >> ~/.zshrc
-```
-
-**Agent command substitutions:**
-
-- grep → rg
-- find / ls -R directory scanning → fd or `rg --files`
-- cat | grep pattern file → `rg pattern file`
-- Manual JSON field extraction → `jq` query
-
-**Read limits & context:** Cap raw file reads to ≤250 lines. Prefer
-`rg -n -A 3 -B 3 pattern` to supply local context without full file dumps.
-
-**JSON hygiene:** Never mutate JSON with ad‑hoc sed/awk unless `jq` is
-insufficient; if so, document justification.
+- Replace commands: grep→rg, find→rg --files/fd, ls -R→rg --files, cat|grep→rg pattern file
+- Cap reads at 250 lines; prefer `rg -n -A 3 -B 3` for context
+- Use `jq` for JSON instead of regex
 
 <!-- END FAST-TOOLS PROMPT v1 | codex-mastery -->
 
@@ -468,8 +415,8 @@ insufficient; if so, document justification.
 - Conventional Commits (scoped), signed commits/tags.
 - Keep diffs small; pair tests with implementation.
 - PRs must pass: lint, types, tests, security, structure, coverage/mutation.
-- Use `/.github/pull_request_template.md`; link specs/plans; cite Governance sections touched.
-- Reviewer posts a completed `/.cortex/rules/code-review-checklist.md` as a top‑level PR comment.
+- Use `.github/pull_request_template.md`; link specs/plans; cite Governance sections touched.
+- Reviewer posts a completed `brainwav/governance/20-checklists/checklists.md` as a top‑level PR comment.
 - If code/content under `packages/<name>/` changed, update that package’s `AGENTS.md` **and** `README.md`, or explicitly confirm no changes required.
 
 ---
@@ -511,15 +458,14 @@ Boundaries, WCAG 2.2 AA). Framework specifics belong in package `AGENTS.md` or
 
 ## 22) Where to Look Next
 
-**Governance Pack:** `/.cortex/rules/*`
+**Governance Pack:** `brainwav/governance/*`
 
-- `vision.md`, `agentic-coding-workflow.md`, `agentic-phase-policy.md`,
-  `code-review-checklist.md`, `RULES_OF_AI.md`, `llm-threat-controls.md`,
-  `skills-system-governance.md`, `constitution.md`
-- `AGENTIC_WORKFLOWS.cortex-os.md` (authoritative operational workflows consolidation)
+- `00-core/vision.md`, `10-flow/agentic-coding-workflow.md` (includes Phase Machine §4.4),
+  `20-checklists/checklists.md`, `00-core/RULES_OF_AI.md`, `00-core/llm-threat-controls.md`,
+  `00-core/skills-system-governance.md`, `00-core/constitution.md`
 
-**Templates:** `/.cortex/templates/*`
-**Other:** `CODESTYLE.md`, `docs/agents/code-planner-agent.md`, `docs/oauth/chatgpt-403-troubleshooting.md`
+**Templates:** `brainwav/governance/templates/*`
+**Other:** `CODESTYLE.md`, `brainwav/governance/docs/`
 
 ---
 
@@ -532,7 +478,7 @@ Convert relative language to ISO‑8601. Distinguish past vs future explicitly.
 
 ## 24) Task & Evidence Contract
 
-**Task dir:** `tasks/<slug>/` (see `/.cortex/rules/TASK_FOLDER_STRUCTURE.md`)
+**Task dir:** `tasks/<slug>/` (see `brainwav/governance/10-flow/agentic-coding-workflow.md` §3)
 
 ```
 tasks/<slug>/
@@ -579,17 +525,17 @@ pnpm models:health && pnpm models:smoke
 
 ## 26) Code Review Checklist — Enforcement
 
-**Source of truth:** `/.cortex/rules/20-checklists/checklists.cortex-os.md`
+**Source of truth:** `brainwav/governance/20-checklists/checklists.md`
 A **human (non‑author)** posts a completed checklist as a top‑level PR comment.
 BLOCKER items must be PASS; MAJOR fixed or waived; MINOR may follow‑up.
-CI mirrors the filled checklist to `.cortex/audit/reviews/<PR_NUMBER>-<SHORT_SHA>.md`.
+CI mirrors the filled checklist to `brainwav/governance/audit/reviews/<PR_NUMBER>-<SHORT_SHA>.md`.
 
 ---
 
 ## 27) Waivers, Versioning & Change Control
 
 - **Waivers:** Maintainer or Constitution delegate MAY approve.
-  Store `/.cortex/waivers/<waiver_id>.md` with `waiver_id`, `rule_id(s)`, `approver`, `expiry`, `reason`, **Apply Waiver** workflow link.
+  Store `brainwav/governance/audit/waivers/<waiver_id>.md` with `waiver_id`, `rule_id(s)`, `approver`, `expiry`, `reason`, **Apply Waiver** workflow link.
 - **SemVer:** This document uses SemVer; bump MINOR for new rules; PATCH for clarifications.
 - **Run Manifest:** CI MAY evaluate older manifests against newer gates for regression checks.
 
@@ -603,7 +549,7 @@ CI mirrors the filled checklist to `.cortex/audit/reviews/<PR_NUMBER>-<SHORT_SHA
 | AGENTS‑ACL‑004  | Package `AGENTS.md` not weakening root     | `structure-validate` | compare rule sets                          |
 | AGENTS‑ACL‑011  | Academic license validation evidence       | `agents-guard`       | check `license-validation.json`            |
 | AGENTS‑RFU‑012  | Reuse‑First compliance evidence            | `reuse-first`        | verify `analysis/reuse-evaluation.md`      |
-| AGENTS‑DOC‑005  | Docs validation (no ERROR)                 | `docs-validate`      | `.cortex/gates/validate-docs.ts`           |
+| AGENTS‑DOC‑005  | Docs validation (no ERROR)                 | `docs-validate`      | `scripts/validate-docs.ts`                 |
 | AGENTS‑TRC‑006  | Trace Context verification                 | `trace-verify`       | `verify-trace-context.ts`                  |
 | AGENTS‑MEM‑007  | Local Memory parity (IDs present)          | `memory-parity`      | check `json/memory-ids.json` + repo mirror |
 | AGENTS‑A11Y‑008 | WCAG reports attached (if UI touched)      | `a11y-check`         | jest-axe/axe                               |
@@ -660,11 +606,19 @@ CI mirrors the filled checklist to `.cortex/audit/reviews/<PR_NUMBER>-<SHORT_SHA
 
 - GitHub: `@jamiescottcraik`
 - Issues: open under the relevant package and label `governance`
-- Emergencies: see `/.cortex/rules/constitution.md` escalation tree
+- Emergencies: see `brainwav/governance/00-core/constitution.md` escalation tree
 
 ---
 
 ## 31) Changelog
+
+- **1.7.0 — 2025‑12‑04**
+
+  - **Path alignment:** Updated all references from `/.cortex/rules/*` to `brainwav/governance/*` to match actual project structure.
+  - **Removed Agent‑Toolkit section:** Replaced with simplified **Fast Tools (MANDATORY)** section (§16) using clean FAST-TOOLS PROMPT v1 format.
+  - **Removed AGENTIC_WORKFLOWS.cortex-os.md references:** Consolidated into `agentic-coding-workflow.md` which now contains all operational workflows.
+  - **Phase Machine reference fix:** Updated to §4.4 (was §4.3).
+  - **Governance index alignment:** Single canonical path at `brainwav/governance/90-infra/governance-index.json`.
 
 - **1.6.0 — 2025‑11‑11**
 
@@ -718,7 +672,7 @@ CI mirrors the filled checklist to `.cortex/audit/reviews/<PR_NUMBER>-<SHORT_SHA
 ```text
 
 **Adoption checklist (quick):**
-- Add `/.cortex/rules/governance-index.json` with paths + SHA‑256 for all governance docs; wire its path into each `tasks/<slug>/json/run-manifest.json`.
+- Add `brainwav/governance/90-infra/governance-index.json` with paths + SHA‑256 for all governance docs; wire its path into each `tasks/<slug>/json/run-manifest.json`.
 - Ensure the agent bootstrap loads & verifies the index before acting; refuse to run on hash mismatch.
 - Extend CI/Danger to (a) verify the index and (b) require the Oversight + academic license evidence bundle.
 - Keep your existing brand tokens, phase machine, and Evidence Triplet flow—this update only strengthens linkage and enforcement.

@@ -1,0 +1,15 @@
+# Issue template chooser configuration
+# Ref: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository
+
+blank_issues_enabled: false
+
+contact_links:
+  - name: "📖 Governance Quickstart"
+    url: "https://github.com/jamiescottcraik/brainwav-agentic-governance/blob/main/brainwav/governance/10-flow/governance-quickstart.md"
+    about: "Read the governance quickstart before opening issues"
+  - name: "📋 AGENTS.md"
+    url: "https://github.com/jamiescottcraik/brainwav-agentic-governance/blob/main/AGENTS.md"
+    about: "Agent operational instructions and workflows"
+  - name: "💬 Discussions"
+    url: "https://github.com/jamiescottcraik/brainwav-agentic-governance/discussions"
+    about: "Ask questions or discuss ideas before opening an issue"

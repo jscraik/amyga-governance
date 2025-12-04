@@ -111,7 +111,7 @@ CI workflows and long‑lived services **must** use **OIDC/WIF** to cloud provid
 **Forbidden**: Any `human_input` before REVIEW is a policy violation (aside from the Ask‑First G0/G1 allowance).
 
 **Canonical details** (tokens, artifacts, CI mapping) are defined in:  
-`governance/rules/agentic-phase-policy.md` (v2025.11) and `governance/rules/agentic-coding-workflow.md`.
+`brainwav/governance/10-flow/agentic-coding-workflow.md` (§4.4 Phase Machine, §6.1 Hard Rules, §6.2 Evidence Tokens).
 
 ### Evidence Tokens (CI-Scanned)
 
@@ -167,7 +167,7 @@ Technical debt tracked via ADRs + Issues with payoff plan.
 1. **Governance Pack** with precedence:
    - `AGENT_CHARTER.md` (immutable ethics; consolidates Rules of AI)
    - **This Constitution**
-   - `vision.md`, `agentic-coding-workflow.md`, `agentic-phase-policy.md`, `code-review-checklist.md`, `assurance-system.md` (Time Freshness Policy), `checklists.md`
+   - `vision.md`, `agentic-coding-workflow.md` (includes Phase Machine §4.4), `code-review-checklist.md`, `assurance-system.md` (Time Freshness Policy), `checklists.md`
 2. `CODESTYLE.md`  
 3. Root `AGENTS.md`  
 4. Package-level `AGENTS.md`  

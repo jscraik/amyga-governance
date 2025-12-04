@@ -7,14 +7,17 @@ docs:
     full_text: "{{INLINE:.cortex/rules/00-core/constitution.md}}"
   - id: agent_charter
     file: .cortex/rules/00-core/AGENT_CHARTER.md
-    sha: d9a9ef1575b4e1c4555a36f8e63ef5e0b8cc124c79e5b78de62b2ba7d8723968
+    sha: 70953d4e7433e886150fcab9daa1dc8c7a735e5ec6877499fd8832720a3900f4
     url: https://governance.cortex-os.local/docs/00-core/AGENT_CHARTER.md
     full_text: "{{INLINE:.cortex/rules/00-core/AGENT_CHARTER.md}}"
   - id: charter_fragment
-    file: .cortex/rules/00-core/CHARTER_FRAGMENT.md
-    sha: e766755420bf5b0466a83722340de170e487d6d055b1172cf9686add88c5e1d3
-    url: https://governance.cortex-os.local/docs/00-core/CHARTER_FRAGMENT.md
-    full_text: "{{INLINE:.cortex/rules/00-core/CHARTER_FRAGMENT.md}}"
+    file: .cortex/rules/00-core/AGENT_CHARTER.md
+    sha: faf6254926f327ac182261de41f0f100b4c4ac24f2ca4700949c091a66cda13a
+    url: https://governance.cortex-os.local/docs/00-core/AGENT_CHARTER.md#fragment
+    fragment_markers:
+      - "<!-- BEGIN CHARTER_FRAGMENT -->"
+      - "<!-- END CHARTER_FRAGMENT -->"
+    full_text: "{{INLINE:.cortex/rules/00-core/AGENT_CHARTER.md}}"
   - id: rules_of_ai
     file: .cortex/rules/00-core/RULES_OF_AI.md
     sha: ""
@@ -25,21 +28,13 @@ docs:
     sha: 7ea61989105a13f64ec81c46cb018b5655b54268bcd8831f4212eec819c72c76
     url: https://governance.cortex-os.local/docs/10-flow/agentic-coding-workflow.md
     full_text: "{{INLINE:.cortex/rules/10-flow/agentic-coding-workflow.md}}"
-  - id: agentic_phase_policy
-    file: .cortex/rules/10-flow/agentic-phase-policy.md
-    sha: 753b47a9eaab75105e2da743980280cd5b5f16e63eb29ad003d7b4217e8663e0
-    url: https://governance.cortex-os.local/docs/10-flow/agentic-phase-policy.md
-    full_text: "{{INLINE:.cortex/rules/10-flow/agentic-phase-policy.md}}"
+    note: "Includes Phase Machine (§4.3), Hard Rules (§6.1), Evidence Tokens (§6.2)"
+  # agentic_phase_policy consolidated into agentic-coding-workflow.md §4.3
   - id: cortex_aegis
     file: .cortex/rules/10-flow/cortex-aegis.md
     sha: cddf030cc8be93055bbd2493f90de926c28f58fd1859d99b416ff95fb1da22cd
     url: https://governance.cortex-os.local/docs/10-flow/cortex-aegis.md
     full_text: "{{INLINE:.cortex/rules/10-flow/cortex-aegis.md}}"
-  - id: time_freshness
-    file: .cortex/rules/10-flow/_time-freshness.md
-    sha: ""
-    url: https://governance.cortex-os.local/docs/10-flow/_time-freshness.md
-    full_text: "{{INLINE:.cortex/rules/10-flow/_time-freshness.md}}"
   - id: checklists
     file: .cortex/rules/20-checklists/checklists.cortex-os.md
     sha: ab1a82f3f5d7b52a4c7bc590596207b336c80186b173c7e648d1b5c2ed3eb144
@@ -85,11 +80,6 @@ docs:
     sha: ee5cbbf7592b3c00ef92e310682bb8ce289aa78e2cd56de173bcb77cc76a492f
     url: https://governance.cortex-os.local/docs/00-core/vision.md
     full_text: "{{INLINE:.cortex/rules/00-core/vision.md}}"
-  - id: task_folder_structure
-    file: .cortex/rules/10-flow/TASK_FOLDER_STRUCTURE.md
-    sha: 0fad52db274b60f4f35ed785ef7696c511662fe931024dce5de371d7d4f59ed4
-    url: https://governance.cortex-os.local/docs/10-flow/TASK_FOLDER_STRUCTURE.md
-    full_text: "{{INLINE:.cortex/rules/10-flow/TASK_FOLDER_STRUCTURE.md}}"
   - id: llm_threat_controls
     file: .cortex/rules/00-core/llm-threat-controls.md
     sha: 75bb7f77caa566add4489259f97512eed84e52a0718eb0b2e3de4f426687fbf1

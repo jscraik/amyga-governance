@@ -7,6 +7,10 @@
 
 ---
 
+> **Fragment usage:** The canonical charter fragment for agent instruction files is the section of this document wrapped between `<!-- BEGIN CHARTER_FRAGMENT -->` and `<!-- END CHARTER_FRAGMENT -->`. Automation should extract exactly that region when a compact charter is required.
+
+<!-- BEGIN CHARTER_FRAGMENT -->
+
 ## ⚡ **OPERATIVE GUARDRAILS** (Non-Negotiable)
 
 All agents executing workstreams MUST obey these rules:
@@ -73,16 +77,15 @@ All agents executing workstreams MUST obey these rules:
 
 ### 6️⃣ **Brand Logs** [AGENTS-BRD-006]
 
-- Runtime and workflow logs MUST include:
-  - Field: `{ "brand": "brAInwav" }`
-  - Prefix: `[brAInwav]` in console output
+- Runtime and workflow logs MUST emit both: (1) a human-readable prefix `[brAInwav]` and (2) structured JSON payloads containing `brand:"brAInwav"`, ISO-8601 timestamp with timezone offset, a 32-character lowercase `trace_id`, and the HTTP `traceparent` captured at ingress/egress.
 - OPA/Conftest policies enforce the following tokens in every charter-governed log line:
   - `MODELS:LIVE:OK` when model health passes
-  - Latency markers (e.g., `LATENCY:123ms` or structured JSON field)
-  - ISO-8601 timestamps with timezone offset
+  - Latency markers (e.g., `LATENCY:123ms` or structured JSON `latency_ms` field)
   - `NORTH_STAR:RED_FIRST` for the initial failing acceptance execution
   - `NORTH_STAR:GREEN_AFTER` once the acceptance turns green
-- **Enforcement**: Grep validation in CI; missing brand fails build
+- First failing acceptance must log `marker:"NORTH_STAR:RED_FIRST"`; the passing acceptance must log `marker:"NORTH_STAR:GREEN_AFTER"`.
+- Emit `model_status:"MODELS:LIVE:OK"` **only** after live model health checks succeed.
+- **Enforcement**: Grep validation in CI; missing brand tokens or trace context fails the build.
 
 **Rationale:** Ensures observability and traceability across distributed systems.
 
@@ -97,8 +100,13 @@ All agents executing workstreams MUST obey these rules:
   "latency_ms": 742,
   "model_status": "MODELS:LIVE:OK",
   "trace_id": "c6f2b0d7a9124f6c",
+  "traceparent": "00-c6f2b0d7a9124f6c9c1d77cd2a4f6aa1-1234567890abcdef-01",
   "message": "Acceptance failed as expected"
 }
+```
+
+```text
+[brAInwav] 2025-10-28T19:22:11.402-07:00 LATENCY:742ms MODELS:LIVE:OK NORTH_STAR:RED_FIRST traceparent=00-c6f2b0d7a9124f6c9c1d77cd2a4f6aa1-1234567890abcdef-01 Acceptance failed as expected
 ```
 
 ---
@@ -303,9 +311,11 @@ Detection relies on CI Conftest failures, observability counters tracking `NORTH
      - Log saved to `logs/vibe-check/<task>.json`
   2. **Hybrid Model Health** – `pnpm models:health && pnpm models:smoke` with live Ollama/Frontier engines (no stubs)
   3. **Knowledge Connector Health** – Verify `${WIKIDATA_MCP_URL}/healthz` and `${ARXIV_MCP_URL}/healthz`; log to `research/connectors-health.log`
-  4. **Trace Context Verification** – `pnpm tsx scripts/ci/verify-trace-context.ts <logfile>` ensures W3C `trace_id` in all logs
+  4. **Trace Context Verification** – `pnpm tsx scripts/ci/verify-trace-context.ts <logfile>` ensures W3C `trace_id` **and** `traceparent` propagate across every governed log line
   5. **Supply-Chain Evidence** – `pnpm sbom:generate && pnpm attest:sign && pnpm verify:attest && pnpm sbom:scan`; store in `sbom/`
   6. **Identity Gate** – CI/services MUST use GitHub Actions OIDC/WIF (no static credentials)
+  7. **Feature Flags** – Only OpenFeature-backed toggles are permitted; ad-hoc env-based toggles are prohibited without a waiver
+  8. **HTTP Cancellation** – All HTTP/tool calls must support `AbortSignal` (or SDK equivalent) to guarantee cancelation safety
 - **Run Manifest Requirements**: `run-manifest.json` MUST include JSON pointers for each attached log artifact **and** persist the raw text submitted to policy helpers so OPA/Conftest inputs remain reproducible.
 - **Enforcement**: PR MUST attach preflight logs (vibe-check, model health, connector health, trace verification, SBOM attestation); missing logs block merge
 
@@ -410,7 +420,7 @@ pnpm sbom:generate && pnpm attest:sign && pnpm verify:attest  # Supply-chain evi
 - Attach Evidence Triplet links (milestone test, contract snapshot, reviewer JSON)
 - Include narrated diff in body
 - Attach preflight logs: `logs/vibe-check/*.json`, model health output, connector health log, SBOM attestation
-- Reference `CHARTER_SHA256: 1c8cbc194209f690ae9fd015c04223a1c619853190d6302a5ccfea6769ceac5f` in description
+- Reference `CHARTER_SHA256: faf6254926f327ac182261de41f0f100b4c4ac24f2ca4700949c091a66cda13a` in description
 
 ---
 
@@ -428,8 +438,7 @@ This document is authoritative. Any conflicts defer to:
 - Workflow MAY define task tiers (fix/feature/refactor) with differentiated gate requirements, provided all tiers enforce these core guardrails
 - Waivers policy detailed in **DEVIATION POLICY** below
 
-**Fragment SHA-256:** `3289664bc8ba94bec3d1418292b76558bcf2ec0eb974e7317f2fb437b5848067`
-**Fragment Path:** `governance/rules/CHARTER_FRAGMENT.md`
+**Fragment Extraction:** Use the region of this file wrapped by `<!-- BEGIN CHARTER_FRAGMENT -->` / `<!-- END CHARTER_FRAGMENT -->` when embedding the condensed charter into agent instruction files. Scripts SHOULD preserve whitespace and Markdown exactly as emitted between those markers.
 
 ---
 
@@ -515,6 +524,10 @@ remediation_plan:
 
 ---
 
+<!-- END CHARTER_FRAGMENT -->
+
+---
+
 ## 📊 **CI ENFORCEMENT MATRIX (Full)**
 
 | Rule ID        | Description                            | CI Job               | Script/Check                                     |
@@ -592,7 +605,7 @@ remediation_plan:
 
 ```bash
 shasum -a 256 governance/rules/AGENT_CHARTER.md
-# 6b158d91437c302c14bf167eb52477c6e90e2604d88bf6e20a8698952feddb2e (matches CHARTER_FRAGMENT.md)
+# 70953d4e7433e886150fcab9daa1dc8c7a735e5ec6877499fd8832720a3900f4 (full document / AGENT_CHARTER.md)
 ```
 
 **Effective Date:** Upon maintainer approval (pending)  

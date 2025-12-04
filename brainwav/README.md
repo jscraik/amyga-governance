@@ -1,4 +1,4 @@
-# .cortex/ Governance Hub
+# brainwav/ Governance Hub
 
 <div align="center">
 
@@ -13,27 +13,27 @@ This directory is the **single source of truth** for all Cortex-OS governance, p
 
 ## Authority Chain
 
-1. **[`.cortex/rules/AGENTS.md`](https://github.com/cortex-os/cortex-os/blob/main/.cortex/rules/AGENTS.md)** - "AGENTS.md is the boss" - Core agentic behavior rules
-2. **[`.cortex/rules/RULES_OF_AI.md`](https://github.com/cortex-os/cortex-os/blob/main/.cortex/rules/RULES_OF_AI.md)** - Fundamental AI governance principles
-3. **[`.cortex/rules/COPILOT-INSTRUCTIONS.md`](https://github.com/cortex-os/cortex-os/blob/main/.cortex/rules/COPILOT-INSTRUCTIONS.md)** - GitHub Copilot specific guidelines
-4. **[`.cortex/policy/`](https://github.com/cortex-os/cortex-os/tree/main/.cortex/policy)** - Machine-readable policies (validated by schemas)
+1. **[`brainwav/governance/00-core/AGENT_CHARTER.md`](governance/00-core/AGENT_CHARTER.md)** - Immutable ethics and core charter
+2. **[`AGENTS.md`](../AGENTS.md)** - "AGENTS.md is the boss" - Root agentic behavior rules
+3. **[`brainwav/governance/00-core/RULES_OF_AI.md`](governance/00-core/RULES_OF_AI.md)** - Fundamental AI governance principles
+4. **[`brainwav/governance/00-core/constitution.md`](governance/00-core/constitution.md)** - Constitutional framework
 5. **Package-level configs** - Local overrides (must comply with global policies)
 
 ## Directory Structure
 
-- **`schemas/`** - JSON Schemas for all policies and data structures
-- **`policy/`** - Runtime policies in JSON format (validated against schemas)
-- **`rules/`** - Human-readable governance documents (Markdown)
-- **`prompts/`** - Agent personas, capability packs, and workflows
-- **`gates/`** - Validation scripts that enforce policies
-- **`runbooks/`** - Operational procedures and incident response
-- **`audit/`** - Compliance tracking and audit logs
-- **`commands/`** - CLI command definitions and utilities
-- **`docs/`** - Governance reference documentation
-- **`indexes/`** - Search indexes used by agents
-- **`library/`** - Shared utility modules
-- **`tools/`** - Automation scripts executed by agents
-- **`tooling/`** - Development helpers and scaffolding
+- **`governance/00-core/`** - Core governance documents (charter, constitution, rules)
+- **`governance/10-flow/`** - Operational workflows and procedures
+- **`governance/20-checklists/`** - Review and validation checklists
+- **`governance/30-compliance/`** - Regulatory compliance mappings
+- **`governance/90-infra/`** - Governance infrastructure (schemas, indexes)
+- **`governance/audit/`** - Compliance tracking and audit logs
+- **`governance/commands/`** - CLI command definitions and utilities
+- **`governance/context/`** - Agent context and reference materials
+- **`governance/docs/`** - Governance reference documentation
+- **`governance/runbooks/`** - Operational procedures and incident response
+- **`governance/templates/`** - Document and artifact templates
+- **`governance-pack/`** - Portable governance configurations
+- **`research/`** - Research notes and integrations
 
 ## Usage
 
@@ -45,9 +45,9 @@ All policies and schemas in this directory are enforced by:
 
 ## Validation
 
-Run all governance validation:
+Run governance bootstrap and validation:
 
 ```bash
-cd .cortex/gates
-pnpm run validate
+pnpm cortex:governance-bootstrap
+pnpm readiness:check
 ```

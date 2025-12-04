@@ -45,6 +45,12 @@
   Implementation plans enhanced via Wikidata/arXiv/Semantic Scholar/OpenAlex/Context7; licensing validated; only SAFE/REVIEW content included.  
   _Evidence:_ `logs/academic-research/findings.json`, license validation notes, references cited in plan.
 
+- **LLM‑S3 — Confession Protocol (BLOCKER at G5)**  
+  Agents MUST produce a separate confession output channel at G5 (and optionally at other gates) that honestly self-assesses compliance with all explicit and implicit objectives. Confessions are evaluated ONLY for truthfulness, not for main work quality. Surfacing failures in confessions does not penalize main work — it enables human oversight.  
+  _Evidence:_ `evidence/confession-report.json`, `CONFESSION:OK` token in logs, false negative rate tracking.  
+  _Rationale:_ Based on OpenAI "Confessions" research (2025) — decoupling honesty incentives from main task rewards reduces reward-hacking, sycophancy, and hidden failures.  
+  _Integration:_ Confession findings feed into Cortex-Aegis risk assessment, Critic Subagent output, and Session Retrospective.
+
 ---
 
 ## Reporting Template
@@ -63,6 +69,6 @@
 
 * OWASP Top 10 for Large Language Model Applications (2025)
 * NIST AI RMF 1.0; NIST Generative AI Profile
-* `governance/10-flow/assurance-system.md` • `governance/10-flow/agentic-coding-workflow.md` • `governance/00-core/CHARTER_FRAGMENT.md`
+* `governance/10-flow/assurance-system.md` • `governance/10-flow/agentic-coding-workflow.md` • `governance/00-core/AGENT_CHARTER.md` (fragment between `<!-- BEGIN/END CHARTER_FRAGMENT -->`)
 * Supply chain: CycloneDX 1.7 • SLSA v1.1 • Cosign v3 bundle
 * Observability: W3C Trace Context • OpenTelemetry

@@ -81,7 +81,7 @@ pnpm governance:sync-hashes:dry-run
 The `governance:sync-hashes` script automatically updates:
 
 1. **`governance/rules/governance-index.json`** - Recomputes SHA-256 for all documents listed
-2. **`AGENTS.md`** - Updates CHARTER_FRAGMENT SHA reference
+2. **`AGENTS.md`** - Updates the embedded charter fragment SHA reference
 3. **`CLAUDE.md`** - Same updates as AGENTS.md
 
 ### Manual Hash Generation
@@ -128,9 +128,9 @@ The `agents-governance.yml` workflow validates:
 2. Verify files exist at declared locations
 3. Check JSON syntax validity
 
-**Missing CHARTER_FRAGMENT References**:
+**Missing charter fragment references**:
 
-1. Ensure AGENTS.md includes SHA-256 reference
+1. Ensure AGENTS.md includes the fragment SHA-256 reference
 2. Run hash sync to update references
 3. Verify charter waiver workflow if intentionally skipping
 

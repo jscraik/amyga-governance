@@ -45,8 +45,8 @@ pnpm cortex:governance-bootstrap
 Update the following files with your project-specific details:
 
 - `AGENTS.md` - Update maintainer and contact information
-- `.cortex/rules/constitution.md` - Define your project's core principles
-- `.cortex/templates/` - Customize templates as needed
+- `brainwav/governance/00-core/constitution.md` - Define your project's core principles
+- `brainwav/governance/templates/` - Customize templates as needed
 
 ## Framework Structure
 
@@ -54,18 +54,15 @@ Update the following files with your project-specific details:
 brainwav/governance/
 ├── 00-core/                  # Foundational law (constitution, charters)
 │   ├── constitution.md       # Supreme governing document
-│   ├── AGENT_CHARTER.md      # Agent behavior and ArcTDD guardrails
-│   ├── CHARTER_FRAGMENT.md   # Charter summary for quick reference
+│   ├── AGENT_CHARTER.md      # Agent behavior + embedded charter fragment markers
 │   ├── vision.md             # Project vision and north star
 │   ├── RULES_OF_AI.md        # AI operational constraints
 │   ├── llm-threat-controls.md # LLM security controls
 │   └── skills-system-governance.md
 ├── 10-flow/                  # Operational workflows
 │   ├── governance-quickstart.md      # Entry point for all workflows
-│   ├── agentic-coding-workflow.md    # G0-G10 gates
-│   ├── agentic-phase-policy.md       # R→G→F→REVIEW phases
-│   ├── assurance-system.md           # Validation system
-│   └── TASK_FOLDER_STRUCTURE.md
+│   ├── agentic-coding-workflow.md    # G0-G10 gates + Phase Machine (§4.4) + Task Folder Layout (§3)
+│   └── assurance-system.md           # Validation system
 ├── 20-checklists/            # Quality validation
 │   └── checklists.md         # Unified checklist source
 ├── 90-infra/                 # Machine-readable configs
