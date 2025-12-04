@@ -1,0 +1,143 @@
+{
+    "description": "Governance document index with precedence order and SHA verification",
+    "version": "2025.12.1",
+    "updated": "2025-12-04",
+    "precedence": [
+        "00-core/constitution.md",
+        "00-core/AGENT_CHARTER.md",
+        "10-flow/governance-quickstart.md",
+        "10-flow/agentic-coding-workflow.md",
+        "10-flow/assurance-system.md",
+        "10-flow/emergency-stop-protocol.md",
+        "10-flow/session-continuity.md",
+        "10-flow/memory-governance.md",
+        "20-checklists/checklists.md",
+        "30-compliance/eu-ai-act.md",
+        "00-core/CHARTER_FRAGMENT.md",
+        "00-core/vision.md",
+        "00-core/llm-threat-controls.md",
+        "00-core/skills-system-governance.md",
+        "10-flow/agentic-phase-policy.md",
+        "10-flow/TASK_FOLDER_STRUCTURE.md",
+        "90-infra/egress-governance.md",
+        "CODESTYLE.md",
+        "SECURITY.md"
+    ],
+    "docs": {
+        "constitution.md": {
+            "path": "00-core/constitution.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["Constitution", "Core Principles"]
+        },
+        "AGENT_CHARTER.md": {
+            "path": "00-core/AGENT_CHARTER.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["[brAInwav]", "MODELS:LIVE:OK", "NORTH_STAR:RED_FIRST"]
+        },
+        "CHARTER_FRAGMENT.md": {
+            "path": "00-core/CHARTER_FRAGMENT.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["Step Budget ≤ 7", "Ask-First ≤ 3", "Evidence Triplet"]
+        },
+        "vision.md": {
+            "path": "00-core/vision.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["Vision", "North Star"]
+        },
+        "llm-threat-controls.md": {
+            "path": "00-core/llm-threat-controls.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["LLM01", "LLM06", "LLM-S0"]
+        },
+        "skills-system-governance.md": {
+            "path": "00-core/skills-system-governance.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["Skills governance", "Structured outputs"]
+        },
+        "governance-quickstart.md": {
+            "path": "10-flow/governance-quickstart.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["governance quickstart", "workflow selection"]
+        },
+        "agentic-coding-workflow.md": {
+            "path": "10-flow/agentic-coding-workflow.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["G0 Initialize", "Evidence Triplet"]
+        },
+        "assurance-system.md": {
+            "path": "10-flow/assurance-system.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["Assurance System", "Time Freshness"]
+        },
+        "agentic-phase-policy.md": {
+            "path": "10-flow/agentic-phase-policy.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["PHASE_TRANSITION", "No HITL before REVIEW"]
+        },
+        "TASK_FOLDER_STRUCTURE.md": {
+            "path": "10-flow/TASK_FOLDER_STRUCTURE.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["task folder", "structure"]
+        },
+        "checklists.md": {
+            "path": "20-checklists/checklists.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["checklist", "quality gates"]
+        },
+        "governance-maintainers.md": {
+            "path": "90-infra/governance-maintainers.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["hash sync", "maintainer"]
+        },
+        "TASK_MANAGEMENT_INDEX.md": {
+            "path": "10-flow/TASK_MANAGEMENT_INDEX.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["task management", "workflow"]
+        },
+        "governance-index.json": {
+            "path": "90-infra/governance-index.json",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["precedence", "sha256"]
+        },
+        "agentic.core.schema.json": {
+            "path": "90-infra/agentic.core.schema.json",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["schema", "validation"]
+        },
+        "governance-pack.map.yaml": {
+            "path": "90-infra/governance-pack.map.yaml",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["pack", "overlay"]
+        },
+        "README.md": {
+            "path": "README.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["governance", "structure"]
+        },
+        "emergency-stop-protocol.md": {
+            "path": "10-flow/emergency-stop-protocol.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["emergency", "termination", "kill switch"]
+        },
+        "session-continuity.md": {
+            "path": "10-flow/session-continuity.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["session", "checkpoint", "resume"]
+        },
+        "memory-governance.md": {
+            "path": "10-flow/memory-governance.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["memory", "retention", "access control"]
+        },
+        "eu-ai-act.md": {
+            "path": "30-compliance/eu-ai-act.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["EU AI Act", "risk classification", "compliance"]
+        },
+        "egress-governance.md": {
+            "path": "90-infra/egress-governance.md",
+            "sha256": "PENDING_RECALC",
+            "required_tokens": ["egress", "allowlist", "rate limit"]
+        }
+    }
+}
