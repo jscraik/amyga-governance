@@ -1,6 +1,6 @@
 # A2A Protocol – Reference & Compliance Rubric
 
-Document Path: `.cortex/context/a2a-protocol-documentation.md`
+Document Path: `brainwav/governance/context/protocols/network/a2a-protocol-documentation.md`
 Version: 2025-08-29
 
 ## 1) Reference Overview

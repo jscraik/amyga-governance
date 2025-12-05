@@ -28,9 +28,9 @@ checklists:
       appliesTo:
         phases:
           - PLAN
-    - id: agent-read-cortex-rules-10-flow-governance-quickstart-md-and-10-flow-agentic-cod
-      description: Agent read `.cortex/rules/10-flow/governance-quickstart.md` and
-        `10-flow/agentic-coding-workflow.md` this session.
+    - id: agent-read-governance-quickstart-and-agentic-coding-workflow
+      description: Agent read `brainwav/governance/10-flow/governance-quickstart.md`
+        and `brainwav/governance/10-flow/agentic-coding-workflow.md` this session.
       severity: MAJOR
       appliesTo:
         phases:
@@ -38,6 +38,14 @@ checklists:
     - id: task-type-flow-selected-task-folder-located-current-gate-g0-g10-identified-in-ru
       description: Task type + flow selected; task folder located; current gate
         (G0–G10) identified in `run-manifest.json`.
+      severity: MAJOR
+      appliesTo:
+        phases:
+          - PLAN
+    - id: compact-flow-mode-selected-and-documented
+      description: Compact/lean mode (Plan → Implement → Verify/Review) selection
+        recorded in `run-manifest.json` with rationale; Oversight marked optional
+        only when no code/model/data/external-call changes.
       severity: MAJOR
       appliesTo:
         phases:

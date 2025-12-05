@@ -7,10 +7,10 @@
         "memorize": {
             "executor": "nx:run-commands",
             "options": {
-                "command": "node ./.cortex/commands/memorize.mjs $TASK_SLUG"
+                "command": "node brainwav/governance/commands/memorize.mjs $TASK_SLUG"
             },
             "outputs": [
-                "{homedir}/.Cortex-OS/tasks/*/logs/memorize"
+                "{homedir}/.agentic-governance/tasks/*/logs/memorize"
             ]
         },
         "arc:close": {

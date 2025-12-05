@@ -219,7 +219,7 @@ fs.writeFileSync(
 - When any academic MCP connector is unavailable, check connector health via `/health` endpoints:
   - Wikidata MCP: `curl ${WIKIDATA_MCP_URL:-http://127.0.0.1:3029}/health`
   - arXiv MCP: `curl ${ARXIV_MCP_URL:-http://127.0.0.1:3041}/health`
-  - Cortex Vibe MCP: `curl ${CORTEX_VIBE_HTTP_URL:-http://127.0.0.1:2001}/health`
+  - Cortex Aegis MCP: `curl ${CORTEX_AEGIS_HTTP_URL:-http://127.0.0.1:2091}/health`
 - Document the outage in a waiver JSON at `logs/academic-research/<slug>-<timestamp>-waiver.json` with `[brAInwav]` branding
 - Record the waiver pointer in `run-manifest.json` and schedule a follow-up check within 72 hours
 - Plans submitted to Oversight must surface outstanding uncertainties (e.g., connector uptime, attestation tooling) so reviewers can challenge mitigations early

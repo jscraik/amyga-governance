@@ -137,13 +137,8 @@ This governance framework enables a self-contained, local-first **Agentic Develo
 **Vision:** Adapters for ChatGPT Apps SDK, Perplexity SSE, frontier APIs.  
 **Done means:** Sample ChatGPT config; SSE demo; rate-limit & auth guards; 403 playbook; protected-resource metadata publishing OAuth scopes.
 
-### 4.10 `apps/chatgpt-dashboard`
-**Vision:** ChatGPT "glass" dashboard (React) rendered via the OpenAI **Apps SDK**, to monitor health, logs, traces, metrics, and control agents **from within ChatGPT**, under the same governance and auth as the MCP hub.  
-**Done means:** Keyboard-navigable UI; live metrics; log search; run controls; role-based access; axe/jest-axe reports; protected-resource discovery (`/.well-known/oauth-protected-resource`) wired; OAuth scopes published (`search.read docs.write memory.read memory.write memory.delete`); app manifest validated in ChatGPT; Cloudflare tunnel tested; structured logs include `brand:"brAInwav"`.
-
-### 4.11 `apps/cortex-os` (ASBR host)
-**Vision:** Boots ASBR, mounts graphs, wires MCP/A2A/Memory/RAG, exposes REST.  
-**Done means:** One-command dev up; golden-path E2E; graceful shutdown; provenance artifacts saved; **structure guard** clean.
+### 4.10 Platform Runtime Surfaces (scope note)
+This vision doc is governance-focused. Runtime host/app specifics (e.g., dashboards, ASBR hosts) live in system architecture/runbook docs. Keep this section scoped to governance expectations; see platform docs for implementation targets.
 
 ---
 

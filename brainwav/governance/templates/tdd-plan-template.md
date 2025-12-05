@@ -85,8 +85,8 @@ Example: "Implement OAuth 2.1 PKCE authentication for brAInwav Local Memory REST
 - [ ] Open questions resolved
 
 ### Internal Dependencies
-- **Package**: `@cortex-os/[package]` - [Why needed]
-- **Package**: `@cortex-os/[package]` - [Why needed]
+- **Package**: `@org/[package]` - [Why needed]
+- **Package**: `@org/[package]` - [Why needed]
 
 ### External Dependencies
 - **Library**: `[package-name]@[version]` - [Purpose] - License: [type]

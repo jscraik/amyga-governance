@@ -20,7 +20,8 @@ if (!homeDir) {
 	process.exit();
 }
 
-const taskDir = path.join(homeDir, '.Cortex-OS', 'tasks', slug);
+const govHome = process.env.GOV_HOME ?? path.join(homeDir, '.agentic-governance');
+const taskDir = path.join(govHome, 'tasks', slug);
 const idsPath = path.join(taskDir, 'json', 'memory-ids.json');
 const outDir = path.join(taskDir, 'logs', 'memorize');
 fs.mkdirSync(outDir, { recursive: true });
@@ -85,12 +86,12 @@ async function updateMemory(memoryId, content, metadata = {}) {
 
 async function recallMemories(query, limit = 5) {
 	// Basic recall functionality for memorize command
-	// For comprehensive recall capabilities, use the /recall command (see /.cortex/commands/recall.md)
+	// For comprehensive recall capabilities, use the /recall command (see brainwav/governance/commands/recall.md)
 	try {
 		const searchParams = new URLSearchParams({
-			query,
-			limit: limit.toString(),
-			domain: 'governance',
+		query,
+		limit: limit.toString(),
+		domain: 'governance',
 		});
 
 		const response = await fetch(`${MEMORY_API_BASE}/memories/search?${searchParams}`, {
@@ -119,7 +120,7 @@ async function main() {
 	const ids = hasId ? JSON.parse(fs.readFileSync(idsPath, 'utf8')) : {};
 
 	// Recall relevant governance memories before storing/updating
-	// Note: For advanced recall capabilities, use the dedicated /recall command (/.cortex/commands/recall.md)
+	// Note: For advanced recall capabilities, use the dedicated /recall command (see brainwav/governance/commands/recall.md)
 	console.log(`[brAInwav] Recalling governance memories for task: ${slug}`);
 	const recalledMemories = await recallMemories(`task governance ${slug} vibe-check decision`, 3);
 	const contextMemories = await recallMemories('governance workflow pattern decision', 2);

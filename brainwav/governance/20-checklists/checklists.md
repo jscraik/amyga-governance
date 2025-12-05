@@ -7,6 +7,22 @@
 
 ---
 
+## Table of Contents
+
+- [0. Document Metadata](#0-document-metadata)
+- [1. How to Use This File](#1-how-to-use-this-file)
+- [2. Local Dev & Agent Run Checklist](#2-local-dev--agent-run-checklist)
+- [3. PR Author Checklist](#3-pr-author-checklist)
+- [4. Code Review Checklist (Human + AI)](#4-code-review-checklist-human--ai)
+- [5. CI Job Checklist (Pipeline Mapping)](#5-ci-job-checklist-pipeline-mapping)
+- [6. Gate-Specific Checklists (ArcTDD G0–G10)](#6-gate-specific-checklists-arctdd-g0g10)
+- [7. Cortex-Aegis Checklists](#7-cortex-aegis-checklists)
+- [8. Accessibility & Inclusive UX Checklist (Global)](#8-accessibility--inclusive-ux-checklist-global)
+- [8.1 Project-Specific Checklist Items](#81-project-specific-checklist-items)
+- [9. Change Management for This File](#9-change-management-for-this-file)
+
+---
+
 ## 0. Document Metadata
 
 - **Doc ID**: `checklists`
@@ -285,6 +301,30 @@ CI jobs must fail closed; waivers recorded in `governance/waivers/` with expiry 
 - [ ] No color-only signalling; icons/text used; contrast meets WCAG 2.2 AA.
 - [ ] Respects reduced-motion preferences; animations limited.
 - [ ] A11y report (axe/jest-axe or equivalent) attached in `evidence/test-results/`.
+
+---
+
+<!-- PROJECT-SPECIFIC: START -->
+## 8.1 Project-Specific Checklist Items
+
+> **Instructions:** Add project-specific checklist items here. This section is NOT overwritten when upgrading the governance pack.
+
+### Additional PR Checklist Items
+
+- [ ] _Project-specific item 1_
+- [ ] _Project-specific item 2_
+
+### Additional Review Checklist Items
+
+- [ ] _Project-specific review item 1_
+
+### Project-Specific Quality Gates
+
+| Gate | Requirement | Evidence |
+|------|-------------|----------|
+| _none_ | — | — |
+
+<!-- PROJECT-SPECIFIC: END -->
 
 ---
 

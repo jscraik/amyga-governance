@@ -5,7 +5,7 @@
 [![Support](https://img.shields.io/badge/support-welcoming-blue.svg)](#getting-help)
 
 **Building an Inclusive and Welcoming Community**
-_Cortex-OS is committed to providing a safe, inclusive, and harassment-free experience for everyone_
+_This project is committed to providing a safe, inclusive, and harassment-free experience for everyone_
 
 ---
 
@@ -87,7 +87,7 @@ This Code of Conduct applies within all community spaces, including:
 
 - **GitHub repositories** - Issues, pull requests, discussions, and code reviews
 - **Documentation sites** - Comments and contributions to documentation
-- **Social media** - Official Cortex-OS social media accounts and hashtags
+- **Social media** - Official project social media accounts and hashtags
 - **Chat platforms** - Discord, Slack, or other official communication channels
 - **Forums and mailing lists** - Any official or semi-official discussion platforms
 
@@ -112,8 +112,8 @@ This Code of Conduct also applies when an individual is officially representing 
 
 If you experience or witness unacceptable behavior, please report it by contacting the community leaders at:
 
-- **Primary Contact**: <conduct@cortex-os.dev>
-- **Alternative Contact**: <team@cortex-os.dev>
+- **Primary Contact**: <conduct@brainwav.dev>
+- **Alternative Contact**: <team@brainwav.dev>
 - **For urgent matters**: Include "URGENT" in the subject line
 
 ### What to Include

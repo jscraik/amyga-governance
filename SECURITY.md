@@ -192,6 +192,32 @@ Expect acknowledgement within 48 hours; fixes are prioritized by severity.
 
 ---
 
+<!-- PROJECT-SPECIFIC: START -->
+## Project Security Contacts
+
+> **Instructions:** Add project-specific security contacts and procedures here. This section is NOT overwritten when upgrading the governance pack.
+
+### Security Team
+
+- Primary contact: `security@your-project.example`
+- Backup: `@your-security-lead`
+
+### Project-Specific Security Requirements
+
+<!-- Add any additional security requirements beyond the base governance pack -->
+
+| Requirement | Implementation | Notes |
+|-------------|----------------|-------|
+| _none_ | — | — |
+
+### Sensitive Data Handling
+
+<!-- Document project-specific PII, credentials, or sensitive data flows -->
+
+<!-- PROJECT-SPECIFIC: END -->
+
+---
+
 ## Response Timeline
 
 | Severity | Initial Response | Target Resolution |

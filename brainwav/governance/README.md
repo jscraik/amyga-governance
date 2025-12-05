@@ -254,5 +254,39 @@ See [`90-infra/governance-maintainers.md`](./90-infra/governance-maintainers.md)
 
 ---
 
+<!-- PROJECT-SPECIFIC: START -->
+## 🏢 Project-Specific Governance
+
+> **Instructions:** Edit this section to add project-specific governance contacts and procedures. This section is NOT overwritten when upgrading the governance pack.
+
+### Project Governance Contacts
+
+| Role | Contact | Escalation |
+|------|---------|------------|
+| Governance Lead | _@your-handle_ | Primary |
+| Security Contact | _@security-lead_ | Security issues |
+| On-Call | _See PagerDuty_ | P0 incidents |
+
+### Project-Specific Channels
+
+- **Slack**: _#your-project-ops_
+- **GitHub Team**: _@your-org/your-team_
+- **Email**: _team@your-domain.com_
+
+### Local Governance Additions
+
+<!-- Add any project-specific governance procedures that extend the framework -->
+
+### Project Document Registry
+
+<!-- List any project-specific governance documents not in the framework -->
+| Document | Location | Purpose |
+|----------|----------|--------|
+| _Project Runbook_ | _/docs/runbook.md_ | _Ops procedures_ |
+
+<!-- PROJECT-SPECIFIC: END -->
+
+---
+
 **Maintained by**: brAInwav Development Team  
 **Version**: 2025.11.0

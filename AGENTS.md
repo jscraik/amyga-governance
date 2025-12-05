@@ -1,6 +1,6 @@
 <!--
 file_path: "AGENTS.md"
-description: "Agent Operational Instructions for Cortex‑OS — Repository Root Reference (ArcTDD, Phase Machine, Governance-Index, Live-Only ML, Reuse-First, Academic License Validation)"
+description: "Agent Operational Instructions — Repository Root Reference (ArcTDD, Phase Machine, Governance-Index, Live-Only ML, Reuse-First, Academic License Validation)"
 maintainer: "brAInwav Development Team"
 last_updated: "2025-12-04"
 version: "1.7.0"
@@ -12,7 +12,7 @@ audit:
   signoff: []
 -->
 
-# AGENTS — Cortex‑OS (authoritative)
+# AGENTS — Governance Pack (authoritative)
 
 > **AGENTS.md is policy.** CI enforces the rules herein. Where this file references machine‑readable artefacts (manifests, logs, SHAs), merges **block** if evidence is missing or stale.
 
@@ -24,7 +24,7 @@ audit:
 
 ## Quick Navigation
 
-- [AGENTS — Cortex‑OS (authoritative)](#agents--cortexos-authoritative)
+- [AGENTS — Governance Pack (authoritative)](#agents--governance-pack-authoritative)
   - [Quick Navigation](#quick-navigation)
   - [0) Purpose](#0-purpose)
   - [0.1) ArcTDD Charter (MANDATORY)](#01-arctdd-charter-mandatory)
@@ -86,7 +86,7 @@ audit:
 > Canonical copy: `brainwav/governance/00-core/AGENT_CHARTER.md` (use the `<!-- BEGIN/END CHARTER_FRAGMENT -->` markers to extract the compact fragment; SHA‑256 recorded below).
 
 - **Charter Location:** `brainwav/governance/00-core/AGENT_CHARTER.md`
-- **Charter SHA‑256:** `faf6254926f327ac182261de41f0f100b4c4ac24f2ca4700949c091a66cda13a` *(fragment between `<!-- BEGIN/END CHARTER_FRAGMENT -->` markers; recomputed by CI)*
+- **Charter SHA‑256:** `d3e96132267e288fd98717e1260b5ba77cfdfcbd1f08733066ddf727c767f3c0` *(fragment between `<!-- BEGIN/END CHARTER_FRAGMENT -->` markers; recomputed by CI)*
 - **Enforcement:** Violations block merge via CI (`charter` job).
 - **Waiver Activation Rule:** A waiver is **valid** only after `charter-enforce / danger` posts ✅ with a link to the **Apply Waiver** workflow run that recorded Maintainer approval.
 
@@ -171,16 +171,17 @@ Run once per session (IDE open, CI init, agent cold start):
 ```bash
 pnpm cortex:governance-bootstrap
 ```
+```
 
-Generates `.cortex/agent-governance-context.json` containing:
+Generates `.agentic-governance/agent-context.json` containing:
 
 - `repo_root`, `agents_md_path`, `AGENTS_MD_SHA`
 - `governance_index_path`
 - `workflows` mapping (`feature`, `fix`, `refactor`, `research`, `code_review`) → section hints in `brainwav/governance/10-flow/agentic-coding-workflow.md`
-- MCP client configs derived from the transport registry `.cortex/mcp.runtime.json`:
-  - `.cortex/mcp.claude.json` (Claude/desktop)
-  - `.cortex/mcp.vscode.json` (VS Code / Claude Code)
-  - Re-run bootstrap whenever `.cortex/mcp.runtime.json` changes.
+- MCP client configs derived from the transport registry `.agentic-governance/mcp.runtime.json`:
+  - `.agentic-governance/mcp.claude.json` (Claude/desktop)
+  - `.agentic-governance/mcp.vscode.json` (VS Code / Claude Code)
+  - Re-run bootstrap whenever `.agentic-governance/mcp.runtime.json` changes.
 - Optional `--health-check --task <slug>` will probe each MCP transport and write results to `tasks/<slug>/logs/connector-health/connector-health-*.json` for Cortex Aegis inputs.
 
 > [brAInwav] **Health Check Operational Note:**  
@@ -200,7 +201,7 @@ Generates `.cortex/agent-governance-context.json` containing:
 **Preamble Injection Example:**
 
 ```text
-You are operating in Cortex-OS. Governance: AGENTS.md, governance-index.json, agentic-coding-workflow.md. When user states a task type, select matching workflow section and follow it.
+You are operating under the Agentic Governance pack. Governance: AGENTS.md, governance-index.json, agentic-coding-workflow.md. When user states a task type, select matching workflow section and follow it.
 ```
 
 **Difference vs Task Bootstrap (see §24):** No slug creation, no run‑manifest; pure discovery + metadata.
@@ -348,7 +349,7 @@ pnpm oversight:vibe-check \
 
 - OpenTelemetry traces/logs/metrics; W3C `traceparent` propagated; every log has `trace_id`.
 - Performance budgets enforced in CI.
-- AI provenance: `.cortex/audit/ai/AI_CONTRIB_LOG.yaml` entries for AI‑assisted commits.
+- AI provenance: `.agentic-governance/audit/ai/AI_CONTRIB_LOG.yaml` entries for AI‑assisted commits.
 
 ---
 
@@ -380,7 +381,7 @@ Persist key decisions to BOTH:
 Record IDs in `tasks/<slug>/json/memory-ids.json` and cite them in PRs.
 
 **Profiles & Launch control:**
-`~/.Cortex-OS/scripts/launchd/toggle-local-memory.sh` reinstalls the LaunchAgent,
+`~/.agentic-governance/scripts/launchd/toggle-local-memory.sh` reinstalls the LaunchAgent,
 restarts managed Qdrant (127.0.0.1:6333), and rebinds ports 3002/3026; removes
 legacy agents.
 
@@ -441,7 +442,7 @@ NEVER use grep for project-wide searches (slow, ignores .gitignore). ALWAYS use 
 
 ## 19) Environments, Ports, Bundling
 
-- **Env loader:** `scripts/utils/dotenv-loader.mjs` or `@cortex-os/utils`; **do not** call `dotenv.config()` directly.
+- **Env loader:** `scripts/utils/dotenv-loader.mjs` or `@governance/utils`; **do not** call `dotenv.config()` directly.
 - **Secrets:** `op run …` for ephemeral injection.
 - **Single‑file deployable bundles** for services (e.g., MCP server with
   `bundle:single`); no workspace‑relative resolution in production artefacts.
@@ -620,13 +621,48 @@ CI mirrors the filled checklist to `brainwav/governance/audit/reviews/<PR_NUMBER
 
 ---
 
+<!-- PROJECT-SPECIFIC: START -->
+## 30.1) Project-Specific Configuration
+
+> **Instructions:** Edit this section to add project-specific maintainers, escalation paths, and local overrides. This section is NOT overwritten when upgrading the governance pack.
+
+### Project Maintainers
+
+- Primary: `@your-github-handle`
+- Backup: `@backup-maintainer`
+
+### Local Escalation Path
+
+1. Project lead
+2. Team Slack channel: `#your-project`
+3. Governance pack maintainers (see §30)
+
+### Project-Specific Overrides
+
+<!-- Add any project-specific rule tightenings here (you MAY tighten, MUST NOT weaken) -->
+
+| Rule ID | Override | Justification |
+|---------|----------|---------------|
+| _none_ | — | — |
+
+### Project Ports & Endpoints
+
+| Service | Port | Notes |
+|---------|------|-------|
+| Local dev server | 3000 | — |
+| API | 4000 | — |
+
+<!-- PROJECT-SPECIFIC: END -->
+
+---
+
 ## 31) Changelog
 
 - **1.7.0 — 2025‑12‑04**
 
-  - **Path alignment:** Updated all references from `/.cortex/rules/*` to `brainwav/governance/*` to match actual project structure.
+  - **Path alignment:** Updated governance paths to `brainwav/governance/*` to match actual project structure.
   - **Removed Agent‑Toolkit section:** Replaced with simplified **Fast Tools (MANDATORY)** section (§16) using clean FAST-TOOLS PROMPT v1 format.
-  - **Removed AGENTIC_WORKFLOWS.cortex-os.md references:** Consolidated into `agentic-coding-workflow.md` which now contains all operational workflows.
+  - **Removed legacy AGENTIC_WORKFLOWS doc references:** Consolidated into `agentic-coding-workflow.md` which now contains all operational workflows.
   - **Phase Machine reference fix:** Updated to §4.4 (was §4.3).
   - **Governance index alignment:** Single canonical path at `brainwav/governance/90-infra/governance-index.json`.
 

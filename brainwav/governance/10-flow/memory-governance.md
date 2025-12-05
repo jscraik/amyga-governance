@@ -13,6 +13,24 @@ This document establishes governance policies for persistent AI memory operation
 
 ---
 
+## Table of Contents
+
+- [Purpose](#purpose)
+- [1. Memory Architecture](#1-memory-architecture)
+- [2. Access Control](#2-access-control)
+- [3. Audit Requirements](#3-audit-requirements)
+- [4. Retention Policies](#4-retention-policies)
+- [5. Content Policies](#5-content-policies)
+- [6. Multi-Agent Coordination](#6-multi-agent-coordination)
+- [7. Memory Parity Requirements](#7-memory-parity-requirements)
+- [8. Privacy & Compliance](#8-privacy--compliance)
+- [9. Monitoring & Alerts](#9-monitoring--alerts)
+- [10. MCP Security & AgentFacts Provenance](#10-mcp-security--agentfacts-provenance)
+- [11. Project-Specific Memory Configuration](#11-project-specific-memory-configuration)
+- [References](#references)
+
+---
+
 ## 1. Memory Architecture
 
 ### 1.1 Memory Types
@@ -393,6 +411,45 @@ Research on MCP threats (arXiv:2511.20920) and AgentFacts (arXiv:2506.13794) req
 
 5. **Model Card Linkage**
   - Model cards must state whether memory access is enabled and cite the MCP controls in effect.
+
+<!-- PROJECT-SPECIFIC: START -->
+## 11. Project-Specific Memory Configuration
+
+> **Instructions:** Edit this section to define project-specific memory policies. This section is NOT overwritten when upgrading the governance pack.
+
+### Custom Retention Policies
+
+| Memory Type | Project TTL | Reason |
+|-------------|-------------|--------|
+| _Task context_ | _7 days_ | _Sprint-based cleanup_ |
+| _User preferences_ | _90 days_ | _UX consistency_ |
+
+### Project Data Classifications
+
+| Classification | Memory Storage | Encryption | Retention |
+|---------------|----------------|------------|----------|
+| _Standard_ | _Default_ | _At-rest_ | _Per policy_ |
+| _Sensitive_ | _Isolated namespace_ | _Field-level_ | _30 days max_ |
+
+### Project Memory Namespaces
+
+```yaml
+# Add project-specific namespaces
+namespaces:
+  - name: "project-context"
+    access: project-team
+    retention: 30d
+```
+
+### Compliance Overrides
+
+<!-- Add any project-specific compliance requirements -->
+- [ ] GDPR Article 17 (Right to Erasure) process documented
+- [ ] Data subject access request workflow defined
+
+<!-- PROJECT-SPECIFIC: END -->
+
+---
 
 ## References
 

@@ -2,16 +2,16 @@
 
 ## Introduction
 
-The Model Context Protocol (MCP) is comprehensively implemented across Cortex-OS as a central hub architecture
+The Model Context Protocol (MCP) is implemented across the platform as a central hub architecture
 that enables secure, scalable AI tool integration. Our implementation follows a **centralized hub pattern**
 with **A2A event bridge integration** for internal communication and **secure external access** via Cloudflare tunnels.
 
-### Cortex-OS MCP Architecture
+### MCP Architecture
 
 - **Central Hub**: All MCP communication routes through a centralized server (port 3024)
 - **A2A Integration**: Internal communication flows through Application-to-Application events
 - **Multi-Language Support**: TypeScript, Python, and Rust implementations
-- **Secure External Access**: Cloudflare tunnel at `https://cortex-mcp.brainwav.io`
+- **Secure External Access**: Cloudflare tunnel at `https://governance-mcp.brainwav.io`
 - **Zero-Downtime Operations**: Automated tunnel rotation and health monitoring
 
 ### Implementation Status
@@ -25,7 +25,7 @@ with **A2A event bridge integration** for internal communication and **secure ex
 
 ### Quick Start
 
-- **Use MCP Tools**: Connect via central hub at `https://cortex-mcp.brainwav.io`
+- **Use MCP Tools**: Connect via central hub at `https://governance-mcp.brainwav.io`
 - **Internal Integration**: Use A2A events for agent-to-agent MCP calls
 - **Develop Tools**: Follow package-specific MCP tool patterns
 - **Deploy Services**: Leverage existing infrastructure and patterns
@@ -57,7 +57,7 @@ All SDKs support:
 **packages/mcp-core**: Enhanced MCP client with multi-transport support
 **packages/mcp-registry**: File-based registry with schema validation
 **packages/mcp-bridge**: Transport bridging with circuit breaker patterns
-**packages/cortex-mcp**: Python FastMCP server implementation
+**packages/mcp-server**: Python FastMCP server implementation
 
 ### Communication Patterns
 
@@ -65,9 +65,9 @@ All SDKs support:
 
 ```typescript
 await bridge.sendEvent({
-  source: 'urn:cortex:agents',
-  type: 'cortex.mcp.tool.requested',
-  data: { tool: 'search', serverName: 'cortex', args: {...} }
+  source: 'urn:governance:agents',
+  type: 'governance.mcp.tool.requested',
+  data: { tool: 'search', serverName: 'governance', args: {...} }
 });
 ```
 
@@ -76,7 +76,7 @@ await bridge.sendEvent({
 ```typescript
 const client = createEnhancedClient({
   transport: 'http',
-  endpoint: 'https://cortex-mcp.brainwav.io'
+  endpoint: 'https://governance-mcp.brainwav.io'
 });
 ```
 
@@ -179,7 +179,7 @@ when versions are incompatible.
 
 **TypeScript (58+ tool files)**:
 
-- `apps/cortex-webui/backend/src/mcp/tools.ts` - WebUI operations
+- `apps/webui/backend/src/mcp/tools.ts` - WebUI operations
 - `packages/model-gateway/src/adapters/mcp-adapter.ts` - Model routing
 - `packages/memories/src/mcp/tools.ts` - Memory management
 - `packages/rag/src/mcp/tools.ts` - RAG operations
@@ -187,14 +187,14 @@ when versions are incompatible.
 
 **Python**:
 
-- `packages/cortex-mcp/cortex_fastmcp_server_v2.py` - Main MCP server
-- `apps/cortex-py/src/cortex_py/mcp/` - Embedding and health tools
+- `packages/mcp-server/cortex_fastmcp_server_v2.py` - Main MCP server
+- `apps/python-mcp/src/cortex_py/mcp/` - Embedding and health tools
 - FastMCP 2.0 compatible implementation
 
 **Rust**:
 
-- `apps/cortex-code/codex-rs/mcp-client/src/mcp_client.rs` - Async MCP client
-- `apps/cortex-code/codex-rs/mcp-types/src/lib.rs` - Generated type system
+- `apps/codex-rs/mcp-client/src/mcp_client.rs` - Async MCP client
+- `apps/codex-rs/mcp-types/src/lib.rs` - Generated type system
 - Full protocol compliance with typed interfaces
 
 ### Infrastructure
@@ -209,7 +209,7 @@ when versions are incompatible.
 
 - Config: `config/cloudflared/mcp-tunnel.yml`
 - Rotation: `scripts/cloudflare/mcp-tunnel-rotate.sh`
-- External endpoint: `https://cortex-mcp.brainwav.io`
+- External endpoint: `https://governance-mcp.brainwav.io`
 
 **A2A Bridge**:
 
@@ -219,9 +219,9 @@ when versions are incompatible.
 
 ## Frequently Asked Questions
 
-### How is MCP implemented in Cortex-OS?
+### How is MCP implemented in the governance stack?
 
-Cortex-OS uses a **central hub architecture** where all MCP communication flows through a centralized server.
+The governance stack uses a **central hub architecture** where all MCP communication flows through a centralized server.
 Internal communication between agents uses A2A events, while external tool access goes through the central MCP hub
 with Cloudflare tunnel security.
 

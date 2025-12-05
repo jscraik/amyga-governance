@@ -1,15 +1,14 @@
 metadata:
-  schemaVersion: https://cortex-os.brainwav.dev/schemas/agentic.core.schema.json
+  schemaVersion: https://governance.brainwav.dev/schemas/agentic.core.schema.json
   packVersion: 0.1.0
   generatedAt: 2025-12-03T00:39:54.121Z
   sourceShas:
-    AGENTIC_WORKFLOWS.cortex-os.md: 1444a979a6238771d8306c7962f96d8d6262df02dd73f07d1d0737945e0d17c9
-    AGENT_CHARTER.md: 70953d4e7433e886150fcab9daa1dc8c7a735e5ec6877499fd8832720a3900f4
     agentic-coding-workflow.md: 7ea61989105a13f64ec81c46cb018b5655b54268bcd8831f4212eec819c72c76
+    AGENT_CHARTER.md: 70953d4e7433e886150fcab9daa1dc8c7a735e5ec6877499fd8832720a3900f4
     cortex-aegis.md: cddf030cc8be93055bbd2493f90de926c28f58fd1859d99b416ff95fb1da22cd
     governance-maintainers.md: 91ace01d09b10d30e9607c41b1e55ce1fe0bee0aa2fadb929aa7e5583f465590
     governance-quickstart.md: 1795f44dd28df68f335d00d2add94d6617f43ea0fbe92fb743394f8387a6ced3
-    checklists.cortex-os.md: ab1a82f3f5d7b52a4c7bc590596207b336c80186b173c7e648d1b5c2ed3eb144
+    checklists.md: ab1a82f3f5d7b52a4c7bc590596207b336c80186b173c7e648d1b5c2ed3eb144
     constitution.md: 47b0df7a7aafcb7cc3fb512290a7c2b2d0688b780ea73520fb1a40185531e5b9
     llm-threat-controls.md: 75bb7f77caa566add4489259f97512eed84e52a0718eb0b2e3de4f426687fbf1
     skills-system-governance.md: f3fbbca5b4516d71139d66610c992bd461a4fdc85c45b840fedc2fe3fb7ce64f
@@ -215,12 +214,12 @@ governance:
     - 10-flow/governance-quickstart.md
     - 10-flow/agentic-coding-workflow.md
     - 10-flow/cortex-aegis.md
-    - 20-checklists/checklists.cortex-os.md
+    - 20-checklists/checklists.md
     - 00-core/vision.md
     - 00-core/llm-threat-controls.md
     - 00-core/skills-system-governance.md
     - CODESTYLE.md
     - SECURITY.md
-  hashIndexPath: /.cortex/rules/governance-index.json
+  hashIndexPath: brainwav/governance/90-infra/governance-index.json
   requireHashVerification: true
 profiles: {}

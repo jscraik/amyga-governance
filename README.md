@@ -48,7 +48,17 @@ pnpm cortex:governance-bootstrap
 
 # 5. (Optional) Validate MCP health + oversight
 pnpm oversight:vibe-check --goal "<task>" --plan "<≤7 steps>" --session "demo"
+
+# 6. Verify required tooling and governance files
+pnpm readiness:check
 ```
+
+### Automation scripts (wired)
+
+- `pnpm ensure:tools` — checks required CLIs (rg, fd, jq, semgrep, gitleaks, trivy, cosign, osv-scanner, markdownlint-cli2) and engine versions.
+- `pnpm cortex:governance-bootstrap` — writes `.agentic-governance/agent-context.json` with AGENTS.md hash and workflow pointers.
+- `pnpm oversight:vibe-check --goal "..." --plan "..." [--session <id>] [--slug <task>]` — posts to the Cortex Aegis HTTP endpoint (default `http://127.0.0.1:2091/vibe_check`) and logs JSON under the task.
+- `pnpm readiness:check` — confirms core governance files exist and required tools are present.
 
 Customize `AGENTS.md`, `brainwav/governance/00-core/constitution.md`, and templates under `brainwav/governance/templates/` with your maintainers, escalation paths, and brand wording. Update `.cortex/mcp.runtime.json` if you add or relocate MCP transports.
 
@@ -186,6 +196,39 @@ tasks/<slug>/
 2. Run `pnpm cortex:governance-bootstrap` to refresh governance hashes.
 3. Follow the ArcTDD workflow with task folders, Evidence Triplet, Cortex-Aegis oversight, and security gates.
 4. Open a PR referencing the relevant governance sections; ensure `agents-guard`, lint, typecheck, tests, and security pipelines pass.
+
+---
+
+<!-- PROJECT-SPECIFIC: START -->
+## Project Configuration
+
+> **Instructions:** Edit this section to customize the governance framework for your project. This section is NOT overwritten when upgrading the governance pack.
+
+### Project Identity
+
+| Field | Value |
+|-------|-------|
+| Project Name | _Your Project Name_ |
+| Repository | _your-org/your-repo_ |
+| Primary Contact | _@your-handle_ |
+| Slack Channel | _#your-project_ |
+
+### Custom Badges
+
+<!-- Add your project badges here -->
+<!-- [![CI](https://github.com/your-org/your-repo/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/your-repo/actions) -->
+
+### Getting Started Overrides
+
+<!-- Add any project-specific bootstrap steps that differ from the default -->
+
+### Project-Specific MCP Servers
+
+| Server | Port | Purpose |
+|--------|------|--------|
+| _Example_ | _3100_ | _Project-specific tooling_ |
+
+<!-- PROJECT-SPECIFIC: END -->
 
 ---
 

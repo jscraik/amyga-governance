@@ -13,6 +13,24 @@ This document defines egress control policies for agent network access. Based on
 
 ---
 
+## Table of Contents
+
+- [Purpose](#purpose)
+- [1. Default Policy](#1-default-policy)
+- [2. Allowlist Configuration](#2-allowlist-configuration)
+- [3. Rate Limiting](#3-rate-limiting)
+- [4. Logging Requirements](#4-logging-requirements)
+- [5. Isolation & Containment](#5-isolation--containment)
+- [6. DNS Control](#6-dns-control)
+- [7. TLS/SSL Requirements](#7-tlsssl-requirements)
+- [8. Monitoring & Alerts](#8-monitoring--alerts)
+- [9. Compliance Integration](#9-compliance-integration)
+- [10. Configuration Management](#10-configuration-management)
+- [11. Project-Specific Egress Configuration](#11-project-specific-egress-configuration)
+- [References](#references)
+
+---
+
 ## 1. Default Policy
 
 ```yaml
@@ -419,6 +437,50 @@ pnpm egress:emergency-block --reason "Security incident"
 # Restore normal operation
 pnpm egress:restore --incident-id "inc-123"
 ```
+
+---
+
+<!-- PROJECT-SPECIFIC: START -->
+## 11. Project-Specific Egress Configuration
+
+> **Instructions:** Edit this section to define project-specific network policies. This section is NOT overwritten when upgrading the governance pack.
+
+### Project Allowlist Additions
+
+```yaml
+project_allowlist:
+  # Add project-specific domains
+  - domain: "api.your-service.com"
+    ports: [443]
+    protocols: [https]
+    rate_limit: 100/min
+    reason: "Internal API"
+    approved_by: "@your-handle"
+    expires: "2025-06-01"  # Review date
+```
+
+### Project Rate Limits
+
+| Domain | Default Limit | Project Override | Reason |
+|--------|--------------|------------------|--------|
+| _api.github.com_ | _500/min_ | _1000/min_ | _High PR volume_ |
+
+### Project Blocklist
+
+```yaml
+project_blocklist:
+  # Block specific domains for this project
+  - domain: "*.competitor.com"
+    reason: "Legal restriction"
+```
+
+### Monitoring Overrides
+
+- **Alert threshold**: _Override default if needed_
+- **Log retention**: _Override default if compliance requires_
+- **PII scrubbing**: _Additional fields to scrub_
+
+<!-- PROJECT-SPECIFIC: END -->
 
 ---
 

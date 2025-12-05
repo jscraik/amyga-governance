@@ -4,14 +4,14 @@
 - Upstream source: https://github.com/jlowin/fastmcp.git (tracks FastMCP 2.x)
 - Local package: `fastmcp==2.12.3` (verify with `python -c "import fastmcp; print(fastmcp.__version__)"`)
 
-## Cortex MCP Integration Checklist
-- Discovery manifest advertises the Streamable HTTP transport and points to `https://cortex-mcp.brainwav.io/mcp`
-- `DEFAULT_TRANSPORT` is overridable through `CORTEX_MCP_TRANSPORT`; default is `streamable-http`
-- Run regression test: `uv run pytest packages/cortex-mcp/tests/test_discovery_route.py`
+## MCP Integration Checklist
+- Discovery manifest advertises the Streamable HTTP transport and points to `https://governance-mcp.brainwav.io/mcp`
+- `DEFAULT_TRANSPORT` is overridable through `MCP_TRANSPORT`; default is `streamable-http`
+- Run regression test: `uv run pytest packages/mcp-server/tests/test_discovery_route.py`
 - Environment:
-  - `CORTEX_MCP_PUBLIC_ENDPOINT=https://cortex-mcp.brainwav.io/mcp`
-  - `CORTEX_MCP_TRANSPORT=streamable-http` (optional override)
-  - JWT secret + rate-limit env vars per `packages/cortex-mcp/config.py`
+  - `MCP_PUBLIC_ENDPOINT=https://governance-mcp.brainwav.io/mcp`
+  - `MCP_TRANSPORT=streamable-http` (optional override)
+  - JWT secret + rate-limit env vars per `packages/mcp-server/config.py`
 
 ## Reference Docs
 

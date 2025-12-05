@@ -2,7 +2,28 @@
 
 # Agentic Coding Workflow
 
+> **At a glance:** Flows = Feature, Fix, Refactor, Research, Review. Gates bundle R→G→F→REVIEW with optional compact mode (Plan, Implement, Verify/Review). Oversight (Cortex-Aegis) required when code/model/data/external-call changes or risk ≥ medium. Evidence Triplet + run-manifest are mandatory; memory parity required. See §2.3 for compact flow; §4 for tool gating.
+
 > Canonical, enforceable workflow for humans + agents across feature, research, fix, refactor, and review flows.
+
+---
+
+## Table of Contents
+
+- [0. Document Metadata](#0-document-metadata)
+- [1. Purpose & Scope](#1-purpose--scope)
+- [2. Task Types & Canonical Flows](#2-task-types--canonical-flows)
+- [3. Standard Task Folder Layout](#3-standard-task-folder-layout)
+- [4. ArcTDD Gate Policy (G0–G10)](#4-arctdd-gate-policy-g0g10)
+- [5. Canonical Flows](#5-canonical-flows)
+  - [5.1 Feature Implementation Flow](#51-feature-implementation-flow)
+  - [5.2 Research / Spike Flow](#52-research--spike-flow)
+  - [5.3 Fix Implementation Flow](#53-fix-implementation-flow)
+  - [5.4 Refactor / Cleanup Flow](#54-refactor--cleanup-flow)
+  - [5.5 Code Review Flow](#55-code-review-flow)
+- [6. JEDI Coding Rules & Agent Defaults](#6-jedi-coding-rules--agent-defaults)
+- [7. Integration with Cortex-Aegis](#7-integration-with-cortex-aegis)
+- [8. References & Change Process](#8-references--change-process)
 
 ---
 
@@ -69,6 +90,18 @@
 | Bug / incident         | Fix                 | G0–G7 (extend to G8–G10 for hotfix rollout) | Needs reproducer, failing test, and postmortem if SEV ≥ 2. |
 | Refactor / cleanup     | Refactor            | G0–G7 → G10                      | Behaviour-preserving; emphasise invariants + perf baselines. |
 | Review-only work       | Code Review         | G5–G7 → G10                      | No authoring; consumes Evidence Triplet + manifests. |
+
+### 2.3 Compact Flow (lean mode)
+
+Use this when work is low/medium risk and the overhead of full per-gate checkpoints would slow delivery. It **does not** weaken evidence requirements; it bundles gates and clarifies when Oversight is required.
+
+- **Phases (bundled gates):**
+  - **Plan** (G0–G2): classify task, capture time-freshness token, 1–7 step plan, risk tags, reuse scan, minimal `plan/PLAN.md`, update `run-manifest.json`.
+  - **Implement** (G3–G4): establish failing→passing test path, apply changes, keep `work/implementation-log.md` concise, log deviations.
+  - **Verify/Review** (G5–G7): run tests/linters/coverage, record Evidence Triplet, run Oversight **only** if code/model/data/external-call surface changed or risk ≥ medium, summarize in `evidence/summary.md` and `run-manifest.json`.
+- **Lightweight tasks (docs/typo/non-executable):** plan ≤2 steps, tests noted as not applicable, Oversight optional with rationale in `plan/PLAN.md`, still record a memory entry and mirror to `.github/instructions/memories.instructions.md`.
+- **High-risk tasks (prod data/models/security/perf-sensitive):** stay on full G0–G10; do not use compact bundling.
+- **Evidence bundle:** one `run-manifest.json` entry per bundled phase and a single `evidence/summary.md` linking the Triplet (plan anchor, failing→passing evidence, review). Memory parity still required.
 
 ---
 

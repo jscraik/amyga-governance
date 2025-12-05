@@ -17,6 +17,8 @@ if (!homeDir) {
 	process.exit();
 }
 
+const govHome = process.env.GOV_HOME ?? path.join(homeDir, '.agentic-governance');
+
 // Determine repo root (try git, fallback to cwd)
 let repoRoot;
 try {
@@ -30,10 +32,10 @@ try {
 const slug = process.env.TASK_SLUG;
 let outDir;
 if (slug) {
-	const taskDir = path.join(homeDir, '.Cortex-OS', 'tasks', slug);
+	const taskDir = path.join(govHome, 'tasks', slug);
 	outDir = path.join(taskDir, 'logs', 'daily-summary');
 } else {
-	outDir = path.join(homeDir, '.Cortex-OS', 'logs', 'daily-summary');
+	outDir = path.join(govHome, 'logs', 'daily-summary');
 }
 fs.mkdirSync(outDir, { recursive: true });
 

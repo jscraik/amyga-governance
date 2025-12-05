@@ -83,14 +83,14 @@ For packages at different depths, update the `extends` field:
 mkdir -p tests
 
 # Copy test config
-cp ../..governance/templates/tsconfig/tsconfig.spec.json tsconfig.spec.json
+cp <path-to-governance>/brainwav/governance/templates/tsconfig/tsconfig.spec.json tsconfig.spec.json
 ```
 
 ### Step 5: Create package.json
 
 ```json
 {
-  "name": "@cortex-os/my-package",
+  "name": "@org/my-package",
   "version": "0.0.1",
   "type": "module",
   "main": "dist/index.js",
@@ -289,7 +289,7 @@ packages/gateway/
 ### Example 3: App Package
 
 ```
-apps/cortex-os/
+apps/example-app/
 ├── src/
 │   ├── index.ts
 │   └── config/

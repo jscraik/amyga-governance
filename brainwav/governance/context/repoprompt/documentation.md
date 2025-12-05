@@ -1,5 +1,7 @@
 # Repo Prompt Documentation
 
+> **At a glance:** Install the Repo Prompt app (macOS/Windows), enable MCP, and point it at your repo. Core flows: context building, plan preset, Pro Edit/MCP Pair for implementation, and selection management. Use the TOC to jump; this file is long.
+
 *Complete documentation for Repo Prompt - AI-powered code context management for macOS*
 
 ---

@@ -13,6 +13,23 @@ This document defines the emergency termination procedures for AI agents operati
 
 ---
 
+## Table of Contents
+
+- [Purpose](#purpose)
+- [1. Immediate Termination Triggers](#1-immediate-termination-triggers)
+- [2. Termination Procedures](#2-termination-procedures)
+- [3. Incident Response Integration](#3-incident-response-integration)
+- [4. Recovery Procedures](#4-recovery-procedures)
+- [5. Prompt Injection Patterns](#5-prompt-injection-patterns)
+- [6. Monitoring & Alerts](#6-monitoring--alerts)
+- [7. Testing Requirements](#7-testing-requirements)
+- [8. Sentinel & Coordinator Integration](#8-sentinel--coordinator-integration)
+- [9. Emergent Systemic Risk Horizon (ESRH)](#9-emergent-systemic-risk-horizon-esrh)
+- [10. Project-Specific Emergency Procedures](#10-project-specific-emergency-procedures)
+- [References](#references)
+
+---
+
 ## 1. Immediate Termination Triggers
 
 ### 1.1 Automatic Triggers (No Human Approval Required)
@@ -233,6 +250,43 @@ Multi-agent chains can accumulate risk even when each agent is locally aligned (
   - ESRH 0.4–0.59 → Trigger degrade-to-sandbox; require human approval to resume.
 3. **Reporting**: Append ESRH metrics to incident report and store in `audit/incidents/<date>-esrh.json`.
 4. **Feedback Loop**: Runtime governance service ingests ESRH outcome to adjust Trust Factor deltas.
+
+<!-- PROJECT-SPECIFIC: START -->
+## 10. Project-Specific Emergency Procedures
+
+> **Instructions:** Edit this section to define project-specific emergency contacts and procedures. This section is NOT overwritten when upgrading the governance pack.
+
+### Emergency Contacts
+
+| Role | Name | Contact | Hours |
+|------|------|---------|-------|
+| Primary On-Call | _TBD_ | _@handle / phone_ | 24/7 |
+| Security Lead | _TBD_ | _@handle_ | Business hours |
+| Escalation Manager | _TBD_ | _@handle_ | Business hours |
+
+### Project Kill Switch Commands
+
+```bash
+# Project-specific kill switch (customize as needed)
+# pnpm project:halt --name <your-project>
+```
+
+### Incident Channels
+
+- **Slack**: _#your-project-incidents_
+- **PagerDuty**: _Service ID: xxxxx_
+- **Status Page**: _https://status.your-domain.com_
+
+### Post-Incident Requirements
+
+<!-- Add any project-specific post-incident requirements -->
+- [ ] Notify stakeholders within _X_ hours
+- [ ] Post-mortem within _Y_ days
+- [ ] Update runbook if needed
+
+<!-- PROJECT-SPECIFIC: END -->
+
+---
 
 ## References
 

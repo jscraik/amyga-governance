@@ -1,4 +1,11 @@
 # Schema Reference
+> **Navigation aid:** This file is large. Use the section links below to jump directly to what you need. Consider fetching slices via anchors instead of full-document loads when using agents.
+
+- [Overview](#overview)
+- [Schemas](#schemas)
+- [Types](#types)
+- [Examples](#examples)
+- [Error Codes](#error-codes)
 
 <div id="schema-reference" />
 

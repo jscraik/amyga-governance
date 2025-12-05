@@ -209,7 +209,7 @@ sudo dnf install mise
 ----------------------------------------
 
 TITLE: Local Pre-commit Equivalents (Husky-based)
-DESCRIPTION: Cortex-OS uses Husky for git hooks. Hooks run automatically on commit.
+DESCRIPTION: The governance workspace uses Husky for git hooks. Hooks run automatically on commit.
 If you want to run quick pre-commit style checks manually, use these commands.
 
 LANGUAGE: bash

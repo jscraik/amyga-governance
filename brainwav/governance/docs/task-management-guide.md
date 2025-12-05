@@ -26,13 +26,15 @@ The brAInwav task workflow emphasizes:
 
 ## Workflow Phases
 
+**CLI note:** Use `pnpm governance-task ...` (formerly `cortex-task`). Existing aliases keep working, but prefer the governance-prefixed command going forward.
+
 ### Phase 0: Task Initialization
 
 **Goal**: Create task structure with specification and research documents.
 
 **Command**:
 ```bash
-pnpm cortex-task init "Feature Name" --priority P1
+pnpm governance-task init "Feature Name" --priority P1
 ```
 
 **What Happens**:
@@ -115,7 +117,7 @@ Each story should be implementable in isolation and deliver standalone value. As
 
 **Command**:
 ```bash
-pnpm cortex-task plan [task-id]
+pnpm governance-task plan [task-id]
 ```
 
 **What Happens**:
@@ -271,7 +273,7 @@ If directive is broken, acknowledge:
 ### Initialize New Task
 
 ```bash
-pnpm cortex-task init "Feature Name" --priority P1
+pnpm governance-task init "Feature Name" --priority P1
 ```
 
 **Options**:
@@ -279,7 +281,7 @@ pnpm cortex-task init "Feature Name" --priority P1
 
 **Example**:
 ```bash
-pnpm cortex-task init "OAuth 2.1 Authentication" --priority P1
+pnpm governance-task init "OAuth 2.1 Authentication" --priority P1
 ```
 
 ---
@@ -287,7 +289,7 @@ pnpm cortex-task init "OAuth 2.1 Authentication" --priority P1
 ### Create TDD Plan
 
 ```bash
-pnpm cortex-task plan <task-id>
+pnpm governance-task plan <task-id>
 ```
 
 **Prerequisites**:
@@ -296,7 +298,7 @@ pnpm cortex-task plan <task-id>
 
 **Example**:
 ```bash
-pnpm cortex-task plan oauth-21-authentication
+pnpm governance-task plan oauth-21-authentication
 ```
 
 ---
@@ -304,7 +306,7 @@ pnpm cortex-task plan oauth-21-authentication
 ### List All Tasks
 
 ```bash
-pnpm cortex-task list
+pnpm governance-task list
 ```
 
 **Output**:
@@ -316,7 +318,7 @@ pnpm cortex-task list
 ### Show Task Status
 
 ```bash
-pnpm cortex-task status <task-id>
+pnpm governance-task status <task-id>
 ```
 
 **Output**:
@@ -326,7 +328,7 @@ pnpm cortex-task status <task-id>
 
 **Example**:
 ```bash
-pnpm cortex-task status oauth-21-authentication
+pnpm governance-task status oauth-21-authentication
 ```
 
 ---
@@ -468,7 +470,7 @@ All development must comply with Constitution requirements.
 
 **Error**: `Task [task-id] already exists!`
 
-**Solution**: Use `pnpm cortex-task status [task-id]` to check existing task, or choose a different task name.
+**Solution**: Use `pnpm governance-task status [task-id]` to check existing task, or choose a different task name.
 
 ---
 
@@ -502,7 +504,7 @@ All development must comply with Constitution requirements.
 **Solution**: 
 1. Check if you're already on the correct branch: `git branch`
 2. If branch exists elsewhere: `git checkout [branch-name]`
-3. If you want a fresh start: `git branch -D [branch-name]` then re-run `pnpm cortex-task init`
+3. If you want a fresh start: `git branch -D [branch-name]` then re-run `pnpm governance-task init`
 
 ---
 
@@ -512,7 +514,7 @@ All development must comply with Constitution requirements.
 
 ```bash
 # Phase 0: Initialize
-pnpm cortex-task init "User Profile Management" --priority P1
+pnpm governance-task init "User Profile Management" --priority P1
 
 # Phase 1: Research (manual - edit tasks/user-profile-management.research.md)
 # - Document current state
@@ -525,7 +527,7 @@ pnpm cortex-task init "User Profile Management" --priority P1
 # - Document requirements
 
 # Phase 3: Create TDD Plan
-pnpm cortex-task plan user-profile-management
+pnpm governance-task plan user-profile-management
 
 # Phase 4: Implementation (manual - follow TDD plan)
 # - Write failing tests (RED)
@@ -545,7 +547,7 @@ pnpm structure:validate
 # - Store insights in local memory
 
 # Check final status
-pnpm cortex-task status user-profile-management
+pnpm governance-task status user-profile-management
 ```
 
 ---
@@ -554,10 +556,10 @@ pnpm cortex-task status user-profile-management
 
 ```bash
 # List all tasks
-pnpm cortex-task list
+pnpm governance-task list
 
 # Check specific task status
-pnpm cortex-task status oauth-authentication
+pnpm governance-task status oauth-authentication
 
 # Review task files
 cat tasks/oauth-authentication-spec.md

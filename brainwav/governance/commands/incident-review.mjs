@@ -27,6 +27,8 @@ if (!homeDir) {
 	process.exit();
 }
 
+const govHome = process.env.GOV_HOME ?? path.join(homeDir, '.agentic-governance');
+
 // Determine repo root
 let repoRoot;
 try {
@@ -39,10 +41,10 @@ try {
 const slug = process.env.TASK_SLUG;
 let outDir;
 if (slug) {
-	const taskDir = path.join(homeDir, '.Cortex-OS', 'tasks', slug);
+	const taskDir = path.join(govHome, 'tasks', slug);
 	outDir = path.join(taskDir, 'logs', 'incident-review');
 } else {
-	outDir = path.join(homeDir, '.Cortex-OS', 'logs', 'incident-review');
+	outDir = path.join(govHome, 'logs', 'incident-review');
 }
 fs.mkdirSync(outDir, { recursive: true });
 
@@ -116,8 +118,8 @@ function findRelatedRunbooks(incidentPattern) {
 
 function findRelatedLogs(incidentPattern) {
 	// Search for log files matching the incident
-	const logsDir = path.join(homeDir, '.Cortex-OS', 'logs');
-	const taskLogsDir = slug ? path.join(homeDir, '.Cortex-OS', 'tasks', slug, 'logs') : null;
+	const logsDir = path.join(govHome, 'logs');
+	const taskLogsDir = slug ? path.join(govHome, 'tasks', slug, 'logs') : null;
 
 	const results = [];
 

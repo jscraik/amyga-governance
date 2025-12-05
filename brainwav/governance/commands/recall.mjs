@@ -27,14 +27,16 @@ if (!homeDir) {
 	process.exit();
 }
 
+const govHome = process.env.GOV_HOME ?? path.join(homeDir, '.agentic-governance');
+
 // Output directory (task-aware if TASK_SLUG provided)
 const slug = process.env.TASK_SLUG;
 let outDir;
 if (slug) {
-	const taskDir = path.join(homeDir, '.Cortex-OS', 'tasks', slug);
+	const taskDir = path.join(govHome, 'tasks', slug);
 	outDir = path.join(taskDir, 'logs', 'recall');
 } else {
-	outDir = path.join(homeDir, '.Cortex-OS', 'logs', 'recall');
+	outDir = path.join(govHome, 'logs', 'recall');
 }
 fs.mkdirSync(outDir, { recursive: true });
 

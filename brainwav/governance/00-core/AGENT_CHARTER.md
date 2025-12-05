@@ -7,6 +7,21 @@
 
 ---
 
+## Table of Contents
+
+- [⚡ OPERATIVE GUARDRAILS (Non-Negotiable)](#-operative-guardrails-non-negotiable)
+- [🚨 AI BEHAVIORAL RULES (Production Standards)](#-ai-behavioral-rules-production-standards)
+- [🔒 ENFORCEMENT MECHANISMS](#-enforcement-mechanisms)
+- [📋 QUICK REFERENCE](#-quick-reference)
+- [🔗 CANONICAL REFERENCE](#-canonical-reference)
+- [📖 GLOSSARY](#-glossary)
+- [⚠️ DEVIATION POLICY](#%EF%B8%8F-deviation-policy)
+- [📊 CI ENFORCEMENT MATRIX (Full)](#-ci-enforcement-matrix-full)
+- [🚀 QUICKSTART FOR NEW CONTRIBUTORS](#-quickstart-for-new-contributors)
+- [📜 VERSION HISTORY](#-version-history)
+
+---
+
 > **Fragment usage:** The canonical charter fragment for agent instruction files is the section of this document wrapped between `<!-- BEGIN CHARTER_FRAGMENT -->` and `<!-- END CHARTER_FRAGMENT -->`. Automation should extract exactly that region when a compact charter is required.
 
 <!-- BEGIN CHARTER_FRAGMENT -->
@@ -180,7 +195,7 @@ Never claim "production-ready/complete/operational" if any prod path contains:
 
 **Environment/config**:
 
-- Use shared loader (`scripts/utils/dotenv-loader.mjs` or `@cortex-os/utils`)
+- Use shared loader (`scripts/utils/dotenv-loader.mjs` or `@governance/utils`)
 - **Never call `dotenv.config()` directly**
 - No hardcoded secrets; env/secret managers only; retrieve API keys, SSH keys, and tokens via the 1Password CLI (`op`) at runtime
 
@@ -306,7 +321,7 @@ Detection relies on CI Conftest failures, observability counters tracking `NORTH
 ### 9️⃣ **Preflight Guards** [AGENTS-PRV-009]
 
 - Before any file writes, network calls, or long executions, agents MUST execute **preflight guards**:
-  1. **Cortex Vibe (Oversight)** – `pnpm oversight:vibe-check` or JSON-RPC to `${CORTEX_VIBE_HTTP_URL:-http://127.0.0.1:2001}`
+  1. **Cortex Aegis (Oversight)** – `pnpm oversight:vibe-check` or JSON-RPC to `${CORTEX_AEGIS_HTTP_URL:-http://127.0.0.1:2091}`
      - Required headers: `Accept: application/json, text/event-stream`
      - Log saved to `logs/vibe-check/<task>.json`
   2. **Hybrid Model Health** – `pnpm models:health && pnpm models:smoke` with live Ollama/Frontier engines (no stubs)

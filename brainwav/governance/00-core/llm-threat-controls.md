@@ -65,6 +65,39 @@
 
 ---
 
+<!-- PROJECT-SPECIFIC: START -->
+## Project-Specific Threat Controls
+
+> **Instructions:** Edit this section to add project-specific threat controls and mitigations. This section is NOT overwritten when upgrading the governance pack.
+
+### Additional Project Controls
+
+| ID | Threat | Project Mitigation | Evidence |
+|----|--------|-------------------|----------|
+| _PRJ-01_ | _Description_ | _Mitigation steps_ | _Evidence location_ |
+
+### Project-Specific Data Classifications
+
+| Classification | Handling | Examples |
+|---------------|----------|----------|
+| _Internal_ | _Standard controls_ | _Internal docs_ |
+| _Confidential_ | _Encryption + access control_ | _User PII_ |
+| _Restricted_ | _Additional approval_ | _Financial data_ |
+
+### Project API/Model Inventory
+
+| Provider | Model | Use Case | Risk Level |
+|----------|-------|----------|------------|
+| _OpenAI_ | _GPT-4o_ | _Code generation_ | _Medium_ |
+
+### Project-Specific Blockers
+
+<!-- Add any additional BLOCKER controls specific to this project -->
+
+<!-- PROJECT-SPECIFIC: END -->
+
+---
+
 ## References
 
 * OWASP Top 10 for Large Language Model Applications (2025)

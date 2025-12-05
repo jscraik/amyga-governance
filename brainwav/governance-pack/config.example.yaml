@@ -2,8 +2,8 @@
 # Copy to config.yaml and fill per org/project.
 
 precedenceDocs:
-  - /.cortex/rules/constitution.md
-hashIndexPath: /.cortex/rules/governance-index.json
+  - brainwav/governance/00-core/constitution.md
+hashIndexPath: brainwav/governance/90-infra/governance-index.json
 requireHashVerification: true
 
 coverageGlobal: 90
@@ -33,7 +33,7 @@ runManifestPath: tasks/<slug>/json/run-manifest.json
 aegisLogPath: logs/vibe-check/
 vibeCheckLogPath: logs/vibe-check/
 modelsHealthLogPath: logs/models/health.log
-timeFreshnessDoc: .cortex/rules/10-flow/assurance-system.md
+timeFreshnessDoc: brainwav/governance/10-flow/assurance-system.md
 
 docBaseUrl: https://governance.example.org/docs/
 docUrls:

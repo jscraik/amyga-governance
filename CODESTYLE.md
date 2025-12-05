@@ -2,11 +2,42 @@
 
 ## Purpose
 
-This document defines **mandatory coding standards** for the Cortex-OS monorepo.  
+This document defines **mandatory coding standards** for the agentic governance framework.  
 All contributors and automation agents must follow these rules. CI enforces them via Nx targets and checks (Biome, ESLint **v9 flat config**, Ruff, Pyright, Clippy, pytest, mutation testing, Semgrep, supply-chain scanners).  
 **Baselines**: Node **24 Active LTS** (see [ADR 004](./docs/architecture/decisions/004-node-24-active-lts.md)), React **19**, Next.js **16**, TypeScript **≥ 5.9**, Rust **2024 edition** (rustc ≥ **1.85**).
 
 > **Security advisories override baselines.** When a CVE or security advisory is published for any baseline framework, all affected projects MUST upgrade to the patched version immediately, regardless of the stated baseline. Monitor [Next.js Blog](https://nextjs.org/blog), [React Security](https://react.dev/), and framework-specific channels.
+
+---
+
+## Table of Contents
+
+- [Purpose](#purpose)
+- [0. brAInwav Production Standards (Hard Prohibitions)](#0-brainwav-production-standards-hard-prohibitions)
+- [1. General Principles](#1-general-principles)
+- [2. Monorepo Task Orchestration (Nx "Smart" Mode)](#2-monorepo-task-orchestration-nx-smart-mode)
+- [3. JavaScript / TypeScript](#3-javascript--typescript)
+- [3.1. TypeScript Project Configuration](#31-typescript-project-configuration-brainwav-standards)
+- [4. React / Next.js](#4-react--nextjs)
+- [5. Python (uv-managed)](#5-python-uv-managed)
+- [6. Rust (TUI/CLI only)](#6-rust-tuicli-only)
+- [7. Naming Conventions](#7-naming-conventions)
+- [8. Commit, Releases, ADRs](#8-commit-releases-adrs)
+- [9. Toolchain & Lockfiles](#9-toolchain--lockfiles)
+- [10. Quality Gates: Coverage, Mutation, TDD](#10-quality-gates-coverage-mutation-tdd)
+- [11. Fast Tools (MANDATORY for agents)](#11-fast-tools-mandatory-for-agents)
+- [12. Security, Supply Chain & Compliance](#12-security-supply-chain--compliance)
+- [13. AI/ML Engineering](#13-aiml-engineering)
+- [14. Governance Lint Policies](#14-governance-lint-policies-semgrep--eslint)
+- [14. Accessibility](#14-accessibility)
+- [15. Observability, Logging & Streaming](#15-observability-logging--streaming)
+- [16. Resource Management & Memory Discipline](#16-resource-management--memory-discipline)
+- [17. Repository Scripts & Reports](#17-repository-scripts--reports)
+- [18. MCP & External Tools](#18-mcp--external-tools)
+- [19. Config References (Authoritative)](#19-config-references-authoritative)
+- [Appendix A — EU AI Act](#appendix-a--eu-ai-act-dates-for-governance)
+- [Appendix B — Policy Automation](#appendix-b--policy-automation-semgrep--eslint)
+- [Project-Specific Style Rules](#project-specific-style-rules)
 
 ---
 
@@ -46,7 +77,7 @@ All contributors and automation agents must follow these rules. CI enforces them
 - **Determinism**: No ambient randomness/time in core logic; inject seeds/clocks.
 - **DRY**: Shared logic lives in:
   - `src/lib/` (TypeScript)
-  - `apps/cortex-py/lib/` (Python)
+  - `apps/python-app/lib/` (Python)
   - `crates/common/` (Rust)
 
 ---
@@ -154,7 +185,7 @@ Built-ins like `JSON.parse()` and `Response.json()` return `any`. Mitigate via:
 
 **Purpose**: Standardized TypeScript configuration across all packages to ensure build consistency, enable incremental compilation, and support project references.
 
-**Templates**: Available in `.cortex/templates/tsconfig/`
+**Templates**: Available in `brainwav/governance/templates/tsconfig/`
 
 - `tsconfig.lib.json` - Standard library configuration
 - `tsconfig.spec.json` - Test configuration  
@@ -221,14 +252,14 @@ Packages with test files SHOULD use separate `tsconfig.spec.json`:
 
 ```bash
 # 1. Copy template
-cp .cortex/templates/tsconfig/tsconfig.lib.json packages/my-package/tsconfig.json
+cp brainwav/governance/templates/tsconfig/tsconfig.lib.json packages/my-package/tsconfig.json
 
 # 2. Adjust extends path (match your package depth)
 # packages/my-package/ → "../../tsconfig.base.json"
 # packages/services/my-package/ → "../../../tsconfig.base.json"
 
 # 3. Add test config if needed
-cp .cortex/templates/tsconfig/tsconfig.spec.json packages/my-package/
+cp brainwav/governance/templates/tsconfig/tsconfig.spec.json packages/my-package/
 
 # 4. Verify
 cd packages/my-package
@@ -554,6 +585,36 @@ See `docs/troubleshooting/typescript-config.md` for:
 - **Semgrep rule catalog**: See `semgrep/brAInwav.yml` (rules defined in [`security/semgrep/packs/brainwav-custom.yml`](security/semgrep/packs/brainwav-custom.yml)). These rules block `child_process.exec*` shell spawns, `NODE_TLS_REJECT_UNAUTHORIZED=0`, and AbortSignal gaps via `brainwav.async.fetch-missing-abort-signal`, `brainwav.async.fetch-options-missing-abort-signal`, `brainwav.async.axios-missing-cancellation`, and `brainwav.async.axios-options-missing-cancellation`.
 - **Testing/validation**: Regression tests live in [`security/semgrep/tests/abort-signal`](security/semgrep/tests/abort-signal) and run with `semgrep --test security/semgrep/packs/brainwav-custom.yml`.
 - **Exemption criteria**: Helper factories that already inject `signal` are exempt because the rules only match object literals.
-- **Waiver process**: Request waivers via `/.cortex/waivers/` with Maintainer approval.
+- **Waiver process**: Request waivers via `/.agentic-governance/waivers/` with Maintainer approval.
 - **Legacy ESLint profile** — [`.eslintrc.cjs`](./.eslintrc.cjs) enforces the 40-line ceiling (`max-lines-per-function`), naming conventions, and cross-domain import guards; overrides live in per-package `eslint.config.js` fragments and require a documented waiver before relaxing.
 - **Flat ESLint config** — [`eslint.config.js`](./eslint.config.js) layers SonarJS + `typescript-eslint` async safety checks; together with the `AbortSignal` mandate in §3 and the `scripts/ensure-eslint-flat-config.mjs` guard (runs before `pnpm lint:smart` and emits `reports/policy/flat-config-guard.json`), this is how CI verifies cancellation-ready async boundaries. Adjustments also flow through the waiver process above.
+
+---
+
+<!-- PROJECT-SPECIFIC: START -->
+## Project-Specific Style Rules
+
+> **Instructions:** Add project-specific linting, formatting, or architectural rules here. This section is NOT overwritten when upgrading the governance pack.
+
+### Additional ESLint Rules
+
+```jsonc
+// Extend your local eslint.config.mjs with project-specific rules
+{
+  // "rules": { ... }
+}
+```
+
+### Project Naming Conventions
+
+| Pattern | Example | Notes |
+|---------|---------|-------|
+| Components | `PascalCase` | — |
+| Hooks | `useCamelCase` | — |
+| Utils | `camelCase` | — |
+
+### Architectural Boundaries
+
+<!-- Define project-specific import restrictions or layer rules -->
+
+<!-- PROJECT-SPECIFIC: END -->

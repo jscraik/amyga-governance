@@ -247,8 +247,8 @@ export const featureToolSchema = z.object({
 ## Dependencies
 
 ### Internal Dependencies (governance framework packages)
-- `@cortex-os/[package]` - [Why needed]
-- `@cortex-os/[package]` - [Why needed]
+- `@brainwav/[package]` - [Why needed]
+- `@brainwav/[package]` - [Why needed]
 
 ### External Dependencies (npm/pypi)
 - `[package-name]@[version]` - [Why needed, license verification required]

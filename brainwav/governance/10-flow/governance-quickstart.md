@@ -4,6 +4,20 @@
 
 ---
 
+## Table of Contents
+
+- [1. Purpose & Audience](#1-purpose--audience)
+- [2. Core Principles (AI-Native, Human-Owned)](#2-core-principles-ai-native-human-owned)
+- [3. SDLC → ArcTDD → Flow Map](#3-sdlc--arctdd--flow-map)
+- [4. Standard Flows (5 Canonical Workflows)](#4-standard-flows-5-canonical-workflows)
+- [5. Roles & Responsibilities](#5-roles--responsibilities-delegate--review--own)
+- [6. Assurance System in the Loop](#6-assurance-system-in-the-loop)
+- [7. Checklists & CI Integration](#7-checklists--ci-integration)
+- [8. Where to Go Next (References)](#8-where-to-go-next-references)
+- [9. Project-Specific Workflow Configuration](#9-project-specific-workflow-configuration)
+
+---
+
 ## 1. Purpose & Audience
 
 **What this is**: The operational "how we work with agents" guide for AI-assisted development. This document provides the essential workflow patterns, gate policies, and responsibilities for AI-native software development.
@@ -233,3 +247,32 @@ This quickstart connects to comprehensive checklists in:
 ### Infrastructure
 
 - [Governance Infrastructure](../90-infra/) - Machine-readable governance files and automation
+
+---
+
+<!-- PROJECT-SPECIFIC: START -->
+## 9. Project-Specific Workflow Configuration
+
+> **Instructions:** Add project-specific workflow tweaks, custom gates, or additional requirements here. This section is NOT overwritten when upgrading the governance pack.
+
+### Custom Gates
+
+<!-- Define any project-specific gates beyond G0-G10 -->
+
+| Gate | Name | Requirements |
+|------|------|-------------|
+| _none_ | — | — |
+
+### Project Flow Overrides
+
+<!-- Document any project-specific flow modifications (tighten only, cannot weaken) -->
+
+### Additional Tools & Integrations
+
+<!-- List project-specific tools that integrate with the governance workflow -->
+
+| Tool | Purpose | Integration Point |
+|------|---------|------------------|
+| _none_ | — | — |
+
+<!-- PROJECT-SPECIFIC: END -->

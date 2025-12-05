@@ -17,7 +17,7 @@
 - [Quality Metrics](#quality-metrics) - Coverage and mutation thresholds
 
 **Related:**
-[Contributor Guide](./AGENTS-QUICK.md) | [AI Agent Rules](./AGENTS-AI.md) | [Full AGENTS.md](./CLAUDE.md)
+[Contributor Guide](./CONTRIBUTING.md) | [AI Agent Rules](brainwav/governance/00-core/RULES_OF_AI.md) | [Root AGENTS](./AGENTS.md)
 
 ---
 
@@ -40,7 +40,7 @@ Every rule in the governance framework has corresponding CI automation. This mat
 | **AGENTS-PRV-002** | Oversight logs attached | 🔴 BLOCKER | `agents-guard` | Search `brAInwav-vibe-check` in artifacts | Waiver only |
 | **AGENTS-HMS-003** | Live model evidence present | 🔴 BLOCKER | `models-smoke` | Verify `MODELS:LIVE:OK` in logs | Waiver only |
 | **AGENTS-ACL-004** | Package AGENTS.md not weakening root | 🔴 BLOCKER | `structure-validate` | Compare rule sets programmatically | N/A |
-| **AGENTS-DOC-005** | Docs validation (no ERROR) | 🔴 BLOCKER | `docs-validate` | `.cortex/gates/validate-docs.ts` | Waiver only |
+| **AGENTS-DOC-005** | Docs validation (no ERROR) | 🔴 BLOCKER | `docs-validate` | `scripts/gates/validate-docs.ts` | Waiver only |
 | **AGENTS-TRC-006** | Trace context verification | 🔴 BLOCKER | `trace-verify` | `verify-trace-context.ts` | Waiver only |
 | **AGENTS-MEM-007** | Local Memory parity (IDs present) | 🔴 BLOCKER | `memory-parity` | Check `json/memory-ids.json` + repo mirror | Waiver only |
 | **AGENTS-A11Y-008** | WCAG reports attached (if UI touched) | 🔴 BLOCKER | `a11y-check` | jest-axe/axe JSON output | Skip if no UI |
@@ -67,7 +67,7 @@ Added: 2025-11-17 as part of documentation automation initiative
 | **AGENTS-DOC-022** | Bare URLs wrapped in angle brackets | 🟡 WARNING | `lint-markdown` | Grep for `http[s]://[^ )]*\s` | Fix recommended |
 | **AGENTS-DOC-023** | Alt text on all images | 🔴 BLOCKER | `lint-markdown` | MD045 rule in markdownlint | N/A |
 | **AGENTS-DOC-024** | Heading hierarchy (no skips) | 🟡 WARNING | `lint-markdown` | MD001 rule in markdownlint | Style override |
-| **AGENTS-DOC-025** | Proper name capitalization | 🟡 WARNING | `lint-markdown` | MD044 rule (Cortex-OS, brAInwav, etc.) | Allowlist |
+| **AGENTS-DOC-025** | Proper name capitalization | 🟡 WARNING | `lint-markdown` | MD044 rule (governance pack names, brAInwav, etc.) | Allowlist |
 
 **Pre-commit Integration:**
 - Markdown files run through `markdownlint-cli2 --fix` automatically
@@ -113,7 +113,7 @@ Added: 2025-11-17 as part of documentation automation initiative
 
 ### Standards Alignment (Advisory)
 
-Cortex-OS aligns with industry standards. This mapping is **informational** (not enforced by CI) but guides architecture decisions.
+The governance pack aligns with industry standards. This mapping is **informational** (not enforced by CI) but guides architecture decisions.
 
 #### NIST SSDF (Secure Software Development Framework)
 
@@ -201,7 +201,7 @@ Waivers allow temporary bypass of governance rules under specific conditions.
 
 #### 1. Create Waiver Document
 
-**Location:** `/.cortex/waivers/<waiver_id>.md`
+**Location:** `/.agentic-governance/waivers/<waiver_id>.md`
 
 **Template:**
 ```markdown

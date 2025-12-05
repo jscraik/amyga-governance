@@ -334,7 +334,7 @@ pnpm skills:security-scan --changed
 - `governance/testing-standards.md`
 - `governance/CODESTYLE.md`
 - `governance/00-core/AGENT_CHARTER.md`
-- `@cortex-os/contracts/skill-events.ts`
+- `@brainwav/contracts/skill-events.ts`
 - `packages/memory-core/src/skills/`
 
 ---

@@ -25,6 +25,7 @@ Add MCP servers to your client configuration:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
+| `GOV_HOME` | `~/.agentic-governance` | Base directory for governance artefacts and task folders |
 | `TASK_SLUG` | — | Current task identifier for commands |
 | `LOCAL_MEMORY_BASE_URL` | `http://localhost:3002/api/v1` | Local Memory API endpoint |
 | `CORTEX_AEGIS_PORT` | `2091` | Cortex Aegis MCP port |
@@ -40,4 +41,4 @@ sha256sum brainwav/governance/00-core/*.md
 
 ## Task Folder Configuration
 
-Task folders follow the structure defined in `brainwav/governance/10-flow/agentic-coding-workflow.md` §3. Customize the base path via `CORTEX_OS_HOME` environment variable.
+Task folders follow the structure defined in `brainwav/governance/10-flow/agentic-coding-workflow.md` §3. Customize the base path via `GOV_HOME` (defaults to `~/.agentic-governance`).

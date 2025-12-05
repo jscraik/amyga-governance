@@ -2,6 +2,20 @@
 
 This policy enforces documentation quality using the OpenAI Cookbook guidance ("What makes documentation good") and mandates JSDoc coverage across all JavaScript/TypeScript code.
 
+## Table of Contents
+
+- [Documentation Governance](#documentation-governance)
+  - [Table of Contents](#table-of-contents)
+  - [Scope](#scope)
+  - [Quality Bar (OpenAI Cookbook-aligned)](#quality-bar-openai-cookbook-aligned)
+  - [Documentation Acceptance Checklist](#documentation-acceptance-checklist)
+  - [JSDoc Implementation Standard](#jsdoc-implementation-standard)
+    - [JSDoc template (TypeScript)](#jsdoc-template-typescript)
+    - [Tooling \& Enforcement](#tooling--enforcement)
+  - [Author Workflow](#author-workflow)
+  - [Reviewer Checklist](#reviewer-checklist)
+  - [Traceability](#traceability)
+
 ## Scope
 
 - Applies to all documentation in this repository (markdown, READMEs, runbooks, specs) and to all JS/TS source files, tests, scripts, and config code that expose functions/types/classes.

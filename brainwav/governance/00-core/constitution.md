@@ -17,6 +17,20 @@ This constitution defines the **foundational principles** that govern all AI-ass
 
 ---
 
+## Table of Contents
+
+- [Purpose](#purpose)
+- [I. Core Principles](#i-core-principles)
+- [II. Development Workflow (Phases & HITL)](#ii-development-workflow-phases--hitl)
+- [III. Quality Standards](#iii-quality-standards)
+- [IV. Feature Development Standards](#iv-feature-development-standards)
+- [V. Compliance & Governance](#v-compliance--governance)
+- [V.1 Project-Specific Governance](#v1-project-specific-governance)
+- [VI. Amendment Process](#vi-amendment-process)
+- [VII. Enforcement](#vii-enforcement)
+
+---
+
 ## I. Core Principles
 
 ### 1. brAInwav Production Standards (NON-NEGOTIABLE)
@@ -74,7 +88,7 @@ Use affected-only **smart** targets (`pnpm *:smart`), respect Nx dependency grap
 - **Provenance (SLSA v1.1)**  
 - **Sign & verify with Cosign v3 bundle** artifacts  
 - Minimal/pinned containers (non‑root, read‑only FS, drop caps)  
-- **No secrets in code**. Use shared env loader (`scripts/utils/dotenv-loader.mjs` or `@cortex-os/utils`) — **never call `dotenv.config()` directly**.  
+- **No secrets in code**. Use shared env loader (`scripts/utils/dotenv-loader.mjs` or `@governance/utils`) — **never call `dotenv.config()` directly**.  
 - Secrets are retrieved **on demand** via the **1Password CLI (`op`)**; never persisted in repo or long‑lived env vars.
 
 ### 7. Time Freshness Guard
@@ -156,6 +170,35 @@ Technical debt tracked via ADRs + Issues with payoff plan.
 
 - A **human (non-author)** completes and posts `governance/rules/code-review-checklist.md`.  
 - BLOCKER items must be PASS; MAJORs need fixes or a waiver; MINORs need a follow-up task.
+
+---
+
+<!-- PROJECT-SPECIFIC: START -->
+## V.1 Project-Specific Governance
+
+> **Instructions:** Add project-specific mission, values, and escalation paths here. This section is NOT overwritten when upgrading the governance pack.
+
+### Project Mission
+
+_Define your project's specific mission and how it aligns with brAInwav principles._
+
+### Project Values
+
+| Value | Description |
+|-------|-------------|
+| _e.g., User Privacy_ | _How this project prioritizes user privacy_ |
+
+### Project Escalation Path
+
+1. Project maintainer
+2. Team lead
+3. Governance pack maintainers
+
+### Project-Specific Principles
+
+<!-- Add any additional principles that tighten (not weaken) the base constitution -->
+
+<!-- PROJECT-SPECIFIC: END -->
 
 ---
 
