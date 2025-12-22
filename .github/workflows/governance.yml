@@ -34,9 +34,24 @@ jobs:
       - run: pnpm install --frozen-lockfile=false
       - run: pnpm governance:sync-hashes:check
 
-  oversight:
+  governance-validate:
     runs-on: ubuntu-latest
     needs: [readiness, hash-drift]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.19.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.11.0'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile=false
+      - run: pnpm governance:validate
+
+  oversight:
+    runs-on: ubuntu-latest
+    needs: [readiness, hash-drift, governance-validate]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -51,7 +66,7 @@ jobs:
 
   security:
     runs-on: ubuntu-latest
-    needs: [readiness, hash-drift]
+    needs: [readiness, hash-drift, governance-validate]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -79,7 +94,7 @@ jobs:
 
   scripts-smoke:
     runs-on: ubuntu-latest
-    needs: [readiness, hash-drift, oversight, security]
+    needs: [readiness, hash-drift, governance-validate, oversight, security]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
