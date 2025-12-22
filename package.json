@@ -42,6 +42,7 @@
     "governance:install": "node scripts/install-governance.mjs",
     "task:scaffold": "node scripts/task-scaffold.mjs",
     "task:validate": "node scripts/task-validate.mjs",
+    "governance:validate": "node scripts/validate-governance.mjs",
     "governance:bootstrap-consumer": "node scripts/bootstrap-consumer.mjs",
     "commands:daily-summary": "node brainwav/governance/commands/daily-summary.mjs",
     "commands:memorize": "node brainwav/governance/commands/memorize.mjs",
