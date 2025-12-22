@@ -34,9 +34,52 @@ jobs:
       - run: pnpm install --frozen-lockfile=false
       - run: pnpm governance:sync-hashes:check
 
-  governance-scripts:
+  oversight:
     runs-on: ubuntu-latest
     needs: [readiness, hash-drift]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.19.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.11.0'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile=false
+      - run: pnpm oversight:vibe-check --goal "ci-governance-smoke" --plan "1) validate hashes 2) check governance files" --session "ci"
+
+  security:
+    runs-on: ubuntu-latest
+    needs: [readiness, hash-drift]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.11.0'
+      - name: Semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: p/ci
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: "--no-git"
+      - name: OSV-Scanner
+        uses: google/osv-scanner-action@v1
+        with:
+          scan-args: "."
+      - name: CycloneDX SBOM
+        uses: CycloneDX/gh-action@v3
+        with:
+          run-id: npm
+          output-format: json
+          path: .
+          version: latest
+
+  governance-scripts:
+    runs-on: ubuntu-latest
+    needs: [readiness, hash-drift, oversight, security]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -50,3 +93,5 @@ jobs:
       - run: pnpm governance:sync-hashes:check
       - run: pnpm readiness:check
       - run: pnpm ensure:tools
+      - run: pnpm task:scaffold --slug ci-smoke
+      - run: pnpm task:validate --slug ci-smoke

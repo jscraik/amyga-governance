@@ -39,6 +39,7 @@
     "readiness:check": "node scripts/readiness-check.mjs",
     "governance:sync-hashes": "node scripts/sync-governance-hashes.mjs",
     "governance:sync-hashes:check": "node scripts/sync-governance-hashes.mjs --check",
+    "governance:install": "node scripts/install-governance.mjs",
     "task:scaffold": "node scripts/task-scaffold.mjs",
     "task:validate": "node scripts/task-validate.mjs",
     "governance:bootstrap-consumer": "node scripts/bootstrap-consumer.mjs",

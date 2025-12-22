@@ -34,21 +34,22 @@ function mustExist(p, label, missing) {
 function main() {
 	try {
 		const { slug, root } = parseArgs();
-		const taskRoot = path.join(repoRoot, root, slug);
-		const missing = [];
+	const taskRoot = path.join(repoRoot, root, slug);
+	const missing = [];
 
-		mustExist(path.join(taskRoot, 'implementation-plan.md'), 'implementation-plan.md', missing);
-		mustExist(path.join(taskRoot, 'tdd-plan.md'), 'tdd-plan.md', missing);
-		mustExist(path.join(taskRoot, 'implementation-checklist.md'), 'implementation-checklist.md', missing);
-		mustExist(path.join(taskRoot, 'json', 'run-manifest.json'), 'json/run-manifest.json', missing);
-		mustExist(path.join(taskRoot, 'json', 'memory-ids.json'), 'json/memory-ids.json', missing);
-		mustExist(path.join(taskRoot, 'logs', 'vibe-check'), 'logs/vibe-check/', missing);
-		mustExist(path.join(taskRoot, 'logs', 'academic-research'), 'logs/academic-research/', missing);
+	mustExist(path.join(taskRoot, 'implementation-plan.md'), 'implementation-plan.md', missing);
+	mustExist(path.join(taskRoot, 'tdd-plan.md'), 'tdd-plan.md', missing);
+	mustExist(path.join(taskRoot, 'implementation-checklist.md'), 'implementation-checklist.md', missing);
+	mustExist(path.join(taskRoot, 'json', 'run-manifest.json'), 'json/run-manifest.json', missing);
+	mustExist(path.join(taskRoot, 'json', 'memory-ids.json'), 'json/memory-ids.json', missing);
+	mustExist(path.join(taskRoot, 'logs', 'vibe-check'), 'logs/vibe-check/', missing);
+	mustExist(path.join(taskRoot, 'logs', 'academic-research'), 'logs/academic-research/', missing);
+	mustExist(path.join(taskRoot, 'logs', 'tests'), 'logs/tests/ (evidence)', missing);
 
-		if (missing.length > 0) {
-			console.error(
-				`[brAInwav] task-validate FAILED for ${slug}. Missing:\n - ${missing.join('\n - ')}`
-			);
+	if (missing.length > 0) {
+		console.error(
+			`[brAInwav] task-validate FAILED for ${slug}. Missing:\n - ${missing.join('\n - ')}`
+		);
 			process.exitCode = 1;
 			return;
 		}
