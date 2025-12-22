@@ -74,6 +74,7 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile=false
       - run: pnpm governance:validate
+      - run: pnpm governance:validate-evidence
 
   oversight:
     runs-on: ubuntu-latest

@@ -71,6 +71,7 @@ pnpm readiness:check
 - `pnpm governance:sync-hashes:check` — fail on governance hash drift (non-writing).
 - `pnpm task:scaffold --slug <id>` / `pnpm task:validate --slug <id>` — create and check task folders for Evidence Triplet placeholders.
 - `pnpm governance:check-nx` — run Nx graph when nx.json exists (skips if absent); included in CI template.
+- `pnpm governance:validate-evidence` — verify Evidence Triplet files, memory IDs, trace context, and academic research logs are present and non-empty.
 
 Customize `AGENTS.md`, `brainwav/governance/00-core/constitution.md`, and templates under `brainwav/governance/templates/` with your maintainers, escalation paths, and brand wording. Update `.agentic-governance/mcp.runtime.json` in consumer repos if you add or relocate MCP transports.
 

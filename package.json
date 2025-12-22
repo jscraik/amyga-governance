@@ -44,6 +44,7 @@
     "task:validate": "node scripts/task-validate.mjs",
     "governance:validate": "node scripts/validate-governance.mjs",
     "governance:check-nx": "node scripts/check-nx.mjs",
+    "governance:validate-evidence": "node scripts/validate-task-evidence.mjs",
     "governance:bootstrap-consumer": "node scripts/bootstrap-consumer.mjs",
     "commands:daily-summary": "node brainwav/governance/commands/daily-summary.mjs",
     "commands:memorize": "node brainwav/governance/commands/memorize.mjs",
