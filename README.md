@@ -27,31 +27,38 @@ The brAInwav framework packages policies, workflows, templates, and automation f
 - Security toolchain installed locally and in CI: `semgrep`, `gitleaks`, `trivy`, `cosign`, `cyclonedx`, plus OSV/pnpm audit support (`pnpm audit`, `osv-scanner`).
 - MCP clients (VS Code, Claude Desktop, RepoPrompt CLI) with access to Context7, Local Memory, and Cortex-Aegis servers.
 
-### Bootstrap Steps
+### Bootstrap Steps (pack maintainers)
 
 ```bash
 # 1. Clone the framework
 git clone https://github.com/jscraik/brainwav-agentic-governance.git
 
-# 2. Copy required governance artefacts into your repo root
-cp -R brainwav-agentic-governance/.cortex /path/to/your-project/
-cp brainwav-agentic-governance/AGENTS.md /path/to/your-project/
-cp brainwav-agentic-governance/CODESTYLE.md /path/to/your-project/
-cp -R brainwav-agentic-governance/brainwav /path/to/your-project/
-
-# 3. Install dependencies + security tools
+# 2. Install dependencies + security tools
 pnpm install
 pnpm ensure:tools        # installs repo-required CLIs (Semgrep, Gitleaks, etc.)
 
-# 4. Run governance bootstrap (discover hashes, MCP config, governance index)
+# 3. Run governance bootstrap (discover hashes, MCP config, governance index)
 pnpm cortex:governance-bootstrap
 
-# 5. (Optional) Validate MCP health + oversight
+# 4. (Optional) Validate MCP health + oversight
 pnpm oversight:vibe-check --goal "<task>" --plan "<≤7 steps>" --session "demo"
 
-# 6. Verify required tooling and governance files
+# 5. Verify required tooling and governance files
 pnpm readiness:check
 ```
+
+### Install & Verify in a consumer project
+
+> Use this when you want to drop governance into an existing repo.
+
+1. From this repo: `pnpm install` (Node 24.11.x, pnpm 10.19.x).  
+2. Install governance into the target repo:  
+   `pnpm governance:install --dest /path/to/consumer-repo`  
+   This copies AGENTS, CODESTYLE, SECURITY, `brainwav/governance/**`, issue/PR templates, and the GitHub Actions workflow.
+3. In the consumer repo, run:  
+   `pnpm governance:validate` (checks required tokens + Step Budget ≤7)  
+   `pnpm governance:sync-hashes:check` (ensures hashes match the index)
+4. Commit the added files and ensure the consumer CI uses Node 24.11.x + pnpm 10.19.x. The included `governance.yml` workflow will enforce readiness, hash drift, oversight, security scans, dependency boundaries, and task scaffolds on every PR.
 
 ### Automation scripts (wired)
 
@@ -59,8 +66,12 @@ pnpm readiness:check
 - `pnpm cortex:governance-bootstrap` — writes `.agentic-governance/agent-context.json` with AGENTS.md hash and workflow pointers.
 - `pnpm oversight:vibe-check --goal "..." --plan "..." [--session <id>] [--slug <task>]` — posts to the Cortex Aegis HTTP endpoint (default `http://127.0.0.1:2091/vibe_check`) and logs JSON under the task.
 - `pnpm readiness:check` — confirms core governance files exist and required tools are present.
+- `pnpm governance:install --dest <path>` — copy governance pack + CI workflow into another repo.
+- `pnpm governance:validate` — verify required tokens and Step Budget ≤7 across tasks.
+- `pnpm governance:sync-hashes:check` — fail on governance hash drift (non-writing).
+- `pnpm task:scaffold --slug <id>` / `pnpm task:validate --slug <id>` — create and check task folders for Evidence Triplet placeholders.
 
-Customize `AGENTS.md`, `brainwav/governance/00-core/constitution.md`, and templates under `brainwav/governance/templates/` with your maintainers, escalation paths, and brand wording. Update `.cortex/mcp.runtime.json` if you add or relocate MCP transports.
+Customize `AGENTS.md`, `brainwav/governance/00-core/constitution.md`, and templates under `brainwav/governance/templates/` with your maintainers, escalation paths, and brand wording. Update `.agentic-governance/mcp.runtime.json` in consumer repos if you add or relocate MCP transports.
 
 ---
 
