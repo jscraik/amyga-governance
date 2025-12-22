@@ -69,7 +69,7 @@ function main() {
 	}
 }
 
-if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('task-validate.mjs')) {
+if (import.meta.url === `file://${process.argv[1]}`) {
 	main();
 }
 
