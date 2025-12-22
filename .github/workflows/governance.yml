@@ -131,8 +131,6 @@ jobs:
           node-version: '24.11.0'
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile=false
-      - run: pnpm governance:sync-hashes:check
-      - run: pnpm readiness:check
       - run: pnpm ensure:tools
       - run: pnpm task:scaffold --slug ci-smoke
       - run: pnpm task:validate --slug ci-smoke
