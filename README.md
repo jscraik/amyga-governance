@@ -74,6 +74,13 @@ pnpm readiness:check
 
 Customize `AGENTS.md`, `brainwav/governance/00-core/constitution.md`, and templates under `brainwav/governance/templates/` with your maintainers, escalation paths, and brand wording. Update `.agentic-governance/mcp.runtime.json` in consumer repos if you add or relocate MCP transports.
 
+### Documentation quality checklist (OpenAI Cookbook aligned)
+- State prerequisites up front (here: Node 24.11.x, pnpm 10.19.x, security toolchain).
+- Provide a minimal happy path (see “Install & Verify in a consumer project”).
+- Include verification commands (`governance:validate`, `governance:sync-hashes:check`) so readers can confirm success.
+- Keep steps copy/pasteable and ordered; mark optional steps clearly.
+- Link enforcement to CI templates so readers know what’s automated vs manual.
+
 ---
 
 ## Repository Layout
