@@ -28,7 +28,7 @@ workflow:
       phase: R
     - id: G2
       name: Plan / Design
-      summary: Produce PLAN.md, risk register, and aegis-validated approach.
+      summary: Produce PLAN.md, risk register, and assurance-validated approach.
       phase: R
     - id: G3
       name: Scaffold
@@ -64,12 +64,12 @@ workflow:
       phase: REVIEW
   flows:
     - id: feature
-      summary: Requires North-Star test + Aegis at G2 and G5.
+      summary: Requires North-Star test + assurance/oversight at G2 and G5 (Aegis or project-equivalent).
       phases: [R, G, F]
       gates: [G0, G1, G2, G3, G4, G5, G6, G7]
       gatesOptional: [G8, G9, G10]
     - id: research
-      summary: Produces decision memo; code optional; Aegis validates sources/time freshness.
+      summary: Produces decision memo; code optional; assurance/oversight validates sources/time freshness.
       phases: [R, G]
       gates: [G0, G1, G2, G3]
       gatesOptional: [G10]
@@ -95,6 +95,7 @@ workflow:
         - New acceptance/unit tests **fail first**, then **pass** on the next commit
         - "`TIME_FRESHNESS:OK tz=<IANA> today=<YYYY-MM-DD>` token present"
         - Oversight log present at ${vibeCheckLogPath}
+        - Threat model + data classification updated against OWASP ASVS/LLM Top 10 and NIST SSDF controls
     - from: G
       to: F
       requirements:
@@ -102,6 +103,7 @@ workflow:
         - Coverage ≥ **${coverageGlobal}%** global & **${coverageChanged}%** changed lines
         - Mutation ≥ **${mutationGlobal}%** (where enabled)
         - Latest model-health log recorded at ${modelsHealthLogPath}
+        - SBOM + provenance artifacts generated at ${sbomSpec}/${slsaLevel} (or stricter project default) and attached to the task folder
     - from: F
       to: REVIEW
       requirements:
@@ -134,4 +136,83 @@ governance:
   precedence: ${precedenceDocs}
   hashIndexPath: ${hashIndexPath}
   requireHashVerification: ${requireHashVerification}
-profiles: {}
+operationalPlaybooks:
+  rollout:
+    summary: "Profile rollout playbook (Q1)."
+    steps:
+      - "Map teams/services to a profile with an assigned DRI and record in the rollout brief."
+      - "Publish a one-page brief linking to this pack; acknowledge receipt from all teams."
+      - "Pilot one greenfield and one brownfield service; tag chosen profile in PR/task templates."
+      - "Add CI or template reminders for profile selection; schedule a retro after two sprints."
+  metrics:
+    summary: "Quality/flow metrics by profile (Q2)."
+    steps:
+      - "Slice CI results by profile and gate; report coverage/mutation on changed lines and Evidence Triplet completeness."
+      - "Track waiver volume/reasons with expiry + mitigation; monitor lead time and post-merge defect rate."
+      - "For brownfield, publish weekly uplift deltas on touched code (coverage/mutation)."
+  mixedSurfaces:
+    summary: "Mixed regulated/consumer surfaces (Q3)."
+    steps:
+      - "Apply the strictest profile when regulated/data-sensitive code is touched; require profile + data-class tags in PRs."
+      - "Document compensating controls with expiry in the risk register; use feature flags/shadow traffic where needed."
+      - "Ensure cross-surface regression tests and observability cover regulated vs. consumer paths."
+  standards:
+    summary: "Standards upkeep (Q4)."
+    steps:
+      - "Run a quarterly standards review (SLSA, CycloneDX, WCAG, NIST/ISO/OWASP) with assigned DRIs and a watchlist."
+      - "Version profiles with change logs and effective dates; communicate migrations and waivers."
+      - "Keep CI/template drift checks between templates and dist outputs; document exceptions."
+  training:
+    summary: "Onboarding and reinforcement (Q5)."
+    steps:
+      - "Publish a 10-minute onboarding guide + crib sheet in PR/task templates; record a short demo."
+      - "Include a profile rehearsal exercise for new joiners with reviewer sign-off."
+      - "Collect feedback after two weeks and iterate the materials."
+profiles:
+  greenfield:
+    overrides:
+      description: >
+        Default strict profile for net-new services. Uses the full gate set, default coverage/mutation/a11y targets,
+        live model health checks, and requires SBOM + signed provenance and WCAG ${a11yStandard} evidence.
+      requiredGates: [G0, G1, G2, G3, G4, G5, G6, G7]
+      requiredStandards:
+        - "NIST SSDF v1.1 (secure-by-default development)"
+        - "ISO/IEC 42001:2023 AI management and transparency"
+        - "OWASP ASVS 4.0 L2 + OWASP LLM Top 10 mitigations"
+        - "WCAG ${a11yStandard} for all user-impacting changes"
+      qualityGates:
+        coverage:
+          global: ${coverageGlobal}
+          changedLines: ${coverageChanged}
+        mutation:
+          global: ${mutationGlobal}
+      supplyChain:
+        sbom: ${sbomSpec}
+        slsa: ${slsaLevel}
+        signing: ${signingSpec}
+  brownfield:
+    overrides:
+      description: >
+        Transitional profile for existing/legacy systems. Prioritizes rigor on changed code while staging uplift for
+        untouched modules and enforcing compensating controls (feature flags, dark deploys, observability baselines).
+      requiredGates: [G0, G1, G2, G3, G4, G5, G6]
+      stagedControls:
+        - "Changed code meets ≥${coverageChanged}% coverage and ≥${mutationGlobal}% mutation; legacy surfaces get uplift backlogs with due dates."
+        - "Document risk register entries for gaps with explicit expiry/owners; waivers must reference mitigation evidence."
+        - "Enable runtime guards (feature flags, traffic shadowing, replay tests) before rollout."
+  regulated:
+    overrides:
+      description: >
+        High-assurance profile for regulated or safety-critical workloads (finance, health, safety, education, civic).
+        Adds privacy, safety, and release controls with mandatory human sign-off.
+      requiredGates: [G0, G1, G2, G3, G4, G5, G6, G7, G8, G9, G10]
+      requiredStandards:
+        - "NIST SSDF v1.1 + NIST AI RMF v1.0"
+        - "ISO/IEC 27001:2022 controls mapped to delivery"
+        - "ISO/IEC 42001:2023 governance + transparency statements"
+        - "OWASP ASVS 4.0 L2/L3 + OWASP LLM Top 10"
+        - "WCAG ${a11yStandard} with assistive tech validation"
+      additionalEvidence:
+        - "Data protection impact assessment (DPIA) and privacy review where personal data is processed."
+        - "Signed SBOM (${sbomSpec}) + provenance (${slsaLevel}) for every release artifact."
+        - "Model-health, bias, and safety evaluations recorded alongside the Evidence Triplet."

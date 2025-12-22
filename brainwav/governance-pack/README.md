@@ -26,6 +26,24 @@ Overlay values **win** on conflicts. Deep-merge semantics are expected (overlay 
 - Project overlays (`overlays/<org>/<project>/*`, optional): tighten for a project without mutating org/core; use when a project needs stricter gates/links than the org baseline.
 - Merge precedence: core → org overlay → project overlay; later layers override keys but must not edit files in `core/`.
 
+## Adoption profiles (project-neutral)
+
+Pick a profile and merge/override if needed:
+
+- **Greenfield** — Full gate set, WCAG 2.2 AA, OWASP ASVS/LLM Top 10, NIST SSDF v1.1, ISO/IEC 42001 alignment. Ships SBOM (CycloneDX) + provenance (SLSA ≥1.1) with signed artifacts.
+- **Brownfield** — For existing/legacy code. Enforces changed-code rigor (coverage on touched lines, mutation, structure checks) while allowing staged uplift for untouched areas. Requires risk-register entries, compensating controls (feature flags, shadow traffic), and dated uplift plans.
+- **Regulated/Safety-Critical** — Adds privacy + safety evidence (DPIA where applicable), signed SBOM/provenance per release, model health/bias evaluations, and mandatory human sign-off for rollout/rollback.
+
+Profiles live in `governance.core.yaml` (templates), `governance.yaml` (defaults), and `dist/governance.yaml` (rendered) so downstream projects can consume them without Cortex-specific assumptions.
+
+## Operational action sets (Q1–Q5)
+
+- **Rollout (Q1)** — Map teams/services to a profile with a DRI; publish a one-page brief linking to this README; pilot one greenfield and one brownfield service; tag profile choice in PR/task templates; run a retro after two sprints.
+- **Metrics (Q2)** — Slice CI outcomes by profile; track coverage/mutation on changed lines, Evidence Triplet completeness, waiver volume/reasons, lead time, and post-merge defects. For brownfield, report uplift deltas on touched code weekly.
+- **Mixed surfaces (Q3)** — Default to the strictest profile when regulated/data-sensitive code is touched; require profile + data-class tags in PRs; document compensating controls and expiry in the risk register; ensure cross-surface regression tests and observability cover regulated vs. consumer paths.
+- **Standards maintenance (Q4)** — Run a quarterly standards review (SLSA, CycloneDX, WCAG, NIST/ISO/OWASP); maintain a watchlist with DRIs; version the profiles with change logs and effective dates; add/keep a CI or template check to flag drift between templates and `dist/`.
+- **Training (Q5)** — Provide a 10-minute onboarding guide and crib sheet in PR/task templates; record a short demo; include a “profile rehearsal” exercise for new joiners; collect feedback after two weeks and iterate.
+
 ## Variables
 
 Templates use `${var}` placeholders. See `config.example.yaml` for the canonical variable list. Expected injections include precedence docs, hash index path, hash enforcement toggle, coverage/mutation/a11y thresholds, step budgets, Aegis gates/endpoints/verdicts, structure snapshot file, common commands, log/manifests paths, and doc URLs/base.
