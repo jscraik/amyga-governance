@@ -1,0 +1,16 @@
+assurance:
+  aegis:
+    enabled: true
+    requiredGates:
+      - G2
+      - G5
+    endpointEnv: CORTEX_AEGIS_BASE_URL (default http://127.0.0.1:2091)
+    verdicts:
+      - PASS
+      - WARN
+      - FAIL
+  timeFreshness:
+    required: true
+    anchorRules: Anchor to harness timezone; convert relative language to ISO-8601;
+      distinguish past/future explicitly.
+    allowedDrift: See assurance-system.md §2

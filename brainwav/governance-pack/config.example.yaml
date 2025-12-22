@@ -1,0 +1,82 @@
+# Example variable values for rendering governance-pack core templates.
+# Copy to config.yaml and fill per org/project.
+
+precedenceDocs:
+  - brainwav/governance/00-core/constitution.md
+hashIndexPath: brainwav/governance/90-infra/governance-index.json
+requireHashVerification: true
+
+coverageGlobal: 90
+coverageChanged: 95
+mutationGlobal: 90
+a11yStandard: WCAG 2.2 AA
+
+stepBudget: 7
+askFirst: 3
+
+aegisRequiredGates:
+  - G2
+  - G5
+aegisEndpointEnv: CORTEX_AEGIS_BASE_URL
+aegisVerdicts:
+  - PASS
+  - WARN
+  - FAIL
+
+structureSnapshotFile: export-freeze.snapshot.json
+
+pkgManager: pnpm
+lintCmd: pnpm lint
+typecheckCmd: pnpm typecheck
+buildCmd: pnpm build
+runManifestPath: tasks/<slug>/json/run-manifest.json
+aegisLogPath: logs/vibe-check/
+vibeCheckLogPath: logs/vibe-check/
+modelsHealthLogPath: logs/models/health.log
+timeFreshnessDoc: brainwav/governance/10-flow/assurance-system.md
+
+docBaseUrl: https://governance.example.org/docs/
+docUrls:
+  constitution: ${docBaseUrl}00-core/constitution.md
+  agent_charter: ${docBaseUrl}00-core/AGENT_CHARTER.md
+  # Charter fragment now lives inside AGENT_CHARTER.md between
+  # <!-- BEGIN/END CHARTER_FRAGMENT --> markers; expose it via the
+  # same canonical URL plus a fragment identifier so downstream
+  # tooling knows to extract the marked region.
+  charter_fragment: ${docBaseUrl}00-core/AGENT_CHARTER.md#fragment
+  rules_of_ai: ${docBaseUrl}00-core/RULES_OF_AI.md
+  agentic_coding_workflow: ${docBaseUrl}10-flow/agentic-coding-workflow.md
+  # Phase policy (R→G→F→REVIEW) is now consolidated into agentic-coding-workflow.md §4.3
+  # Retained for backwards compatibility; points to same doc with section anchor
+  agentic_phase_policy: ${docBaseUrl}10-flow/agentic-coding-workflow.md#phase-machine
+  cortex_aegis: ${docBaseUrl}10-flow/cortex-aegis.md
+  time_freshness: ${docBaseUrl}10-flow/assurance-system.md#time-freshness-policy
+  checklists: ${docBaseUrl}20-checklists/checklists.cortex-os.md
+  structure_guard: ${docBaseUrl}structure-guard.json
+  export_freeze_snapshot: ${docBaseUrl}export-freeze.snapshot.json
+  governance_index: ${docBaseUrl}governance-index.json
+  governance_maintainers: ${docBaseUrl}governance-maintainers.md
+  governance_hash_update: ${docBaseUrl}GOVERNANCE_HASH_UPDATE.md
+  code_style: ${docBaseUrl}CODESTYLE.md
+  security: ${docBaseUrl}SECURITY.md
+  vision: ${docBaseUrl}00-core/vision.md
+  llm_threat_controls: ${docBaseUrl}00-core/llm-threat-controls.md
+  skills_system_governance: ${docBaseUrl}00-core/skills-system-governance.md
+
+# Optional supply-chain and evidence parameters
+sbomSpec: cyclonedx@1.7
+slsaLevel: "1.1"
+signingSpec: cosign-v3-bundle
+evidenceTokens:
+  - Step Budget ≤ ${stepBudget}
+  - Ask-First ≤ ${askFirst}
+  - Evidence Triplet
+securityScanners:
+  - semgrep
+  - gitleaks
+  - osv
+a11yCmd: pnpm test:a11y
+securityCmd: pnpm security:scan
+
+# Rendering options
+includeFullText: false

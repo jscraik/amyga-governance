@@ -2,9 +2,42 @@
 
 ## Purpose
 
-This document defines **mandatory coding standards** for the Cortex-OS monorepo.  
+This document defines **mandatory coding standards** for the agentic governance framework.  
 All contributors and automation agents must follow these rules. CI enforces them via Nx targets and checks (Biome, ESLint **v9 flat config**, Ruff, Pyright, Clippy, pytest, mutation testing, Semgrep, supply-chain scanners).  
-**Baselines**: Node **24 Active LTS** (see [ADR 004](./docs/architecture/decisions/004-node-24-active-lts.md)), React **19**, Next.js **15**, Rust **2024 edition** (rustc ≥ **1.85**).
+**Baselines**: Node **24 Active LTS** (see [ADR 004](./docs/architecture/decisions/004-node-24-active-lts.md)), React **19**, Next.js **16**, TypeScript **≥ 5.9**, Rust **2024 edition** (rustc ≥ **1.85**).
+
+> **Security advisories override baselines.** When a CVE or security advisory is published for any baseline framework, all affected projects MUST upgrade to the patched version immediately, regardless of the stated baseline. Monitor [Next.js Blog](https://nextjs.org/blog), [React Security](https://react.dev/), and framework-specific channels.
+
+---
+
+## Table of Contents
+
+- [Purpose](#purpose)
+- [0. brAInwav Production Standards (Hard Prohibitions)](#0-brainwav-production-standards-hard-prohibitions)
+- [1. General Principles](#1-general-principles)
+- [2. Monorepo Task Orchestration (Nx "Smart" Mode)](#2-monorepo-task-orchestration-nx-smart-mode)
+- [3. JavaScript / TypeScript](#3-javascript--typescript)
+- [3.1. TypeScript Project Configuration](#31-typescript-project-configuration-brainwav-standards)
+- [4. React / Next.js](#4-react--nextjs)
+- [5. Python (uv-managed)](#5-python-uv-managed)
+- [6. Rust (TUI/CLI only)](#6-rust-tuicli-only)
+- [7. Naming Conventions](#7-naming-conventions)
+- [8. Commit, Releases, ADRs](#8-commit-releases-adrs)
+- [9. Toolchain & Lockfiles](#9-toolchain--lockfiles)
+- [10. Quality Gates: Coverage, Mutation, TDD](#10-quality-gates-coverage-mutation-tdd)
+- [11. Fast Tools (MANDATORY for agents)](#11-fast-tools-mandatory-for-agents)
+- [12. Security, Supply Chain & Compliance](#12-security-supply-chain--compliance)
+- [13. AI/ML Engineering](#13-aiml-engineering)
+- [14. Governance Lint Policies](#14-governance-lint-policies-semgrep--eslint)
+- [14. Accessibility](#14-accessibility)
+- [15. Observability, Logging & Streaming](#15-observability-logging--streaming)
+- [16. Resource Management & Memory Discipline](#16-resource-management--memory-discipline)
+- [17. Repository Scripts & Reports](#17-repository-scripts--reports)
+- [18. MCP & External Tools](#18-mcp--external-tools)
+- [19. Config References (Authoritative)](#19-config-references-authoritative)
+- [Appendix A — EU AI Act](#appendix-a--eu-ai-act-dates-for-governance)
+- [Appendix B — Policy Automation](#appendix-b--policy-automation-semgrep--eslint)
+- [Project-Specific Style Rules](#project-specific-style-rules)
 
 ---
 
@@ -24,7 +57,7 @@ All contributors and automation agents must follow these rules. CI enforces them
 - **Apps/binaries/infrastructure services** must include **brAInwav** branding in outputs, **error messages**, and **logs**.  
 - **Shared libraries** SHOULD avoid hard-coded branding; when emitting logs, prefer a structured field `{ brand: "brAInwav" }` passed/injected by the caller.
 - Status claims in UIs, logs, or docs must be **evidence-backed by code** and passing checks.
-- The file `.cortex/rules/RULES_OF_AI.md` is normative; this document complements it.
+- The file `brainwav/governance/00-core/RULES_OF_AI.md` is normative; this document complements it.
 
 **Detection**
 
@@ -39,11 +72,12 @@ All contributors and automation agents must follow these rules. CI enforces them
 - **Classes**: Only when required by a framework (e.g., React ErrorBoundary) or to encapsulate unavoidable state.
 - **Functions**: ≤ 40 lines; split if readability suffers. Prefer guard clauses over deep nesting.
 - **Exports**: Named exports only. No `export default`.
+  - **Exception**: Framework file conventions that require default exports (e.g., Next.js `page.tsx`, `layout.tsx`, `route.ts`, `loading.tsx`, `error.tsx`, `not-found.tsx`, and other App Router special files).
 - **ESM everywhere**: JS/TS packages use `"type": "module"`. Avoid CJS.
 - **Determinism**: No ambient randomness/time in core logic; inject seeds/clocks.
 - **DRY**: Shared logic lives in:
   - `src/lib/` (TypeScript)
-  - `apps/cortex-py/lib/` (Python)
+  - `apps/python-app/lib/` (Python)
   - `crates/common/` (Rust)
 
 ---
@@ -65,8 +99,44 @@ All contributors and automation agents must follow these rules. CI enforces them
 **Type discipline**
 
 - Explicit types at **all public API boundaries** (functions, modules, React props).
-- `strict: true` with `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`.
-- Prefer `unknown` over `any`. Use `satisfies` for object literal constraint checking.
+- `strict: true` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, and `useUnknownInCatchVariables`.
+- **`any` is forbidden everywhere** — not just at boundaries. Use real types or `unknown` + narrowing.
+
+**Banned patterns (CI errors)**
+
+| ❌ DON'T | ✅ DO |
+|----------|-------|
+| `: any`, `as any`, `Promise<any>`, `Record<string, any>`, `any[]` | Use concrete types or `unknown` with validation |
+| `value as unknown as T` (double-cast escape) | Use type guards or schema validation (Zod, Valibot) |
+| `// @ts-ignore`, `// @ts-nocheck` | `// @ts-expect-error -- <reason + ticket>` (TS fails if unnecessary) |
+| `value as SpecificType` without runtime guard | Type guard function or schema validator |
+| `eslint-disable` without description | `eslint-disable -- <reason + expiry/ticket>` |
+
+**Type-checked linting (mandatory)**
+
+Require `tseslint.configs.recommendedTypeChecked` (or equivalent) to catch "viral any" from `JSON.parse`, `response.json()`, etc. The following rules MUST be **errors**:
+
+- `@typescript-eslint/no-explicit-any` — blocks direct `any` usage ([docs](https://typescript-eslint.io/rules/no-explicit-any))
+- `@typescript-eslint/no-unsafe-assignment` — catches `any` spreading via assignment ([docs](https://typescript-eslint.io/rules/no-unsafe-assignment))
+- `@typescript-eslint/no-unsafe-member-access` — blocks property access on `any` ([docs](https://typescript-eslint.io/rules/no-unsafe-member-access))
+- `@typescript-eslint/no-unsafe-argument` — prevents passing `any` to typed params ([docs](https://typescript-eslint.io/rules/no-unsafe-argument))
+- `@typescript-eslint/no-unsafe-return` — stops `any` from leaking via returns ([docs](https://typescript-eslint.io/rules/no-unsafe-return))
+- `@typescript-eslint/no-unsafe-type-assertion` — forbids narrowing via `as` without guards ([docs](https://typescript-eslint.io/rules/no-unsafe-type-assertion))
+- `@typescript-eslint/no-unnecessary-type-assertion` — removes redundant casts ([docs](https://typescript-eslint.io/rules/no-unnecessary-type-assertion))
+- `@typescript-eslint/ban-ts-comment` — requires `@ts-expect-error` with description; bans `@ts-ignore`/`@ts-nocheck` ([docs](https://typescript-eslint.io/rules/ban-ts-comment))
+
+**ESLint directive discipline**
+
+- `@eslint-community/eslint-comments/require-description` — all disable directives need reasons ([docs](https://eslint-community.github.io/eslint-plugin-eslint-comments/rules/require-description.html))
+- `reportUnusedDisableDirectives: "error"` — dead disables fail CI
+- Disable directives follow the same waiver model as Semgrep rules (reason + expiry + ticket)
+
+**Known `any` sources — policy hazards**
+
+Built-ins like `JSON.parse()` and `Response.json()` return `any`. Mitigate via:
+- Typed linting (above rules catch downstream usage)
+- Repo helper: `parseJson<T>(schema: ZodSchema<T>, raw: string): T` — mandate at API boundaries
+- Consider [`ts-reset`](https://github.com/total-typescript/ts-reset) to convert built-in `any` returns to `unknown`
 
 **Modules & imports**
 
@@ -109,17 +179,13 @@ All contributors and automation agents must follow these rules. CI enforces them
 
 - No `eval`/dynamic Function. No unpinned remote code. Validate/sanitize all external inputs.
 
-**MLX rule**
-
-- All MLX integrations must be real; no mocks/placeholders in production code.
-
 ---
 
 ## 3.1. TypeScript Project Configuration (brAInwav Standards)
 
 **Purpose**: Standardized TypeScript configuration across all packages to ensure build consistency, enable incremental compilation, and support project references.
 
-**Templates**: Available in `.cortex/templates/tsconfig/`
+**Templates**: Available in `brainwav/governance/templates/tsconfig/`
 
 - `tsconfig.lib.json` - Standard library configuration
 - `tsconfig.spec.json` - Test configuration  
@@ -186,14 +252,14 @@ Packages with test files SHOULD use separate `tsconfig.spec.json`:
 
 ```bash
 # 1. Copy template
-cp .cortex/templates/tsconfig/tsconfig.lib.json packages/my-package/tsconfig.json
+cp brainwav/governance/templates/tsconfig/tsconfig.lib.json packages/my-package/tsconfig.json
 
 # 2. Adjust extends path (match your package depth)
 # packages/my-package/ → "../../tsconfig.base.json"
 # packages/services/my-package/ → "../../../tsconfig.base.json"
 
 # 3. Add test config if needed
-cp .cortex/templates/tsconfig/tsconfig.spec.json packages/my-package/
+cp brainwav/governance/templates/tsconfig/tsconfig.spec.json packages/my-package/
 
 # 4. Verify
 cd packages/my-package
@@ -243,7 +309,7 @@ See `docs/troubleshooting/typescript-config.md` for:
 
 ## 4. React / Next.js
 
-- **Baselines**: **React 19** and **Next.js 15**.
+- **Baselines**: **React 19** and **Next.js 16** (upgrade immediately for any security advisories).
 - **Component roles**
   - Containers: fetch, state, mutations.
   - Presentational children: pure and stateless.
@@ -286,6 +352,7 @@ See `docs/troubleshooting/typescript-config.md` for:
 ## 7. Naming Conventions
 
 - **Directories & files**: `kebab-case`
+  - **Exception**: Constitutional governance documents (`AGENT_CHARTER.md`, `RULES_OF_AI.md`, `README.md`) use `UPPER_SNAKE_CASE` or `PascalCase` to signal authority/standard status.
 - **Variables & functions**: `camelCase` (JS/TS), `snake_case` (Python/Rust)
 - **Types & components**: `PascalCase`
 - **Constants**: `UPPER_SNAKE_CASE`
@@ -307,7 +374,10 @@ See `docs/troubleshooting/typescript-config.md` for:
 - **Mise** (`.mise.toml`) pins Node, Python, uv, Rust, and other tool versions.
 - **Package manager**: **pnpm** (single repo-wide choice).
 - **Corepack** manages pnpm version; Bun is not used.
-- **Lockfiles**: Only **`pnpm-lock.yaml`** exists in the repo.
+- **Lockfiles** (language-specific, all authoritative):
+  - Node: `pnpm-lock.yaml` (repo root)
+  - Python: `uv.lock` (per app/package with `pyproject.toml`)
+  - Rust: `Cargo.lock` (per crate/workspace)
 - **Frozen installs**
   - Node: `pnpm install --frozen-lockfile`
   - Python: `uv sync --frozen`
@@ -343,17 +413,21 @@ See `docs/troubleshooting/typescript-config.md` for:
 
 ---
 
-## 11. Automation & Agent-Toolkit (MANDATORY for agents)
+## 11. Fast Tools (MANDATORY for agents)
 
-- Agents and automation **must** use `packages/agent-toolkit` for:
-  - Code search (`multiSearch`) instead of raw `grep/rg`
-  - Structural refactors/codemods
-  - Cross-language validation and pre-commit checks
-- Shell “Just” recipes are canonical entry points:
-  - `just scout "<pattern>" <path>`
-  - `just codemod 'find(:[x])' 'replace(:[x])' <path>`
-  - `just verify changed.txt`
-- Architecture: contract-first (Zod), event-driven, MCP compatible, layered design.
+<!-- FAST-TOOLS PROMPT v1 | codex-mastery | watermark:do-not-alter -->
+
+- **CRITICAL: Use ripgrep, not grep** — NEVER use grep for project-wide searches. ALWAYS use `rg`.
+  - `rg "pattern"` — search content
+  - `rg --files | rg "name"` — find files
+  - `rg -t python "def"` — language filters
+- **File finding**: Prefer `fd` (respects .gitignore)
+- **JSON**: Use `jq` for parsing and transformations
+- **Agent command substitutions**: grep→rg, find→fd/rg --files, ls -R→rg --files, cat|grep→rg pattern file
+- **Read limits**: Cap reads at 250 lines; prefer `rg -n -A 3 -B 3` for context
+- **JSON hygiene**: Use `jq` instead of regex for JSON manipulation
+
+<!-- END FAST-TOOLS PROMPT v1 | codex-mastery -->
 
 ---
 
@@ -408,9 +482,13 @@ See `docs/troubleshooting/typescript-config.md` for:
 | `no-math-random-in-prod` | `semgrep/brAInwav.yml` | Prevents fabricated data/entropy. | Guardrail #6 & Proof integrity |
 | `require-brainwav-brand-in-logs` | `semgrep/brAInwav.yml` | Ensures `{ brand:"brAInwav" }` attached to logs. | Guardrail #6 |
 | `async-must-accept-abortsignal` | `semgrep/brAInwav.yml` | Exported async APIs require `AbortSignal`. | Guardrail #7 (Arc Protocol resilience) |
-| `strict-boundaries-no-any` | `semgrep/brAInwav.yml` + ESLint `@typescript-eslint/no-explicit-any` | No `any` at public boundaries. | Guardrail #4 (Proof) |
+| `no-explicit-any` | ESLint `@typescript-eslint/no-explicit-any` | No `any` anywhere (not just boundaries). | Guardrail #4 (Proof) |
+| `no-unsafe-*` | ESLint `@typescript-eslint/no-unsafe-{assignment,member-access,argument,return}` | Blocks viral `any` spread from JSON.parse, etc. | Guardrail #4 (Proof) |
+| `no-unsafe-type-assertion` | ESLint `@typescript-eslint/no-unsafe-type-assertion` | Forbids narrowing via `as` without runtime guards. | Guardrail #4 (Proof) |
+| `ban-ts-comment` | ESLint `@typescript-eslint/ban-ts-comment` | Bans `@ts-ignore`/`@ts-nocheck`; requires `@ts-expect-error -- reason`. | Guardrail #4 (Proof) |
+| `require-description` | ESLint `@eslint-community/eslint-comments/require-description` | All disable directives need documented reasons. | Guardrail #4 (Proof) |
 | `max-lines-per-function` | ESLint `max-lines-per-function` | Functions ≤ 40 LOC; split arcs early. | Guardrail #7 |
-| `import/no-default-export` | ESLint | Enforces named exports only. | Guardrail #4 (Proof traceability) |
+| `import/no-default-export` | ESLint | Enforces named exports only (except framework files). | Guardrail #4 (Proof traceability) |
 | `no-restricted-imports` | ESLint | Blocks cross-domain imports; require interfaces. | Guardrail #7 |
 
 - **Local reproduction:** `pnpm lint:smart` (ESLint) and `pnpm dlx semgrep --config semgrep/brAInwav.yml`.
@@ -431,7 +509,9 @@ See `docs/troubleshooting/typescript-config.md` for:
 
 ## 15. Observability, Logging & Streaming
 
-- **OpenTelemetry**: Instrument services/CLIs to emit OTLP **traces, metrics, and logs** (Logs Data Model “stable”). Correlate request IDs end-to-end.
+- **OpenTelemetry**: Instrument services/CLIs to emit OTLP **traces, metrics, and logs**. Correlate request IDs end-to-end.
+  - **Logs Data Model**: Spec status is "Stable" per [OpenTelemetry spec](https://opentelemetry.io/docs/specs/otel/logs/data-model/).
+  - **JS/TS implementation caveat**: The JavaScript SDK logs implementation is listed as "Development" maturity. For Node services, prefer collector-side log ingestion or accept development-status APIs with appropriate testing. Monitor [OTel JS status](https://opentelemetry.io/docs/languages/js/) for GA promotion.
 - **brAInwav logging**
   - Structured logs SHOULD include `brand: "brAInwav"` at app/service boundaries; libraries inherit caller context.
   - Log levels: `error`, `warn`, `info`, `debug`, `trace` only.
@@ -487,7 +567,7 @@ See `docs/troubleshooting/typescript-config.md` for:
 - **Mise**: `.mise.toml` pins tool versions (Node 24 Active LTS, Python, uv, Rust; per [ADR-004](./docs/architecture/decisions/004-node-24-active-lts.md))
 - **CI**: `.github/workflows/*.yml` enforce gates (quality, security, supply chain, badges)
 - **ADRs**: `docs/adr/` (MADR template)
-- **brAInwav Rules**: `.cortex/rules/RULES_OF_AI.md` (primary production standards)
+- **brAInwav Rules**: `brainwav/governance/00-core/RULES_OF_AI.md` (primary production standards)
 
 ---
 
@@ -505,6 +585,36 @@ See `docs/troubleshooting/typescript-config.md` for:
 - **Semgrep rule catalog**: See `semgrep/brAInwav.yml` (rules defined in [`security/semgrep/packs/brainwav-custom.yml`](security/semgrep/packs/brainwav-custom.yml)). These rules block `child_process.exec*` shell spawns, `NODE_TLS_REJECT_UNAUTHORIZED=0`, and AbortSignal gaps via `brainwav.async.fetch-missing-abort-signal`, `brainwav.async.fetch-options-missing-abort-signal`, `brainwav.async.axios-missing-cancellation`, and `brainwav.async.axios-options-missing-cancellation`.
 - **Testing/validation**: Regression tests live in [`security/semgrep/tests/abort-signal`](security/semgrep/tests/abort-signal) and run with `semgrep --test security/semgrep/packs/brainwav-custom.yml`.
 - **Exemption criteria**: Helper factories that already inject `signal` are exempt because the rules only match object literals.
-- **Waiver process**: Request waivers via `/.cortex/waivers/` with Maintainer approval.
+- **Waiver process**: Request waivers via `/.agentic-governance/waivers/` with Maintainer approval.
 - **Legacy ESLint profile** — [`.eslintrc.cjs`](./.eslintrc.cjs) enforces the 40-line ceiling (`max-lines-per-function`), naming conventions, and cross-domain import guards; overrides live in per-package `eslint.config.js` fragments and require a documented waiver before relaxing.
 - **Flat ESLint config** — [`eslint.config.js`](./eslint.config.js) layers SonarJS + `typescript-eslint` async safety checks; together with the `AbortSignal` mandate in §3 and the `scripts/ensure-eslint-flat-config.mjs` guard (runs before `pnpm lint:smart` and emits `reports/policy/flat-config-guard.json`), this is how CI verifies cancellation-ready async boundaries. Adjustments also flow through the waiver process above.
+
+---
+
+<!-- PROJECT-SPECIFIC: START -->
+## Project-Specific Style Rules
+
+> **Instructions:** Add project-specific linting, formatting, or architectural rules here. This section is NOT overwritten when upgrading the governance pack.
+
+### Additional ESLint Rules
+
+```jsonc
+// Extend your local eslint.config.mjs with project-specific rules
+{
+  // "rules": { ... }
+}
+```
+
+### Project Naming Conventions
+
+| Pattern | Example | Notes |
+|---------|---------|-------|
+| Components | `PascalCase` | — |
+| Hooks | `useCamelCase` | — |
+| Utils | `camelCase` | — |
+
+### Architectural Boundaries
+
+<!-- Define project-specific import restrictions or layer rules -->
+
+<!-- PROJECT-SPECIFIC: END -->

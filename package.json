@@ -1,0 +1,45 @@
+{
+  "name": "brainwav-agentic-governance",
+  "version": "0.1.1",
+  "private": false,
+  "type": "module",
+  "description": "Governance automation scripts and MCP helpers",
+  "engines": {
+    "node": ">=24.11.0",
+    "pnpm": ">=10.19.0"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jscraik/brainwav-agentic-governance"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "AGENTS.md",
+    "AGENTS-GOVERNANCE.md",
+    "CODESTYLE.md",
+    "SECURITY.md",
+    "README.md",
+    "brainwav/",
+    "scripts/",
+    ".agentic-governance/"
+  ],
+  "bin": {
+    "ensure-tools": "scripts/ensure-tools.mjs",
+    "cortex-governance-bootstrap": "scripts/cortex-governance-bootstrap.mjs",
+    "readiness-check": "scripts/readiness-check.mjs",
+    "oversight-vibe-check": "scripts/oversight-vibe-check.mjs"
+  },
+  "scripts": {
+    "ensure:tools": "node scripts/ensure-tools.mjs",
+    "cortex:governance-bootstrap": "node scripts/cortex-governance-bootstrap.mjs",
+    "oversight:vibe-check": "node scripts/oversight-vibe-check.mjs",
+    "readiness:check": "node scripts/readiness-check.mjs",
+    "governance:sync-hashes": "node scripts/sync-governance-hashes.mjs",
+    "commands:daily-summary": "node brainwav/governance/commands/daily-summary.mjs",
+    "commands:memorize": "node brainwav/governance/commands/memorize.mjs",
+    "commands:recall": "node brainwav/governance/commands/recall.mjs"
+  }
+}

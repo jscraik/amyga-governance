@@ -1,0 +1,84 @@
+name: "📚 Documentation"
+description: "Report documentation issues or suggest improvements"
+title: "[Docs]: "
+labels: ["documentation", "triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Documentation Issue / Improvement
+        
+        Help us improve the governance documentation!
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: "Issue Type"
+      options:
+        - "Missing documentation"
+        - "Incorrect / outdated information"
+        - "Unclear / confusing content"
+        - "Broken links"
+        - "Typos / grammar"
+        - "Suggested improvement"
+        - "New documentation request"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: "Documentation Area"
+      options:
+        - "AGENTS.md (root)"
+        - "CODESTYLE.md"
+        - "Governance Core (00-core/)"
+        - "Workflows (10-flow/)"
+        - "Checklists (20-checklists/)"
+        - "Compliance (30-compliance/)"
+        - "Infrastructure (90-infra/)"
+        - "Templates"
+        - "Runbooks"
+        - "API Reference"
+        - "Context docs"
+        - "README files"
+        - "Other"
+    validations:
+      required: true
+
+  - type: input
+    id: file
+    attributes:
+      label: "Affected File(s)"
+      description: "Path to the file(s) that need updating"
+      placeholder: "brainwav/governance/10-flow/agentic-coding-workflow.md"
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: "Describe the documentation issue or improvement"
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: "Suggested Change"
+      description: "If you have a specific fix or improvement in mind"
+      placeholder: |
+        Current: "..."
+        Suggested: "..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: "Contribution"
+      options:
+        - label: "I would like to submit a PR to fix this"

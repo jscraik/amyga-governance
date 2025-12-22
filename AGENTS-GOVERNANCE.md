@@ -17,7 +17,7 @@
 - [Quality Metrics](#quality-metrics) - Coverage and mutation thresholds
 
 **Related:**
-[Contributor Guide](./AGENTS-QUICK.md) | [AI Agent Rules](./AGENTS-AI.md) | [Full AGENTS.md](./CLAUDE.md)
+[Contributor Guide](./CONTRIBUTING.md) | [AI Agent Rules](brainwav/governance/00-core/RULES_OF_AI.md) | [Root AGENTS](./AGENTS.md)
 
 ---
 
@@ -40,7 +40,7 @@ Every rule in the governance framework has corresponding CI automation. This mat
 | **AGENTS-PRV-002** | Oversight logs attached | 🔴 BLOCKER | `agents-guard` | Search `brAInwav-vibe-check` in artifacts | Waiver only |
 | **AGENTS-HMS-003** | Live model evidence present | 🔴 BLOCKER | `models-smoke` | Verify `MODELS:LIVE:OK` in logs | Waiver only |
 | **AGENTS-ACL-004** | Package AGENTS.md not weakening root | 🔴 BLOCKER | `structure-validate` | Compare rule sets programmatically | N/A |
-| **AGENTS-DOC-005** | Docs validation (no ERROR) | 🔴 BLOCKER | `docs-validate` | `.cortex/gates/validate-docs.ts` | Waiver only |
+| **AGENTS-DOC-005** | Docs validation (no ERROR) | 🔴 BLOCKER | `docs-validate` | `scripts/gates/validate-docs.ts` | Waiver only |
 | **AGENTS-TRC-006** | Trace context verification | 🔴 BLOCKER | `trace-verify` | `verify-trace-context.ts` | Waiver only |
 | **AGENTS-MEM-007** | Local Memory parity (IDs present) | 🔴 BLOCKER | `memory-parity` | Check `json/memory-ids.json` + repo mirror | Waiver only |
 | **AGENTS-A11Y-008** | WCAG reports attached (if UI touched) | 🔴 BLOCKER | `a11y-check` | jest-axe/axe JSON output | Skip if no UI |
@@ -67,7 +67,7 @@ Added: 2025-11-17 as part of documentation automation initiative
 | **AGENTS-DOC-022** | Bare URLs wrapped in angle brackets | 🟡 WARNING | `lint-markdown` | Grep for `http[s]://[^ )]*\s` | Fix recommended |
 | **AGENTS-DOC-023** | Alt text on all images | 🔴 BLOCKER | `lint-markdown` | MD045 rule in markdownlint | N/A |
 | **AGENTS-DOC-024** | Heading hierarchy (no skips) | 🟡 WARNING | `lint-markdown` | MD001 rule in markdownlint | Style override |
-| **AGENTS-DOC-025** | Proper name capitalization | 🟡 WARNING | `lint-markdown` | MD044 rule (Cortex-OS, brAInwav, etc.) | Allowlist |
+| **AGENTS-DOC-025** | Proper name capitalization | 🟡 WARNING | `lint-markdown` | MD044 rule (governance pack names, brAInwav, etc.) | Allowlist |
 
 **Pre-commit Integration:**
 - Markdown files run through `markdownlint-cli2 --fix` automatically
@@ -113,19 +113,19 @@ Added: 2025-11-17 as part of documentation automation initiative
 
 ### Standards Alignment (Advisory)
 
-Cortex-OS aligns with industry standards. This mapping is **informational** (not enforced by CI) but guides architecture decisions.
+The governance pack aligns with industry standards. This mapping is **informational** (not enforced by CI) but guides architecture decisions.
 
 #### NIST SSDF (Secure Software Development Framework)
 
 | NIST Practice | Cortex-OS Implementation | Evidence |
 |---------------|-------------------------|----------|
-| **PO.1.1** Identify stakeholders | `.cortex/rules/constitution.md` escalation tree | Constitutional doc |
+| **PO.1.1** Identify stakeholders | `brainwav/governance/00-core/constitution.md` escalation tree | Constitutional doc |
 | **PO.3.2** Train developers | Mandatory governance pack reading | `AGENTS.md` acknowledgment |
 | **PS.1.1** Version control | Git with signed commits/tags | Commit signatures |
 | **PS.2.1** Threat modeling | `llm-threat-controls.md` | Threat controls map |
 | **PS.3.1** Dependency management | Lockfiles, SBOM, OSV scanning | `pnpm-lock.yaml` + SBOM |
 | **PW.1.1** Secure coding | `CODESTYLE.md` + ESLint security rules | `.eslintrc.js` configs |
-| **PW.4.1** Code review | Required PR reviews + checklist | `.cortex/rules/code-review-checklist.md` |
+| **PW.4.1** Code review | Required PR reviews + checklist | `brainwav/governance/20-checklists/checklists.md` |
 | **PW.7.1** Automated testing | 95% coverage + 90% mutation | CI test jobs |
 | **PW.8.1** SAST | Semgrep OWASP profiles | `.github/workflows/security-modern.yml` |
 | **RV.1.1** Vulnerability response | Dependabot + SECURITY.md | GitHub Security tab |
@@ -134,10 +134,10 @@ Cortex-OS aligns with industry standards. This mapping is **informational** (not
 
 | Control | Cortex-OS Implementation | Evidence |
 |---------|-------------------------|----------|
-| **5.2** AI policy | `.cortex/rules/RULES_OF_AI.md` | Governance pack |
+| **5.2** AI policy | `brainwav/governance/00-core/RULES_OF_AI.md` | Governance pack |
 | **6.2.3** Risk assessment | `llm-threat-controls.md` | OWASP LLM Top 10 mapping |
 | **7.2** Competence | Mandatory charter reading | AGENTS_MD_SHA logs |
-| **7.5** Documented information | Task folder structure | `TASK_FOLDER_STRUCTURE.md` |
+| **7.5** Documented information | Task folder structure | `agentic-coding-workflow.md` §3 |
 | **8.1** Operational planning | Phase machine (R→G→F→REVIEW) | `.cortex/run.yaml` |
 | **8.3** AI system lifecycle | ArcTDD workflow | Charter enforcement |
 | **9.1** Monitoring | OpenTelemetry + trace context | W3C traceparent logs |
@@ -201,7 +201,7 @@ Waivers allow temporary bypass of governance rules under specific conditions.
 
 #### 1. Create Waiver Document
 
-**Location:** `/.cortex/waivers/<waiver_id>.md`
+**Location:** `/.agentic-governance/waivers/<waiver_id>.md`
 
 **Template:**
 ```markdown
@@ -323,7 +323,7 @@ Every task MUST produce an evidence package for audit purposes.
     }
   ],
   "governance": {
-    "rules_index": "/.cortex/rules/index.json",
+    "rules_index": "brainwav/governance/90-infra/governance-index.json",
     "AGENTS_MD_SHA": "abc123...",
     "llm_controls_map": "verification/llm-controls-map.md"
   },
@@ -462,7 +462,7 @@ pnpm quality:gate
 
 ### SHA-Pinned Rules
 
-**Index Location:** `/.cortex/rules/index.json`
+**Index Location:** `brainwav/governance/90-infra/governance-index.json`
 
 **Structure:**
 ```json
@@ -471,12 +471,12 @@ pnpm quality:gate
   "generated_at": "2025-11-17T10:00:00Z",
   "documents": [
     {
-      "path": ".cortex/rules/RULES_OF_AI.md",
+      "path": "brainwav/governance/00-core/RULES_OF_AI.md",
       "sha256": "abc123...",
       "mandatory": true
     },
     {
-      "path": ".cortex/rules/CHARTER_FRAGMENT.md",
+      "path": "brainwav/governance/00-core/AGENT_CHARTER.md",
       "sha256": "f08875...",
       "mandatory": true
     }
@@ -487,14 +487,14 @@ pnpm quality:gate
 ### Agent Bootstrap Verification
 
 **MUST (before any action):**
-1. Load `/.cortex/rules/index.json`
+1. Load `brainwav/governance/90-infra/governance-index.json`
 2. Compute SHA-256 of each listed document
 3. Compare against index
 4. **REFUSE to act if mismatch**
 
 **Log Evidence:**
 ```
-[brAInwav] Governance index verified | index_path=/.cortex/rules/index.json | docs_count=15 | all_sha_match=true
+[brAInwav] Governance index verified | index_path=brainwav/governance/90-infra/governance-index.json | docs_count=15 | all_sha_match=true
 ```
 
 ### CI Verification
@@ -527,7 +527,7 @@ pnpm quality:gate
 - Issues: Label with `governance`
 
 **Emergency Escalation:**
-See `.cortex/rules/constitution.md` escalation tree
+See `brainwav/governance/00-core/constitution.md` escalation tree
 
 ---
 

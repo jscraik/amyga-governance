@@ -1,0 +1,92 @@
+# Full-doc variant for offline/air-gapped review; render-pack picks this when --full-doc or includeFullText=true.
+docs:
+  - id: constitution
+    file: .cortex/rules/00-core/constitution.md
+    sha: e766755420bf5b0466a83722340de170e487d6d055b1172cf9686add88c5e1d3
+    url: https://governance.cortex-os.local/docs/00-core/constitution.md
+    full_text: "{{INLINE:.cortex/rules/00-core/constitution.md}}"
+  - id: agent_charter
+    file: .cortex/rules/00-core/AGENT_CHARTER.md
+    sha: 70953d4e7433e886150fcab9daa1dc8c7a735e5ec6877499fd8832720a3900f4
+    url: https://governance.cortex-os.local/docs/00-core/AGENT_CHARTER.md
+    full_text: "{{INLINE:.cortex/rules/00-core/AGENT_CHARTER.md}}"
+  - id: charter_fragment
+    file: .cortex/rules/00-core/AGENT_CHARTER.md
+    sha: faf6254926f327ac182261de41f0f100b4c4ac24f2ca4700949c091a66cda13a
+    url: https://governance.cortex-os.local/docs/00-core/AGENT_CHARTER.md#fragment
+    fragment_markers:
+      - "<!-- BEGIN CHARTER_FRAGMENT -->"
+      - "<!-- END CHARTER_FRAGMENT -->"
+    full_text: "{{INLINE:.cortex/rules/00-core/AGENT_CHARTER.md}}"
+  - id: rules_of_ai
+    file: .cortex/rules/00-core/RULES_OF_AI.md
+    sha: ""
+    url: https://governance.cortex-os.local/docs/00-core/RULES_OF_AI.md
+    full_text: "{{INLINE:.cortex/rules/00-core/RULES_OF_AI.md}}"
+  - id: agentic_coding_workflow
+    file: .cortex/rules/10-flow/agentic-coding-workflow.md
+    sha: 7ea61989105a13f64ec81c46cb018b5655b54268bcd8831f4212eec819c72c76
+    url: https://governance.cortex-os.local/docs/10-flow/agentic-coding-workflow.md
+    full_text: "{{INLINE:.cortex/rules/10-flow/agentic-coding-workflow.md}}"
+    note: "Includes Phase Machine (§4.3), Hard Rules (§6.1), Evidence Tokens (§6.2)"
+  # agentic_phase_policy consolidated into agentic-coding-workflow.md §4.3
+  - id: cortex_aegis
+    file: .cortex/rules/10-flow/cortex-aegis.md
+    sha: cddf030cc8be93055bbd2493f90de926c28f58fd1859d99b416ff95fb1da22cd
+    url: https://governance.cortex-os.local/docs/10-flow/cortex-aegis.md
+    full_text: "{{INLINE:.cortex/rules/10-flow/cortex-aegis.md}}"
+  - id: checklists
+    file: .cortex/rules/20-checklists/checklists.cortex-os.md
+    sha: ab1a82f3f5d7b52a4c7bc590596207b336c80186b173c7e648d1b5c2ed3eb144
+    url: https://governance.cortex-os.local/docs/20-checklists/checklists.cortex-os.md
+    full_text: "{{INLINE:.cortex/rules/20-checklists/checklists.cortex-os.md}}"
+  - id: structure_guard
+    file: .cortex/rules/90-infra/structure-guard.json
+    sha: ""
+    url: https://governance.cortex-os.local/docs/structure-guard.json
+    full_text: "{{INLINE:.cortex/rules/90-infra/structure-guard.json}}"
+  - id: export_freeze_snapshot
+    file: .cortex/rules/90-infra/export-freeze.snapshot.json
+    sha: ""
+    url: https://governance.cortex-os.local/docs/export-freeze.snapshot.json
+    full_text: "{{INLINE:.cortex/rules/90-infra/export-freeze.snapshot.json}}"
+  - id: governance_index
+    file: .cortex/rules/governance-index.json
+    sha: ""
+    url: https://governance.cortex-os.local/docs/governance-index.json
+    full_text: "{{INLINE:.cortex/rules/governance-index.json}}"
+  - id: governance_maintainers
+    file: .cortex/rules/90-infra/governance-maintainers.md
+    sha: 91ace01d09b10d30e9607c41b1e55ce1fe0bee0aa2fadb929aa7e5583f465590
+    url: https://governance.cortex-os.local/docs/governance-maintainers.md
+    full_text: "{{INLINE:.cortex/rules/90-infra/governance-maintainers.md}}"
+  - id: governance_hash_update
+    file: .cortex/rules/90-infra/GOVERNANCE_HASH_UPDATE.md
+    sha: ""
+    url: https://governance.cortex-os.local/docs/GOVERNANCE_HASH_UPDATE.md
+    full_text: "{{INLINE:.cortex/rules/90-infra/GOVERNANCE_HASH_UPDATE.md}}"
+  - id: code_style
+    file: CODESTYLE.md
+    sha: f10d53cd89ad9ff279129c4e357b27c3c9216ffe98055b3b539ce6055de1def2
+    url: https://governance.cortex-os.local/docs/CODESTYLE.md
+    full_text: "{{INLINE:CODESTYLE.md}}"
+  - id: security
+    file: SECURITY.md
+    sha: e42c9934307326c19ef9b6483d3742be7522df4b6ae712a1cc5c0c2d2e79177d
+    url: https://governance.cortex-os.local/docs/SECURITY.md
+    full_text: "{{INLINE:SECURITY.md}}"
+  - id: vision
+    file: .cortex/rules/00-core/vision.md
+    sha: ee5cbbf7592b3c00ef92e310682bb8ce289aa78e2cd56de173bcb77cc76a492f
+    url: https://governance.cortex-os.local/docs/00-core/vision.md
+    full_text: "{{INLINE:.cortex/rules/00-core/vision.md}}"
+  - id: llm_threat_controls
+    file: .cortex/rules/00-core/llm-threat-controls.md
+    sha: 75bb7f77caa566add4489259f97512eed84e52a0718eb0b2e3de4f426687fbf1
+    url: https://governance.cortex-os.local/docs/00-core/llm-threat-controls.md
+    full_text: "{{INLINE:.cortex/rules/00-core/llm-threat-controls.md}}"
+  - id: skills_system_governance
+    file: .cortex/rules/00-core/skills-system-governance.md
+    sha: f3fbbca5b4516d71139d66610c992bd461a4fdc85c45b840fedc2fe3fb7ce64f
+    url: https://governance.cortex-os.local/docs/00-core/skills-system-governance.md
+    full_text: "{{INLINE:.cortex/rules/00-core/skills-system-governance.md}}"

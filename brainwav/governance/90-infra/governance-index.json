@@ -1,0 +1,247 @@
+{
+    "description": "Governance document index with precedence order and SHA verification",
+    "version": "2025.12.2",
+    "updated": "2025-12-05",
+    "precedence": [
+        "00-core/constitution.md",
+        "00-core/AGENT_CHARTER.md",
+        "00-core/agent-verification-policy.md",
+        "10-flow/governance-quickstart.md",
+        "10-flow/agentic-coding-workflow.md",
+        "10-flow/assurance-system.md",
+        "10-flow/emergency-stop-protocol.md",
+        "10-flow/session-continuity.md",
+        "10-flow/memory-governance.md",
+        "10-flow/runtime-governance-service.md",
+        "20-checklists/checklists.md",
+        "30-compliance/eu-ai-act.md",
+        "docs/research/arxiv-agentic-governance-summary.md",
+        "00-core/vision.md",
+        "00-core/llm-threat-controls.md",
+        "00-core/skills-system-governance.md",
+        "90-infra/egress-governance.md",
+        "CODESTYLE.md",
+        "docs/documentation-governance.md",
+        "SECURITY.md"
+    ],
+    "docs": {
+        "constitution.md": {
+            "path": "00-core/constitution.md",
+            "sha256": "79a8d3202e09bfd926d1e9d057f831434c80070a068b09669aca35987a3533ae",
+            "required_tokens": [
+                "Constitution",
+                "Core Principles"
+            ]
+        },
+        "AGENT_CHARTER.md": {
+            "path": "00-core/AGENT_CHARTER.md",
+            "sha256": "2f426f7b5eb976cf287697fd803393a726725e8a0fca394d406ec30a3c813dd1",
+            "required_tokens": [
+                "[brAInwav]",
+                "MODELS:LIVE:OK",
+                "NORTH_STAR:RED_FIRST"
+            ]
+        },
+        "agent-verification-policy.md": {
+            "path": "00-core/agent-verification-policy.md",
+            "sha256": "1a0ddb41b599fb886d7c30b5e1e8534795a548db2ee82544538f773eb8af9839",
+            "required_tokens": [
+                "AgentFacts",
+                "trust score",
+                "KYA"
+            ]
+        },
+        "CHARTER_FRAGMENT.md": {
+            "path": "00-core/AGENT_CHARTER.md",
+            "fragment_markers": [
+                "<!-- BEGIN CHARTER_FRAGMENT -->",
+                "<!-- END CHARTER_FRAGMENT -->"
+            ],
+            "sha256": "faf6254926f327ac182261de41f0f100b4c4ac24f2ca4700949c091a66cda13a",
+            "required_tokens": [
+                "Step Budget ≤ 7",
+                "Ask-First ≤ 3",
+                "Evidence Triplet"
+            ]
+        },
+        "vision.md": {
+            "path": "00-core/vision.md",
+            "sha256": "f946e4e09612fad45cb90f20843c4846e2c83091ba3a683420904ec0b301afbb",
+            "required_tokens": [
+                "Vision",
+                "North Star"
+            ]
+        },
+        "llm-threat-controls.md": {
+            "path": "00-core/llm-threat-controls.md",
+            "sha256": "f6505450473d01f17db557848199d0b644f58a88c5a74a43a25f9f47ab5d614a",
+            "required_tokens": [
+                "LLM01",
+                "LLM06",
+                "LLM-S0"
+            ]
+        },
+        "skills-system-governance.md": {
+            "path": "00-core/skills-system-governance.md",
+            "sha256": "b3704e24e00256f223fafa8ace90f512297ab646b8a88149ef29b9d3df06ff8a",
+            "required_tokens": [
+                "Skills governance",
+                "Structured outputs"
+            ]
+        },
+        "governance-quickstart.md": {
+            "path": "10-flow/governance-quickstart.md",
+            "sha256": "84ef7de943b01543d164e2fd1882e49622d598587fb45580cc24e4106e553509",
+            "required_tokens": [
+                "governance quickstart",
+                "workflow selection"
+            ]
+        },
+        "agentic-coding-workflow.md": {
+            "path": "10-flow/agentic-coding-workflow.md",
+            "sha256": "7da47d73e87f99b33980b14066e452f429242269c62658185cf664921c9d511d",
+            "required_tokens": [
+                "G0 Initialize",
+                "Evidence Triplet",
+                "PHASE_TRANSITION",
+                "No HITL before REVIEW",
+                "MCP Tool Integration Matrix",
+                "Context Pruning",
+                "Critic Subagent",
+                "Just-in-Time Docs",
+                "Session Retrospective",
+                "Subagent Governance",
+                "Confession Protocol"
+            ],
+            "note": "Consolidates Phase Machine (§4.4), Task Folder Layout (§3), Hard Rules (§6.1), Context Pruning (§6.2), Evidence Tokens (§6.3), Subagent Governance (§6.4), Confession Protocol (§6.5), MCP Integration Matrix (§4.1)"
+        },
+        "assurance-system.md": {
+            "path": "10-flow/assurance-system.md",
+            "sha256": "0cb958b0543ee7b43589d2f46de05d2d06367d68458f7d85e8878be31dca16a8",
+            "required_tokens": [
+                "Assurance System",
+                "Time Freshness"
+            ]
+        },
+        "checklists.md": {
+            "path": "20-checklists/checklists.md",
+            "sha256": "5f839a91cbc39af28db37637e8cdbcaede64111e914e5eef1a746ae342a970d2",
+            "required_tokens": [
+                "checklist",
+                "quality gates"
+            ]
+        },
+        "governance-maintainers.md": {
+            "path": "90-infra/governance-maintainers.md",
+            "sha256": "6aa96ab9ba4b7c80d1a99300807c7267eea0c2d21631e3ed02d2882fe0d25cb1",
+            "required_tokens": [
+                "hash sync",
+                "maintainer"
+            ]
+        },
+        "governance-index.json": {
+            "path": "90-infra/governance-index.json",
+            "sha256": "b034bdd1c3a924061b8dd3c101d6d91b3985e375dbba3c6b23f82951d20aa644",
+            "required_tokens": [
+                "precedence",
+                "sha256"
+            ]
+        },
+        "agentic.core.schema.json": {
+            "path": "90-infra/agentic.core.schema.json",
+            "sha256": "9b1c602925bdd1988d5bf11dc96192182a90809c439b9b0814549e1cbda5e954",
+            "required_tokens": [
+                "schema",
+                "validation"
+            ]
+        },
+        "governance-pack.map.yaml": {
+            "path": "90-infra/governance-pack.map.yaml",
+            "sha256": "a0d27f5e2b9f8e28ea3a1cc856672ee865f6c5890d2c12cf1185e413a21b92bc",
+            "required_tokens": [
+                "pack",
+                "overlay"
+            ]
+        },
+        "README.md": {
+            "path": "README.md",
+            "sha256": "193fd63ddca7400664da5005dfcbd65bac55df5b2cde7f5bf9a0a346550d1f94",
+            "required_tokens": [
+                "governance",
+                "structure"
+            ]
+        },
+        "emergency-stop-protocol.md": {
+            "path": "10-flow/emergency-stop-protocol.md",
+            "sha256": "ade56b1bf82b6e7987781baff58f2919b420bf475b3b2a297fbd12c9e9422528",
+            "required_tokens": [
+                "emergency",
+                "termination",
+                "kill switch"
+            ]
+        },
+        "session-continuity.md": {
+            "path": "10-flow/session-continuity.md",
+            "sha256": "3d753bcf926dad0c1073492afc4fc6b7c084fd96ff3775a7ff3ef20352521f8e",
+            "required_tokens": [
+                "session",
+                "checkpoint",
+                "resume"
+            ]
+        },
+        "memory-governance.md": {
+            "path": "10-flow/memory-governance.md",
+            "sha256": "4af3b61d638e4bf6d89bf7d373ea941aca52770e2c6c4fc5ed4159b3ba05331b",
+            "required_tokens": [
+                "memory",
+                "retention",
+                "access control"
+            ]
+        },
+        "runtime-governance-service.md": {
+            "path": "10-flow/runtime-governance-service.md",
+            "sha256": "2d8fd2c5e3a3beaebae8f3263274bfcca357cc09d1349890b10841a6fe8e2e35",
+            "required_tokens": [
+                "sentinel",
+                "trust factor",
+                "policy gate"
+            ]
+        },
+        "eu-ai-act.md": {
+            "path": "30-compliance/eu-ai-act.md",
+            "sha256": "a1b7290965c27651f2862f2a81ebff0e90c41f44fa58960317f909467cfbcfe8",
+            "required_tokens": [
+                "EU AI Act",
+                "risk classification",
+                "compliance"
+            ]
+        },
+        "egress-governance.md": {
+            "path": "90-infra/egress-governance.md",
+            "sha256": "896358acd33cff20e48093f7c1f5322c62d95c2d0997bb9f1d5ff5c7dc475874",
+            "required_tokens": [
+                "egress",
+                "allowlist",
+                "rate limit"
+            ]
+        },
+        "documentation-governance.md": {
+            "path": "docs/documentation-governance.md",
+            "sha256": "bc66dcce7c3915ab95ff27ce3e9c774b9b4036a5f84d285be292fcd075854c09",
+            "required_tokens": [
+                "documentation governance",
+                "JSDoc",
+                "OpenAI Cookbook"
+            ]
+        },
+        "arxiv-agentic-governance-summary.md": {
+            "path": "docs/research/arxiv-agentic-governance-summary.md",
+            "sha256": "a63878e310e24ea6d5586ef6b05dc93a80ad5eaf59fc0618dc9645a87ff56323",
+            "required_tokens": [
+                "arXiv",
+                "mapping",
+                "research summary"
+            ]
+        }
+    }
+}

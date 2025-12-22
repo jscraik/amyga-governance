@@ -56,7 +56,7 @@ pnpm dev
 
 - Every PR must include at least one `.changeset/*.md` entry or carry the `skip-release` label; both the [changeset gate](docs/contributing/changeset-gate.md) job in `ci.yml` **and** the `changeset status` rehearsal in `pr-quality-gates.yml` fail otherwise.
 - When either check fails, follow the linked Changesets authoring guide in the step summary (`pnpm changeset`) to generate the missing file; the workflow summary also reiterates the key steps for authoring non-trivial release notes.
-- Apply the `skip-release` label **only** when every modified file is documentation or automation/meta tooling and a release would be a no-op. Governance still requires a waiver: document it under `/.cortex/waivers/<waiver_id>.md` with `rule_id: release.changeset.required`, `status: approved`, and an expiry before requesting review. Remove the label and delete the waiver once you add a changeset.
+- Apply the `skip-release` label **only** when every modified file is documentation or automation/meta tooling and a release would be a no-op. Governance still requires a waiver: document it under `/.agentic-governance/waivers/<waiver_id>.md` with `rule_id: release.changeset.required`, `status: approved`, and an expiry before requesting review. Remove the label and delete the waiver once you add a changeset.
 
 ## 📋 Development Guidelines
 

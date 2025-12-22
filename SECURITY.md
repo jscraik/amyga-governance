@@ -1,579 +1,305 @@
-<!--
-file_path: "SECURITY.md"
-description: "Cortex-OS security policy and vulnerability reporting guide"
-maintainer: "@jamiescottcraik"
-last_updated: "2025-11-18"
-version: "1.2.0"
-status: "governance"
-license: "Apache 2.0"
--->
-
 # Security Policy
 
-[![Vulnerability Reporting](https://img.shields.io/badge/vulnerability-reporting-available-blue.svg)](#-reporting-vulnerabilities)
+brAInwav Agentic Governance is a framework for governing AI agents, MCP integrations, and LLM-assisted development workflows. While primarily documentation and tooling, it defines patterns that influence security-critical systems. This document describes our security practices and how to report vulnerabilities.
 
-**Security-First AI Agent Development Platform**
-_We take security seriously and appreciate responsible disclosure of vulnerabilities_
+For operational governance rules, see [AGENTS.md](AGENTS.md). For LLM-specific threat controls, see [llm-threat-controls.md](brainwav/governance/00-core/llm-threat-controls.md).
 
 ---
 
-## 🛡️ Security Overview
+## Table of Contents
 
-Cortex-OS is built with security as a fundamental principle. Our Autonomous Software Behavior Reasoning (ASBR) runtime implements
-comprehensive security measures to protect against common vulnerabilities and emerging AI/ML specific threats.
+- [Supported Versions](#supported-versions)
+- [Standards & References (Dec 2025)](#standards--references-dec-2025)
+- [Threat Model](#threat-model)
+- [Authentication & Authorization](#authentication--authorization)
+- [Reporting a Vulnerability](#reporting-a-vulnerability)
+- [Response Timeline](#response-timeline)
+- [Continuous Security](#continuous-security)
+- [Scope](#scope)
 
-### Security Frameworks We Follow
+---
 
-- **🔒 OWASP Top-10 2021** - Web application security standards
-- **🤖 OWASP LLM Top-10** - AI/ML specific security guidelines
-- **🎯 MITRE ATLAS** - Adversarial Threat Landscape for Artificial-Intelligence Systems
-- **🌐 NIST Cybersecurity Framework** - Risk management and security controls
-- **🔐 SPIFFE/SPIRE** - Secure Production Identity Framework
+## Supported Versions
 
-### Supported Versions
+Only the latest release on the `main` branch receives security fixes. Governance documentation updates are applied continuously; stay current to benefit from evolving threat mitigations.
 
-Only the latest Cortex-OS release branch (and the `main` branch that feeds it) receives security fixes. If you are running an
-older tag or fork, please upgrade before filing vulnerability reports so we can reproduce the issue in a supported build.
+| Version | Supported |
+|---------|-----------|
+| `main` (latest) | ✅ Active |
+| Previous releases | ❌ No backports |
 
-### Threat Model Focus Areas
+---
 
-- **Prompt / Task Injection** – Malicious prompts, manifests, or research notes could attempt to override guardrails. Core agents
-  use immutable system prompts, phase gates, and schema validation to block unsanctioned mutations.
-- **Tool Misuse** – Cortex-OS limits what executors can run by default (no shell access from oversight agents, tool allowlists,
-  environment capability flags) and audits every tool call through Evidence Triplets.
-- **Data Leakage** – When connectors or LLM providers are enabled, prompts may leave your environment. Do not send regulated data
-  unless you control the upstream provider; disable `vibe_learn`/memory sync if logs must stay local.
-- **Package / Service Impersonation** – Deploy only from this repository or the signed release artifacts. Verify tunnel
-  configurations and LaunchAgents before loading external MCP servers.
+## Standards & References (Dec 2025)
 
-### Prompt Security Controls
+We align governance controls and verification with the following public standards/frameworks:
 
-Cortex-OS implements comprehensive prompt security through structured schemas and explicit boundaries:
+### OWASP Top 10 (Web/AppSec)
+- Primary reference: **OWASP Top 10:2025 (RC1)** (and **OWASP Top 10:2021** as the current “final” release while 2025 remains a release candidate).
+- We use it as a *risk taxonomy* and to drive secure coding training and scanning coverage.
 
-#### Determinism Controls
+References:
+- https://owasp.org/Top10/
+- https://owasp.org/Top10/2025/0x00_2025-Introduction/
 
-All system prompts include determinism controls that ensure consistent, predictable agent behavior:
+### OWASP ASVS (Verification Standard)
+- Primary verification catalog: **OWASP ASVS 5.0.0** (May 2025).
+- Applies to runtime systems *and* developer tooling that processes untrusted inputs or touches production credentials.
 
-- **Structured Output Schemas** – Every prompt specifies output format (JSON/XML/Markdown), required fields, and sections
-- **Confidence Calibration** – Thresholds for uncertainty (low: 0.3, high: 0.7) with explicit prefixes for low-confidence outputs
-- **Boundary Conditions** – Explicit refuse/escalate/require_approval lists for each prompt
-- **Tool Affinity** – Prompts declare which tools they commonly invoke, enabling validation
+References:
+- https://owasp.org/www-project-application-security-verification-standard/
+- https://github.com/OWASP/ASVS
 
-```typescript
-// Example: Prompt with security controls
-{
-  id: 'sys.n0-master',
-  outputSchema: {
-    type: 'structured',
-    format: 'xml',
-    sections: ['reasoning', 'action', 'next_steps'],
-  },
-  boundaries: {
-    refuse: ['operations outside allow-list', 'budget overruns'],
-    escalate: ['security-sensitive operations', 'destructive actions'],
-  },
-  confidenceCalibration: {
-    low_threshold: 0.3,
-    high_threshold: 0.7,
-    uncertainty_prefix: 'UNCERTAIN: ',
-  },
-}
+**ASVS targeting rule**
+- “Internet-facing, multi-tenant, or handles authN/authZ”: meet **ASVS L2** minimum.
+- “Handles PII/financial data/secrets, or executes tools/actions”: meet **ASVS L2** + LLM controls below.
+- “Critical systems (payments, privileged infra, agent orchestration with broad access)”: meet **ASVS L3** where applicable.
+
+### OWASP Top 10 for LLMs / GenAI Apps (Agentic/LLM Security)
+- Primary reference: **OWASP Top 10 for LLMs 2025** (LLM01–LLM10).
+
+Reference: https://genai.owasp.org/llm-top-10/
+
+### MITRE ATLAS (AI Adversary TTPs)
+- Used for AI threat modeling and red-teaming scenarios.
+- Findings and mitigations SHOULD be tagged with relevant ATLAS tactics/techniques.
+
+Reference: https://atlas.mitre.org/
+
+---
+
+## Threat Model
+
+brAInwav governance addresses threats across:
+1. agent/LLM application behavior,
+2. traditional web/app risks,
+3. infrastructure and supply chain,
+4. governance integrity.
+
+### LLM & Agent Threats (OWASP LLM Top 10 2025)
+
+| Threat | Minimum Mitigation | Reference |
+|--------|---------------------|-----------|
+| **LLM01:2025 Prompt Injection** | Strict tool schemas + allowlists; input/output validation; “no implicit tool execution”; audit trails | `llm-threat-controls.md` |
+| **LLM02:2025 Sensitive Information Disclosure** | Secret redaction; least-priv data access; prevent prompt/log leakage; no secrets in context by default | AGENTS.md (§Security + logging) |
+| **LLM03:2025 Supply Chain** | SBOMs; signed artifacts; pinned deps; scanner gates; model/dataset provenance | AGENTS.md §9 |
+| **LLM04:2025 Data and Model Poisoning** | Dataset lineage; checksums; training/eval provenance; retrieval corpus integrity checks | `llm-threat-controls.md` + ML docs |
+| **LLM05:2025 Improper Output Handling** | Treat outputs as untrusted; sanitize before rendering/executing; strict parsers; no eval | `llm-threat-controls.md` |
+| **LLM06:2025 Excessive Agency** | Capability budgets; step limits; human-in-the-loop for risky tools; scoped tokens | `AGENT_CHARTER.md` |
+| **LLM07:2025 System Prompt Leakage** | Prompt minimization; split secrets from prompts; prevent tool output echo; redaction | `llm-threat-controls.md` |
+| **LLM08:2025 Vector and Embedding Weaknesses** | Tenant isolation; ACLs on retrieval; poisoning detection; safe chunking; query filtering | `llm-threat-controls.md` |
+| **LLM09:2025 Misinformation** | Grounding policies; citations/evidence requirements; eval harness regressions block merges | Eval reports |
+| **LLM10:2025 Unbounded Consumption** | Quotas, budgets, rate limits; timeouts; bounded tool loops; cost guards | `AGENT_CHARTER.md` |
+
+### Web/Application Risks (OWASP Top 10:2025 RC1)
+
+We use the OWASP Top 10:2025 list as a baseline taxonomy for all runtime systems:
+
+- **A01:2025 Broken Access Control**
+- **A02:2025 Security Misconfiguration**
+- **A03:2025 Software Supply Chain Failures**
+- **A04:2025 Cryptographic Failures**
+- **A05:2025 Injection**
+- **A06:2025 Insecure Design**
+- **A07:2025 Authentication Failures**
+- **A08:2025 Software or Data Integrity Failures**
+- **A09:2025 Logging & Alerting Failures**
+- **A10:2025 Mishandling of Exceptional Conditions**
+
+### Infrastructure & Supply Chain Threats
+
+| Threat | Minimum Mitigation | Reference |
+|--------|---------------------|-----------|
+| **Secrets Exposure** | Ephemeral injection (`op run` or approved secret manager); pre-commit + CI scanning | AGENTS.md §9 |
+| **Dependency Vulnerabilities** | OSV + ecosystem audits; SBOM generation and scanning; patch SLAs | AGENTS.md §9 |
+| **Container & IaC Misconfig** | Scan images/IaC; pinned digests; non-root; read-only FS; drop caps | AGENTS.md §9 |
+| **Identity Spoofing** | OIDC/WIF; no long-lived cloud keys; scoped workload identity | AGENTS.md §9 |
+| **Supply Chain Attacks** | SLSA provenance; signed releases; artifact attestations; CI hardening | checklists.md §5 |
+
+### AI-Specific Adversary TTPs (MITRE ATLAS)
+
+- Threat modeling and red-team work SHOULD use MITRE ATLAS as the “AI ATT&CK-style” catalog.
+- Security issues and mitigations SHOULD include ATLAS technique tags when applicable (e.g., model theft, data poisoning, evasion, prompt injection).
+
+### Governance-Specific Threats
+
+| Threat | Mitigation |
+|--------|------------|
+| **Agent Charter Bypass** | CI enforcement via `charter-enforce` workflow, SHA-pinned governance index |
+| **Unauthorized Governance Changes** | Hash validation in `governance-index.json`, maintainer approval required |
+| **Fake Telemetry/Evidence** | Anti-patterns list (AGENTS.md), Evidence Triplet requirements |
+| **Disable-the-guardrail attacks** | Any security gate disable requires maintainer waiver + time-boxed expiry |
+
+---
+
+## Authentication & Authorization
+
+### OAuth 2.0 Integration (Runtime Systems)
+
+Systems implementing brAInwav governance should follow these patterns:
+
+- **JWT Validation**: All protected endpoints require valid JWT in `Authorization: Bearer <token>` header
+- **JWKS Verification**: Tokens verified against identity provider's published key set
+- **Role-Based Access Control**: User roles extracted from JWT claims
+
+### Protected Resources (Reference)
+
+| Resource Type | Protection Level | Required Role |
+|---------------|------------------|---------------|
+| Public endpoints (`/health`, `/metrics`) | None | - |
+| Standard API endpoints | Authentication required | Any authenticated |
+| Admin endpoints (`/admin/*`) | Admin role required | `admin` |
+| MCP tool execution | Scoped permissions | Per-tool scopes |
+
+### MCP Scopes (per AGENTS.md §13)
+
+```
+search.read    - Read access to search tools
+docs.write     - Write access to documentation
+memory.read    - Read from Local Memory
+memory.write   - Write to Local Memory
+memory.delete  - Delete from Local Memory
 ```
 
-#### Security Prompts
+---
 
-Dedicated system prompts enforce security at multiple layers:
+## Reporting a Vulnerability
 
-| Prompt ID | Purpose | Security Function |
-|-----------|---------|-------------------|
-| `sys.governance.compliance-checker` | Pre-action compliance | Verifies Evidence Triplet, vibe-check, SBOM, license validation before execution |
-| `sys.router.tool-selection` | Tool routing | Decision tree prevents unauthorized tool access; requires 2+ alternatives considered |
-| `sys.resilience.error-recovery` | Error handling | Controlled fallback chains; prevents uncontrolled error propagation |
-| `sys.memory.contextualize` | Memory integration | Relevance scoring prevents irrelevant/stale context injection |
-| `sys.research.synthesizer` | Research synthesis | License validation (SAFE/REVIEW/BLOCKED); excludes blocked sources |
+### For Critical Vulnerabilities (CVSS 7.0+)
 
-#### Risk Classification
+**Do NOT open a public GitHub issue.** Instead:
 
-All prompts are classified by risk level (L1-L4):
+1. **Use GitHub's Private Security Advisory**
+   - Navigate to the Security tab → "Report a vulnerability"
+   - This creates a private discussion with maintainers
 
-- **L1 (Read-only)** – Proceed without approval
-- **L2 (Write, internal)** – Log and proceed
-- **L3 (External network)** – Require explicit approval
-- **L4 (Destructive/irreversible)** – Block and escalate
+2. **Email (if GitHub is unavailable)**
+   - Contact: security@brainwav.io (or repository owner)
+   - Include:
+     - Description of the vulnerability
+     - Steps to reproduce
+     - Potential impact
+     - Suggested fix (if any)
 
-#### Banned Phrases
+### For Lower Severity Issues (CVSS < 7.0)
 
-The prompt validation system automatically rejects templates containing:
-- `\bDAN\b` – Jailbreak attempts
-- `ignore previous` – Prompt injection attempts
+You may use the public [Security Vulnerability issue template](.github/ISSUE_TEMPLATE/security-vulnerability.yml), but:
+- **DO NOT** include working exploits
+- **DO NOT** include credentials or secrets
+- **DO NOT** include personal/sensitive data
 
-## 🚨 Reporting Vulnerabilities
+Expect acknowledgement within 48 hours; fixes are prioritized by severity.
 
-### How to Report
+---
 
-**⚠️ CRITICAL: DO NOT create public GitHub issues for security vulnerabilities.**
+<!-- PROJECT-SPECIFIC: START -->
+## Project Security Contacts
 
-Instead, please report security vulnerabilities through our secure channels:
-
-#### Primary Contact
-
-- **Private advisory via GitHub**: [Submit a private report](https://github.com/cortex-os/cortex-os/security/advisories/new) (requires GitHub login; preferred).
-- **Email**: <security@cortex-os.dev>  
-  Subject line: `[SECURITY] <short summary>`  
-  Optional PGP: request the current key via email while the public key is being rotated.
-
-#### Alternative Contacts
-
-- **Security Team Lead**: <jscraik@brainwav.io>
-- **Emergency (24/7)**: Use the email contacts above with subject prefix `[URGENT]`. Voice hotlines are not currently operated for initial disclosure.
-
-### What to Include in Your Report
-
-Please provide as much detail as possible:
-
-```markdown
-## Vulnerability Summary
-
-Brief description of the vulnerability and its potential impact.
-
-## Affected Components
-
-- Package/module name and version
-- Specific files or functions affected
-- Operating system and environment details
-
-## Vulnerability Details
-
-### Type
-
-- [ ] SQL Injection
-- [ ] Cross-Site Scripting (XSS)
-- [ ] Cross-Site Request Forgery (CSRF)
-- [ ] Authentication Bypass
-- [ ] Authorization Issues
-- [ ] Information Disclosure
-- [ ] Prompt Injection (AI/ML specific)
-- [ ] Model Extraction (AI/ML specific)
-- [ ] Data Poisoning (AI/ML specific)
-- [ ] Other: ******\_\_\_******
-
-### Severity Assessment
-
-- [ ] Critical (9.0-10.0 CVSS)
-- [ ] High (7.0-8.9 CVSS)
-- [ ] Medium (4.0-6.9 CVSS)
-- [ ] Low (0.1-3.9 CVSS)
-
-### Proof of Concept
-
-Provide step-by-step reproduction instructions:
-
-1. Environment setup
-2. Steps to reproduce
-3. Expected vs actual behavior
-4. Screenshots or video (if applicable)
-
-### Impact Assessment
-
-- Data at risk
-- Systems affected
-- Potential for escalation
-- Business impact
-
-### Suggested Remediation
-
-If you have ideas for fixes, please include them.
-```
-
-- **PGP Key**: We rotate keys annually. Request the active key via <security@cortex-os.dev> until the new public block is published in this document.
-
-## ⏱️ Response Timeline
-
-We are committed to responding promptly to security reports:
-
-| Timeline            | Action                                              |
-| ------------------- | --------------------------------------------------- |
-| **Within 72 hours** | Initial acknowledgment of your report               |
-| **Within 1 week**   | Preliminary assessment and severity classification  |
-| **Within 2 weeks**  | Detailed investigation results and remediation plan |
-| **Within 30 days**  | Fix implementation and testing (for most issues)    |
-| **Within 45 days**  | Public disclosure (coordinated with reporter)       |
-
-## 🔍 Automated Dependency Scanning
-
-- **pnpm audit** – Enforced in CI at the `high` threshold; moderate findings are logged for follow-up via `tools/security/triage-audit.mjs`.
-- **Snyk CLI** – Optional step in `.github/workflows/security.yml` (requires `SNYK_TOKEN`) that runs `snyk test`/`snyk monitor` against `pnpm-lock.yaml` and stores JSON artifacts.
-- **Custom scanners** – `tools/security/scan-tar-deps.mjs` inspects `pnpm-lock.yaml` for tar extractor usage and queries OSV for known vulnerabilities.
-
-Artifacts from these scanners are uploaded as `dependency-security-reports` for reviewers, and remediation expectations are defined in `docs/security/policies/dependency-vulnerability-management.md`.
-
-### Critical Vulnerabilities
-
-For critical vulnerabilities (CVSS 9.0+), we aim to:
-
-- Acknowledge within 24 hours
-- Provide initial assessment within 48 hours
-- Deploy emergency fixes within 1 week
-
-## 🔒 Supported Versions
-
-We provide security updates for the following versions:
-
-| Version | Supported              | End of Support |
-| ------- | ---------------------- | -------------- |
-| 2.x.x   | ✅ Active              | TBD            |
-| 1.5.x   | ✅ Active              | 2025-12-31     |
-| 1.4.x   | ⚠️ Limited             | 2025-06-30     |
-| < 1.4   | ❌ No longer supported | 2024-12-31     |
-
-### Support Levels
-
-- **✅ Active**: Full security updates and patches
-- **⚠️ Limited**: Critical security fixes only
-- **❌ Unsupported**: No security updates provided
-
-## 🛡️ Security Architecture
-
-### Core Security Principles
-
-#### 1. Defense in Depth
-
-- **Input Validation**: All inputs validated using Zod schemas
-- **Authentication**: Multi-factor authentication support
-- **Authorization**: Role-based access control (RBAC)
-- **Encryption**: End-to-end encryption for sensitive data
-- **Monitoring**: Comprehensive security event logging
-
-#### 2. Secure Development Lifecycle
-
-- **Static Analysis**: Automated security scanning with Semgrep
-- **Dynamic Analysis**: Runtime security monitoring
-- **Dependency Scanning**: Automated vulnerability detection in dependencies
-- **Allowlist Maintenance**: Follow the [npm audit allowlist process](docs/security/dependency-guidelines.md) for vetted exceptions
-- **Security Testing**: Dedicated security test suites
-- **Code Review**: Security-focused code reviews
-
-#### 3. AI/ML Security Specific
-
-- **Prompt Injection Prevention**: Input sanitization and validation
-- **Model Security**: Secure model loading and execution
-- **Data Privacy**: PII detection and anonymization
-- **Bias Detection**: Automated bias testing in AI outputs
-- **Rate Limiting**: Protection against model abuse
-
-### Security Controls Implementation
-
-#### Authentication & Authorization
-
-```typescript
-// Example: Secure authentication implementation
-const authConfig = {
-  providers: ['oauth2', 'saml', 'oidc'],
-  mfa: {
-    required: true,
-    methods: ['totp', 'sms', 'hardware-key'],
-  },
-  sessionManagement: {
-    timeout: 3600, // 1 hour
-    refreshToken: true,
-    secureFlags: true,
-  },
-};
-```
-
-#### Input Validation
-
-```typescript
-// Example: Comprehensive input validation
-const UserInputSchema = z.object({
-  query: z
-    .string()
-    .min(1)
-    .max(1000)
-    .regex(/^[a-zA-Z0-9\s\-_.,!?]+$/, 'Invalid characters')
-    .refine((val) => !containsSqlInjection(val), 'Potential SQL injection')
-    .refine((val) => !containsScriptTags(val), 'Script tags not allowed'),
-
-  options: z
-    .object({
-      format: z.enum(['json', 'xml', 'yaml']),
-      maxResults: z.number().min(1).max(100),
-    })
-    .optional(),
-});
-```
-
-#### Secure Communication
-
-```typescript
-// Example: Secure A2A communication
-const secureTransport = createA2ATransport({
-  type: 'https',
-  endpoint: 'https://secure-endpoint.cortex-os.dev',
-  tls: {
-    minVersion: 'TLSv1.3',
-    cipherSuites: ['TLS_AES_256_GCM_SHA384'],
-    certificateValidation: 'strict',
-  },
-  authentication: {
-    type: 'mTLS',
-    clientCert: './certs/client.crt',
-    clientKey: './certs/client.key',
-    caCert: './certs/ca.crt',
-  },
-});
-```
-
-## 🔍 Security Testing
-
-### Automated Security Scanning
-
-We use multiple layers of automated security scanning:
-
-#### Static Application Security Testing (SAST)
-
-```bash
-# Semgrep security scanning
-pnpm security:scan                  # OWASP precise rules
-pnpm security:scan:comprehensive    # All security rulesets
-pnpm security:scan:llm              # LLM-specific rules
-pnpm security:scan:atlas            # MITRE ATLAS rules
-```
-
-#### Dynamic Application Security Testing (DAST)
-
-- Runtime security monitoring
-- Penetration testing (automated and manual)
-- API security testing
-- Container security scanning
-
-#### Dependency Scanning
-
-```bash
-# Dependency vulnerability scanning
-pnpm audit
-pnpm deps:scan
-npm audit --audit-level=high
-```
-
-#### AI/ML Security Testing
-
-```bash
-# LLM-specific security testing
-pnpm test:llm-security
-pnpm test:prompt-injection
-pnpm test:model-extraction
-pnpm test:bias-detection
-```
-
-### Manual Security Testing
-
-Our security team conducts regular manual testing:
-
-- **Penetration Testing**: Quarterly external penetration tests
-- **Code Review**: Security-focused code reviews for all changes
-- **Architecture Review**: Security architecture assessments
-- **Red Team Exercises**: Simulated attack scenarios
-
-## 🛡️ OWASP Compliance
-
-### OWASP Top-10 2021 Compliance
-
-| Risk                                 | Status       | Implementation                                        |
-| ------------------------------------ | ------------ | ----------------------------------------------------- |
-| **A01: Broken Access Control**       | ✅ Compliant | RBAC, session management, API authorization           |
-| **A02: Cryptographic Failures**      | ✅ Compliant | Strong encryption, secure key management              |
-| **A03: Injection**                   | ✅ Compliant | Input validation, parameterized queries, sanitization |
-| **A04: Insecure Design**             | ✅ Compliant | Secure architecture, threat modeling                  |
-| **A05: Security Misconfiguration**   | ✅ Compliant | Secure defaults, configuration management             |
-| **A06: Vulnerable Components**       | ✅ Compliant | Dependency scanning, regular updates                  |
-| **A07: Authentication Failures**     | ✅ Compliant | MFA, secure session management                        |
-| **A08: Software Integrity Failures** | ✅ Compliant | CI/CD security, code signing                          |
-| **A09: Logging & Monitoring**        | ✅ Compliant | Comprehensive audit logging                           |
-| **A10: Server-Side Request Forgery** | ✅ Compliant | URL validation, network segmentation                  |
-
-### OWASP LLM Top-10 Compliance
-
-| Risk                                        | Status       | Implementation                        |
-| ------------------------------------------- | ------------ | ------------------------------------- |
-| **LLM01: Prompt Injection**                 | ✅ Compliant | Input sanitization, prompt validation |
-| **LLM02: Insecure Output Handling**         | ✅ Compliant | Output validation, encoding           |
-| **LLM03: Training Data Poisoning**          | ✅ Compliant | Data validation, provenance tracking  |
-| **LLM04: Model Denial of Service**          | ✅ Compliant | Rate limiting, resource controls      |
-| **LLM05: Supply Chain Vulnerabilities**     | ✅ Compliant | Model validation, dependency scanning |
-| **LLM06: Sensitive Information Disclosure** | ✅ Compliant | PII detection, data anonymization     |
-| **LLM07: Insecure Plugin Design**           | ✅ Compliant | Plugin sandboxing, validation         |
-| **LLM08: Excessive Agency**                 | ✅ Compliant | Capability boundaries, authorization  |
-| **LLM09: Overreliance**                     | ✅ Compliant | Human oversight, confidence scoring   |
-| **LLM10: Model Theft**                      | ✅ Compliant | Access controls, model protection     |
-
-### OWASP ASVS 4.0.3 Alignment
-
-| Verification Requirement                      | L1 | L2 | L3 | Implementation Highlights |
-| --------------------------------------------- | -- | -- | -- | ------------------------- |
-| **V1 Architecture & Threat Modeling**         | ✅ | ✅ | ⚠️ | Zero-trust reviews, MITRE ATLAS scenarios, design ADRs |
-| **V2 Authentication**                         | ✅ | ✅ | ✅ | SPIFFE/SPIRE identity, mTLS mutual auth, MFA enforcement |
-| **V3 Session Management**                     | ✅ | ✅ | ⚠️ | OAuth 2.1 + PKCE, short-lived tokens, secure cookie flags |
-| **V4 Access Control**                         | ✅ | ✅ | ✅ | RBAC/ABAC policies, policy-engine guardrails |
-| **V5 Validation, Sanitization & Encoding**    | ✅ | ✅ | ✅ | Zod validation, safe serialization, output encoding |
-| **V6 Stored Cryptography**                    | ✅ | ✅ | ⚠️ | KMS secrets, envelope encryption, rotation runbooks |
-| **V7 Error Handling & Logging**               | ✅ | ✅ | ✅ | Structured audit trails, privacy-aware logging |
-| **V8 Data Protection**                        | ✅ | ✅ | ⚠️ | Data classification, minimization, L3 encryption backlog |
-| **V9 Communications**                         | ✅ | ✅ | ✅ | Enforce TLS 1.3 + mTLS everywhere; any exceptions must follow the Escalation & Exceptions process and be explicitly approved |
-| **V10 Malicious Code & Configuration**        | ✅ | ✅ | ✅ | Semgrep OWASP/LLM, IaC policy scans, supply-chain attestations |
-| **V11 Business Logic**                        | ✅ | ✅ | ⚠️ | Abuse-case tests, workflow guardrails, manual approvals |
-| **V12 Files, Resources & APIs**               | ✅ | ✅ | ✅ | CSP + sandboxing, contract schemas, resource isolation |
-| **V13 API & Web Service Security**            | ✅ | ✅ | ✅ | OpenAPI linting, rate limiting, telemetry correlation |
-| **V14 Configuration**                         | ✅ | ✅ | ✅ | GitOps baselines, drift detection, secret scanning |
-
-> **Legend:** ✅ = implemented and continuously verified, ⚠️ Planned = tracked in roadmap with open stories, 🚧 = in progress.
-
-Our ASVS alignment work feeds into the MITRE ATLAS navigator to ensure adversarial ML coverage stays in lockstep with web and API controls. Roadmapped L3 capabilities are tracked in the Cortex-OS security program backlog, with quarterly reviews to close any remaining gaps.
-
-## 📋 Security Checklist for Contributors
-
-### Code & Platform Security Checklist (ASVS Mapping)
-
-- [ ] **V1 Architecture & Threat Modeling (L1-L2)** – Document threat models, update ADRs, and record MITRE ATLAS scenarios for new features.
-- [ ] **V2 Authentication (L1-L3)** – Enforce SPIFFE/SPIRE identity, rotate credentials, and verify MFA or device attestation where applicable.
-- [ ] **V3 Session Management (L1-L2)** – Use short-lived, server-side sessions with secure flags and implement token revocation workflows.
-- [ ] **V4 Access Control (L1-L3)** – Apply least privilege RBAC/ABAC rules, add defense-in-depth policy checks, and test negative access paths.
-- [ ] **V5 Input Validation (L1-L3)** – Validate all inbound data with schemas, reject on failure, and encode outputs for target contexts.
-- [ ] **V6 Cryptography (L1-L2)** – Store secrets in approved KMS, enforce TLS 1.3+, and document rotation cadence.
-- [ ] **V7 Error Handling & Logging (L1-L3)** – Emit structured, privacy-safe logs, scrub secrets, and enable tamper detection.
-- [ ] **V8 Data Protection (L1-L2)** – Classify data, enforce retention policies, and ensure data minimization in AI prompts.
-- [ ] **V9 Communications (L1-L3)** – Require mTLS for service mesh hops, enforce TLS for external clients, and monitor certificate health.
-- [ ] **V10 Malicious Code & Configuration (L1-L2)** – Run Semgrep OWASP/LLM rules, IaC scanners, and dependency audits before merge.
-- [ ] **V11 Business Logic (L1-L2)** – Write misuse/abuse tests for workflows, ensure fallback and escalation paths exist.
-- [ ] **V12 Files & Resources (L1-L3)** – Restrict file access, scan uploads, and sandbox untrusted code execution paths.
-- [ ] **V13 API Security (L1-L3)** – Version APIs, enforce schema-based validation, enable rate limits and telemetry correlations.
-- [ ] **V14 Configuration (L1-L3)** – Manage configs via GitOps, lock defaults to secure values, and monitor drift across environments.
-
-### AI/ML Security Checklist (OWASP LLM + ASVS Extensions)
-
-- [ ] Map each LLM integration to MITRE ATLAS techniques and associated detections.
-- [ ] Enforce prompt hygiene, output filtering, and evidence capture for critical flows.
-- [ ] Validate training and fine-tuning datasets for poisoning, lineage, and consent requirements.
-- [ ] Apply rate limiting, workload isolation, and cost guards against LLM DoS or resource abuse.
-- [ ] Restrict model and tool capabilities via explicit allowlists and contract enforcement.
-- [ ] Review fairness/bias dashboards and document mitigations for material risks.
-
-### Infrastructure & Operations Checklist
-
-- [ ] Enforce TLS 1.3 + mTLS; any exceptions must follow the Escalation & Exceptions process and be explicitly approved. Ensure automated certificate rotation.
-- [ ] Confirm secret storage (Vault/KMS) policies and audit logs for administrative actions.
-- [ ] Run container and host vulnerability scans (CIS Benchmarks, Trivy, etc.) before promotion.
-- [ ] Validate network segmentation, egress policies, and zero-trust controls per ASVS V9 requirements.
-- [ ] Ensure monitoring, alerting, and incident runbooks cover ASVS V7/V10/V13 controls with MITRE ATLAS adversary playbooks.
-
-## 🆘 Security Incident Response
-
-### Incident Classification
-
-#### Severity Levels
-
-- **P0 (Critical)**: Active exploitation, data breach, system compromise
-- **P1 (High)**: High risk vulnerability, potential for significant impact
-- **P2 (Medium)**: Moderate risk, limited impact
-- **P3 (Low)**: Low risk, minimal impact
-
-#### Response Teams
-
-- **Security Team**: Primary incident response
-- **Engineering Team**: Technical remediation
-- **Management Team**: Business decisions and communications
-- **Legal Team**: Compliance and legal requirements
-
-### Incident Response Process
-
-1. **Detection & Analysis** (0-2 hours)
-   - Incident identification and initial assessment
-   - Severity classification
-   - Team notification
-
-2. **Containment** (2-6 hours)
-   - Isolate affected systems
-   - Prevent further damage
-   - Preserve evidence
-
-3. **Investigation** (6-24 hours)
-   - Root cause analysis
-   - Impact assessment
-   - Evidence collection
-
-4. **Remediation** (24-72 hours)
-   - Fix implementation
-   - System restoration
-   - Verification testing
-
-5. **Recovery** (72+ hours)
-   - System monitoring
-   - User communication
-   - Lessons learned
-
-## 📞 Contact Information
+> **Instructions:** Add project-specific security contacts and procedures here. This section is NOT overwritten when upgrading the governance pack.
 
 ### Security Team
 
-- **Primary**: <security@cortex-os.dev>
-- **Security Lead**: <security-lead@cortex-os.dev>
-- **Incident Response**: <incident-response@cortex-os.dev>
+- Primary contact: `security@your-project.example`
+- Backup: `@your-security-lead`
 
-### Emergency Contacts
+### Project-Specific Security Requirements
 
-- **Critical Vulnerabilities**: Available 24/7 via <security@cortex-os.dev>
-- **Security Incidents**: Include "URGENT" in subject line
+<!-- Add any additional security requirements beyond the base governance pack -->
 
-### Legal and Compliance
+| Requirement | Implementation | Notes |
+|-------------|----------------|-------|
+| _none_ | — | — |
 
-- **Privacy Officer**: <privacy@cortex-os.dev>
-- **Compliance Team**: <compliance@cortex-os.dev>
-- **Legal Team**: <legal@cortex-os.dev>
+### Sensitive Data Handling
 
-## 📜 Security Policies
+<!-- Document project-specific PII, credentials, or sensitive data flows -->
 
-### Data Protection
-
-- **Data Classification**: Confidential, Internal, Public
-- **Data Retention**: Automated deletion based on classification
-- **Data Encryption**: At rest and in transit
-- **Access Controls**: Need-to-know basis
-
-### Privacy Protection
-
-- **PII Handling**: Minimal collection, secure processing
-- **User Consent**: Explicit consent for data processing
-- **Data Subject Rights**: Right to access, modify, delete
-- **Cross-border Transfers**: GDPR compliant mechanisms
-
-### Vendor Security
-
-- **Security Assessments**: Required for all vendors
-- **Data Processing Agreements**: Mandatory for data processors
-- **Regular Reviews**: Annual security posture reviews
-- **Incident Notification**: 24-hour notification requirement
-
-## 🔄 Security Updates
-
-### Update Notifications
-
-- **Security Advisories**: Published on GitHub Security tab
-- **Email Notifications**: Available for security-sensitive repositories
-- **RSS Feeds**: Security update feeds available
-- **API**: Programmatic access to security information
-
-### Patch Management
-
-- **Critical Patches**: Released within 24-72 hours
-- **High Priority Patches**: Released within 1-2 weeks
-- **Regular Patches**: Included in monthly releases
-- **Emergency Patches**: Out-of-band releases for critical issues
+<!-- PROJECT-SPECIFIC: END -->
 
 ---
 
-**Security is Everyone's Responsibility** 🛡️
-_Help us keep Cortex-OS secure for everyone_
+## Response Timeline
 
-[![Report Vulnerability](https://img.shields.io/badge/report-vulnerability-red.svg)](mailto:security@cortex-os.dev)
+| Severity | Initial Response | Target Resolution |
+|----------|------------------|-------------------|
+| Critical (CVSS 9.0-10.0) | 24 hours | 7 days |
+| High (CVSS 7.0-8.9) | 48 hours | 14 days |
+| Medium (CVSS 4.0-6.9) | 5 business days | 30 days |
+| Low (CVSS 0.1-3.9) | 10 business days | 90 days |
 
-**Last Updated**: November 18, 2025 | **Version**: 1.2.0
+---
+
+## Continuous Security
+
+### CI Security Gates (Required)
+
+| Gate | Tool | Minimum Policy |
+|------|------|----------------|
+| SAST / Semgrep | Semgrep | Block on policy rules; block on High+ where configured |
+| Secret Detection | Gitleaks | `ANY=block` on PRs; allowlist only for rotated/inactive/false-positive secrets |
+| Dependency Audit | OSV + ecosystem audits | Block on High/Critical for runtime deps |
+| Container & IaC Scan | Trivy | Block on Critical/High vulns; block on High misconfig; block on detected secrets |
+| SBOM Generation | CycloneDX | Required for releases |
+| Attestation & Signing | Sigstore Cosign | Required for releases; verify before publish |
+
+### Tooling Notes & Expectations
+
+#### Semgrep
+- Semgrep rules MUST be run in CI.
+- Any “waiver” must be time-boxed and recorded (see waiver process).
+- Where Semgrep policies are used, rules can be set to “Block” for PR/MR gating.
+
+#### Trivy (containers / repos / IaC)
+- Trivy MUST scan:
+   - container images for vulns + secrets (+ misconfig where applicable),
+   - infrastructure-as-code (Dockerfiles, Kubernetes, Terraform, CloudFormation, Helm),
+   - and (where used) SBOMs or installed packages.
+- Use scanner selection explicitly when needed (`--scanners vuln,misconfig,secret,license`).
+
+#### Gitleaks
+- Run as:
+   - pre-commit (developer workstation) AND
+   - CI gate (PR and main)
+- Maintain a `.gitleaks.toml` allowlist for rotated/inactive/false positives; do not “hide” live secrets.
+
+### Automated Checks
+
+- `pnpm security:scan` - Runs Semgrep + gitleaks + OSV audit
+- `pnpm sbom:generate` - Generates CycloneDX SBOM
+- `pnpm attest:sign` - Creates SLSA provenance bundle
+- CI gates run on every pull request (see `checklists.md` §5)
+
+### Governance Integrity
+
+- `governance-index.json` contains SHA-256 hashes of all governance documents
+- `charter-enforce` workflow validates hashes on every PR
+- Hash updates require maintainer approval per `governance-hash-update.md`
+
+---
+
+## Scope
+
+### In Scope
+
+- All code in this repository
+- Governance documentation
+- CI/CD pipeline configurations
+- Templates and scaffolding
+- Dependencies managed by this repository
+
+### Out of Scope
+
+- Third-party services integrated via MCP (report to respective vendors)
+- Vulnerabilities in upstream dependencies (report to respective projects, note here for tracking)
+- Runtime systems implementing brAInwav governance (report to those projects)
+
+---
+
+## Related Documentation
+
+- [AGENTS.md](AGENTS.md) - Operational governance rules (§9: Security)
+- [llm-threat-controls.md](brainwav/governance/00-core/llm-threat-controls.md) - LLM-specific threat controls
+- [AGENT_CHARTER.md](brainwav/governance/00-core/AGENT_CHARTER.md) - Agent behavioral constraints
+- [checklists.md](brainwav/governance/20-checklists/checklists.md) - Quality gates including security
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) - Community standards
