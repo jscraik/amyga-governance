@@ -71,9 +71,9 @@ function main() {
 				tier: 'feature',
 				arcs: [],
 				evidence_triplet: {
-					milestone_test: `${logDir}/tests/milestone.log`,
-					contract_snapshot: `${jsonDir}/contracts-snapshot.json`,
-					reviewer_pointer: `${jsonDir}/reviewer.json`,
+					milestone_test: 'logs/tests/milestone.log',
+					contract_snapshot: 'json/contracts-snapshot.json',
+					reviewer_pointer: 'json/reviewer.json',
 				},
 				governance: {
 					rules_index: 'brainwav/governance/90-infra/governance-index.json',
