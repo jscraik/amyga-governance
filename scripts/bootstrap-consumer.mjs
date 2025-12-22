@@ -42,7 +42,14 @@ function parseArgs() {
 function copyItem(itemPath, targetRoot) {
 	const source = path.join(repoRoot, itemPath);
 	const dest = path.join(targetRoot, itemPath);
-	fs.cpSync(source, dest, { recursive: true });
+	if (!fs.existsSync(source)) {
+		throw new Error(`Source does not exist for item "${itemPath}": ${source}`);
+	}
+	try {
+		fs.cpSync(source, dest, { recursive: true });
+	} catch (error) {
+		throw new Error(`Failed to copy "${itemPath}" from ${source} to ${dest}: ${error.message}`);
+	}
 	console.log(`[brAInwav] copied ${itemPath}`);
 }
 
