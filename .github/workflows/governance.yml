@@ -45,9 +45,24 @@ jobs:
       - run: npm install --no-save dependency-cruiser@13.1.3
       - run: npx dependency-cruiser -c brainwav/governance/90-infra/dependency-cruiser-memory.cjs .
 
+  nx-graph:
+    runs-on: ubuntu-latest
+    needs: [readiness, hash-drift]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.19.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.11.0'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile=false
+      - run: pnpm governance:check-nx
+
   governance-validate:
     runs-on: ubuntu-latest
-    needs: [readiness, hash-drift, dep-boundary]
+    needs: [readiness, hash-drift, dep-boundary, nx-graph]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
