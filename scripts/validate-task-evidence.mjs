@@ -49,13 +49,35 @@ function validateTask(taskRoot, slug) {
 	return failures;
 }
 
+/**
+ * Ensure a task slug is a simple, safe directory name.
+ * Disallows path traversal components and path separators.
+ */
+function isSafeSlug(slug) {
+	if (typeof slug !== 'string') return false;
+	if (slug === '.' || slug === '..') return false;
+	// Disallow any path separators or traversal sequences.
+	if (slug.includes('/') || slug.includes('\\')) return false;
+	if (slug.includes(path.sep)) return false;
+	if (slug.includes('..')) return false;
+	return true;
+}
+
 function main() {
 	const tasksRoot = path.join(repoRoot, 'tasks');
 	if (!fs.existsSync(tasksRoot)) {
 		console.log('[brAInwav] No tasks directory; skipping evidence validation.');
 		return;
 	}
-	const slugs = fs.readdirSync(tasksRoot);
+	const slugs = fs
+		.readdirSync(tasksRoot, { withFileTypes: true })
+		.filter(
+			(dirent) =>
+				dirent.isDirectory() &&
+				!dirent.isSymbolicLink() &&
+				isSafeSlug(dirent.name)
+		)
+		.map((dirent) => dirent.name);
 	const failures = slugs.flatMap((slug) =>
 		validateTask(path.join(tasksRoot, slug), slug)
 	);
