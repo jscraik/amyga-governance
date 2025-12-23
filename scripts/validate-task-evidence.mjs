@@ -90,7 +90,7 @@ function main() {
 	console.log('[brAInwav] validate-task-evidence OK');
 }
 
-if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('validate-task-evidence.mjs')) {
+if (import.meta.url === `file://${process.argv[1]}`) {
 	main();
 }
 
