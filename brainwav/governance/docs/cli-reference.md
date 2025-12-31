@@ -1,3 +1,8 @@
+---
+summary: "Command catalog for governance scripts."
+read_when: "Need a command and usage"
+---
+
 # CLI Reference
 
 The governance framework provides executable commands under `brainwav/governance/commands/`.
@@ -28,6 +33,7 @@ INCIDENT_ID=INC-742 node brainwav/governance/commands/incident-review.mjs
 | `/recall` | `recall.mjs` | Retrieve context via semantic search |
 | `/daily-summary` | `daily-summary.mjs` | Generate standup summary with git status |
 | `/incident-review` | `incident-review.mjs` | Prepare structured post-incident review |
+| `/docs-list` | `docs-list.mjs` | Print governance docs with summaries for fast discovery |
 | `/gather` | `gather.md` | LLM prompt for context collection |
 | `/reframe` | `reframe.md` | LLM prompt for plan validation |
 | `/truth` | `truth.md` | LLM prompt for factual audits |

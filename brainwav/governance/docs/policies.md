@@ -1,3 +1,8 @@
+---
+summary: "Policy configuration and enforcement details."
+read_when: "Interpreting or adjusting gates"
+---
+
 # Policy Configuration
 
 The governance framework enforces policies through document-based rules and optional MCP tooling.

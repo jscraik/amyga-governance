@@ -1,8 +1,15 @@
+---
+summary: "Security standards and CI gate requirements."
+read_when: "Security tooling or compliance alignment"
+---
+
 # Security
 
 The governance framework aligns with current security standards and requires specific tooling in CI/CD pipelines.
 
 ## Standards & References (December 2025)
+
+Pinned versions live in `brainwav/governance/90-infra/standards.versions.json` and are treated as the source of truth for this table. Update the registry first, then run `pnpm governance:sync-hashes`.
 
 | Standard | Version | Purpose |
 |----------|---------|---------|

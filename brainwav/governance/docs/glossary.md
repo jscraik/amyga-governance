@@ -1,3 +1,8 @@
+---
+summary: "Definitions of core governance terms."
+read_when: "Terminology lookup"
+---
+
 # Glossary & Terminology
 
 ## Core Concepts
@@ -12,7 +17,7 @@
 
 - **MCP** – Model Context Protocol; standardized tool integration for AI agents.
 - **A2A** – Agent-to-agent event channel (CloudEvents-based).
-- **SBOM** – Software Bill of Materials (CycloneDX 1.6+).
+- **SBOM** – Software Bill of Materials (CycloneDX 1.7).
 - **SLSA** – Supply-chain Levels for Software Artifacts (provenance attestation).
 
 ## Governance Terms

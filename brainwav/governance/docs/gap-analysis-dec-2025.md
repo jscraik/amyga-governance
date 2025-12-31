@@ -1,3 +1,8 @@
+---
+summary: "Dec 2025 governance gap analysis."
+read_when: "Assessing framework maturity"
+---
+
 # Agentic Governance Framework - Gap Analysis & Recommendations
 
 **Version**: 1.0.0  

@@ -1,3 +1,8 @@
+---
+summary: "Governance structure and document hierarchy."
+read_when: "Design or integration questions"
+---
+
 # Architecture
 
 The brAInwav Agentic Governance Framework is a modular control framework with a fast local loop and strict merge/release gates. It is document-driven with optional MCP tooling and GitHub Actions adapters.

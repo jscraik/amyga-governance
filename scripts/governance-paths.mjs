@@ -7,6 +7,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const POINTER_RELATIVE_PATH = path.join('.agentic-governance', 'pointer.json');
+const CONFIG_RELATIVE_PATH = path.join('.agentic-governance', 'config.json');
 
 function readJson(filePath) {
 	return JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -14,6 +15,7 @@ function readJson(filePath) {
 
 export function resolveGovernancePaths(repoRoot) {
 	const pointerPath = path.join(repoRoot, POINTER_RELATIVE_PATH);
+	const configPath = path.join(repoRoot, CONFIG_RELATIVE_PATH);
 	if (!fs.existsSync(pointerPath)) {
 		const govRoot = path.join(repoRoot, 'brainwav', 'governance');
 		return {
@@ -24,7 +26,8 @@ export function resolveGovernancePaths(repoRoot) {
 			govRoot,
 			indexPath: path.join(govRoot, '90-infra', 'governance-index.json'),
 			agentsPath: path.join(repoRoot, 'AGENTS.md'),
-			packageRoot: null
+			packageRoot: null,
+			configPath
 		};
 	}
 
@@ -44,7 +47,8 @@ export function resolveGovernancePaths(repoRoot) {
 		govRoot,
 		indexPath,
 		agentsPath,
-		packageRoot
+		packageRoot,
+		configPath
 	};
 }
 

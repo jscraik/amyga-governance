@@ -8,21 +8,34 @@ The brAInwav framework packages policies, workflows, templates, and automation f
 
 ---
 
+## Table of Contents
+
+- [Why Teams Adopt This Framework](#why-teams-adopt-this-framework)
+- [Getting Started (Adopters)](#getting-started-adopters)
+- [Repository Layout](#repository-layout)
+- [Architecture: Core + Packs + Adapters](#architecture-core--packs--adapters)
+- [Creative vs Delivery Modes](#creative-vs-delivery-modes)
+- [Profiles & Overlays (local-only defaults)](#profiles--overlays-local-only-defaults)
+- [Adoption Paths (Dec 2025 best practice)](#adoption-paths-dec-2025-best-practice)
+- [Governance Commands](#governance-commands)
+
+---
+
 ## Why Teams Adopt This Framework
 
 - **ArcTDD + Phase Machine** – Standardized G0–G10 workflow (R→G→F→REVIEW) with ≤7-step plans, failing-first tests, and evidence capture at every gate.
 - **Evidence Triplet & Run Manifests** – Mandatory pointers to (1) milestone test red→green proof, (2) contract snapshot, (3) reviewer disposition JSON.
 - **Cortex-Aegis Oversight** – Live MCP/CLI gate that enforces academic research, license validation, and vibe checks before any side-effecting work.
-- **Security & Compliance** – OWASP Top 10:2025, OWASP ASVS 5.0.0, OWASP LLM Top 10 (2025), NIST SSDF 1.1, NIST AI RMF + GenAI Profile, WCAG 2.2, SLSA v1.2, CycloneDX 1.7, SPDX 3.0.1, Sigstore Cosign, and OpenSSF Scorecard alignment (see `SECURITY.md`).
+- **Security & Compliance** – Standards are pinned in `brainwav/governance/90-infra/standards.versions.json` (Dec 2025 baseline) and include OWASP Top 10:2025, ASVS 5.0.0, OWASP LLM Top 10 (2025 v1.1), NIST SSDF 1.1, NIST AI RMF + GenAI Profile, WCAG 2.2, SLSA v1.2, CycloneDX 1.7, SPDX 3.0.1, Sigstore Cosign, and OpenSSF Scorecard (see `SECURITY.md`).
 - **Governance Integrity** – `brainwav/governance/90-infra/governance-index.json` pins SHA-256 hashes for every normative doc; CI blocks mismatches.
 - **MCP-First Tooling** – RepoPrompt, Context7, Local Memory, and Cortex-Aegis MCP servers with run-manifest logging, plus Local Memory parity rules.
 - **Modular Control Framework** – Core + capability packs + GitHub Actions adapters, with controls-as-data for auditability and external defensibility.
 
 ---
 
-## Getting Started
+## Getting Started (Adopters)
 
-### Prerequisites
+### Prerequisites (must match CI)
 
 - Node.js 24.11.x + pnpm 10.19.x (pinned in `.mise.toml`).
 - Security toolchain installed locally and in CI: `semgrep`, `gitleaks`, `trivy`, `cosign`, `cyclonedx`, plus OSV/pnpm audit support (`pnpm audit`, `osv-scanner`).
@@ -54,13 +67,19 @@ pnpm readiness:check
 
 1. From this repo: `pnpm install` (Node 24.11.x, pnpm 10.19.x).  
 2. Install governance into the target repo:  
-   `pnpm governance:install --dest /path/to/consumer-repo [--mode full|pointer] [--profile core|creative|full]`  
+   `pnpm governance:install --dest /path/to/consumer-repo [--mode full|pointer] [--profile creative|core|full]`  
    - `full` copies AGENTS, CODESTYLE, SECURITY, `brainwav/governance/**`, issue/PR templates, and the GitHub Actions workflow.  
    - `pointer` writes pointer stubs + `.agentic-governance/pointer.json` and expects a lockfile-pinned `brainwav-agentic-governance` dependency (invoke scripts from `node_modules/brainwav-agentic-governance/scripts` or via `pnpm dlx`).
 3. In the consumer repo, run:  
-   `pnpm governance:validate` (checks required tokens + Step Budget ≤7)  
+   `pnpm governance:validate` (checks required tokens + Step Budget ≤7 + overlay rules)  
    `pnpm governance:sync-hashes:check` (ensures hashes match the index)
 4. Commit the added files and ensure the consumer CI uses Node 24.11.x + pnpm 10.19.x. The included `governance.yml` workflow will enforce readiness, hash drift, oversight, security scans, dependency boundaries, and task scaffolds on every PR.
+
+### Verify (quick sanity checks)
+
+- `pnpm governance:validate` should print `validate-governance OK`.
+- `pnpm governance:sync-hashes:check` should report no drift.
+- `pnpm governance:validate-evidence` should pass once at least one task folder exists with evidence placeholders.
 
 ### Automation scripts (wired)
 
@@ -74,8 +93,9 @@ pnpm readiness:check
 - `pnpm task:scaffold --slug <id>` / `pnpm task:validate --slug <id>` — create and check task folders for Evidence Triplet placeholders.
 - `pnpm governance:check-nx` — run Nx graph when nx.json exists (skips if absent); included in CI template.
 - `pnpm governance:validate-evidence` — verify Evidence Triplet files, memory IDs, trace context, and academic research logs are present and non-empty.
+- `pnpm commands:docs-list` — list governance docs with summaries for fast discovery.
 
-Customize `AGENTS.md`, `brainwav/governance/00-core/constitution.md`, and templates under `brainwav/governance/templates/` with your maintainers, escalation paths, and brand wording. Update `.agentic-governance/mcp.runtime.json` in consumer repos if you add or relocate MCP transports.
+Customize `AGENTS.md`, `brainwav/governance/00-core/constitution.md`, and templates under `brainwav/governance/templates/` with your maintainers, escalation paths, and brand wording. Use `.agentic-governance/config.json` for profile selection and overlays (local tightenings only). Update `.agentic-governance/mcp.runtime.json` in consumer repos if you add or relocate MCP transports.
 
 ### Documentation quality checklist (OpenAI Cookbook aligned)
 - State prerequisites up front (here: Node 24.11.x, pnpm 10.19.x, security toolchain).
@@ -123,6 +143,14 @@ Controls are stored as data in `brainwav/governance/90-infra/control-registry.co
 
 **Creative mode (default for ideation/spikes):** No side-effecting actions, no deploys, no secrets; output is a short artifact + next steps.  
 **Delivery mode (required for merge/release):** All ArcTDD gates, evidence triplets, oversight, and security/a11y/supply-chain checks apply. CI enforces Delivery regardless of local mode.
+
+Local profile selection (creative/core/full) lives in `.agentic-governance/config.json` and only affects local workflow defaults. CI always enforces core or stricter gates.
+
+## Profiles & Overlays (local-only defaults)
+
+- **Profiles** (`creative`, `core`, `full`) only affect local defaults. CI enforces `core` or stricter gates.
+- **Overlays** let consumer repos tighten rules without editing base governance files.
+- **Base governance is immutable**: files under `brainwav/governance/**` are hash-pinned; modify only via upstream changes and hash updates.
 
 ---
 

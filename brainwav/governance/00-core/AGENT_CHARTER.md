@@ -191,7 +191,7 @@ Never claim "production-ready/complete/operational" if any prod path contains:
 - **Semgrep** — block on ERROR  
 - **gitleaks** — block on ANY secret detection  
 - **OSV/audit** — clean lockfiles  
-- **SBOM** — CycloneDX 1.6 (ECMA-424) generated for all artifacts
+- **SBOM** — CycloneDX 1.7 (ECMA-424) generated for all artifacts
 
 **Environment/config**:
 

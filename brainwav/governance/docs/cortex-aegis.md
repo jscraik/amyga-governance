@@ -1,3 +1,8 @@
+---
+summary: "Oversight gate installation and usage."
+read_when: "Before or during oversight runs"
+---
+
 +# Cortex Aegis MCP Server (Neutral Governance)
 
 > Project-neutral oversight and assurance MCP server for all agentic governance workflows.

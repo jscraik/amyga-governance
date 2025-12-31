@@ -1,3 +1,8 @@
+---
+summary: "Upgrade steps between governance versions."
+read_when: "Upgrading the pack"
+---
+
 # Migration Guide
 
 ## Adopting the Framework

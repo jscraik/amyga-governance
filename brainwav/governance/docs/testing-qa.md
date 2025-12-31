@@ -1,3 +1,8 @@
+---
+summary: "Test requirements and coverage/mutation gates."
+read_when: "Testing strategy or gate failures"
+---
+
 # Testing & QA
 
 The governance framework mandates test-driven development (TDD) with specific coverage requirements.

@@ -1,3 +1,8 @@
+---
+summary: "Common issues and fixes."
+read_when: "When something fails or is unclear"
+---
+
 # Troubleshooting Guide
 
 ## Governance Bootstrap Issues

@@ -20,8 +20,10 @@
         "00-core/llm-threat-controls.md",
         "00-core/skills-system-governance.md",
         "90-infra/egress-governance.md",
+        "90-infra/standards.versions.json",
         "90-infra/control-registry.core.yaml",
         "90-infra/control-registry.schema.json",
+        "90-infra/agentic-config.schema.json",
         "CODESTYLE.md",
         "docs/documentation-governance.md",
         "SECURITY.md"
@@ -37,7 +39,7 @@
         },
         "AGENT_CHARTER.md": {
             "path": "00-core/AGENT_CHARTER.md",
-            "sha256": "2f426f7b5eb976cf287697fd803393a726725e8a0fca394d406ec30a3c813dd1",
+            "sha256": "2c735acd44d1076e6355518ff446b14f466eb27ce4f3435996bb12652d647a9f",
             "required_tokens": [
                 "[brAInwav]",
                 "MODELS:LIVE:OK",
@@ -143,7 +145,7 @@
         },
         "governance-index.json": {
             "path": "90-infra/governance-index.json",
-            "sha256": "a82c9adfa7614e11c9e425fab1bc520ccec452d24c04e0f0ea84b2e8a45a6411",
+            "sha256": "3322318c50eebb09b89efb7a21e24c487e2362b585c2b6a229ae4fa82871da10",
             "hash_mode": "exclude_self",
             "required_tokens": [
                 "precedence",
@@ -158,6 +160,15 @@
                 "validation"
             ]
         },
+        "agentic-config.schema.json": {
+            "path": "90-infra/agentic-config.schema.json",
+            "sha256": "662be3b06b7fcf14e5ea34fd172f6134c582828dcb5ae590649f2415d1ae0fa4",
+            "required_tokens": [
+                "Governance Config",
+                "profile",
+                "overlays"
+            ]
+        },
         "governance-pack.map.yaml": {
             "path": "90-infra/governance-pack.map.yaml",
             "sha256": "6437dd13c49ab48b3d18fc3db4e035e797dad5654cc65fcfd3c4edfb2729e681",
@@ -166,9 +177,27 @@
                 "overlay"
             ]
         },
+        "SECURITY.md": {
+            "path": "SECURITY.md",
+            "sha256": "b4e3bda2b29d2df1b10666e974838739beea29036f3f99ea26aeacaa74b51545",
+            "required_tokens": [
+                "Security Policy",
+                "Standards & References",
+                "Reporting a Vulnerability"
+            ]
+        },
+        "standards.versions.json": {
+            "path": "90-infra/standards.versions.json",
+            "sha256": "12fd10ac6daee6e0561322807a88ba6633c0e995a40c9bec4c0fc6529b37080d",
+            "required_tokens": [
+                "standards",
+                "owasp_top10",
+                "cyclonedx"
+            ]
+        },
         "README.md": {
             "path": "README.md",
-            "sha256": "89f25cfd7920c79c2d5e760c82cccabd364efbef67f1907791797dc0ef01828f",
+            "sha256": "a7078a3a412de66dd61e17f65ca8b0136919d93050d80799fcfb24b60ca494b2",
             "required_tokens": [
                 "governance",
                 "structure"
@@ -246,7 +275,7 @@
         },
         "documentation-governance.md": {
             "path": "docs/documentation-governance.md",
-            "sha256": "f6aaa258d1bd206b65188ed20b48d49115500b3686de87470c44e3653e6ab967",
+            "sha256": "6568eca7417222dd963fcd08791b98344d755238fa47c357050b393d1eb1138a",
             "required_tokens": [
                 "documentation governance",
                 "JSDoc",

@@ -1,3 +1,8 @@
+---
+summary: "WCAG 2.2 AA requirements and checks."
+read_when: "UI/CLI accessibility work"
+---
+
 # Accessibility Guidelines
 
 The governance framework mandates WCAG 2.2 AA compliance for all user-facing surfaces.

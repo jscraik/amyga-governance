@@ -33,7 +33,7 @@ function parseArgs() {
 	const args = process.argv.slice(2);
 	let dest;
 	let mode = 'full';
-	let profile = 'core';
+	let profile = 'creative';
 	for (let i = 0; i < args.length; i++) {
 		if (args[i] === '--dest' && args[i + 1]) dest = args[i + 1];
 		if (args[i] === '--mode' && args[i + 1]) mode = args[i + 1];
@@ -54,6 +54,24 @@ function parseArgs() {
 function copyRecursive(src, dest) {
 	fs.cpSync(src, dest, { recursive: true });
 	console.log(`[brAInwav] copied ${path.relative(repoRoot, src)} -> ${dest}`);
+}
+
+function writeConfigFile(destRoot, profile, mode) {
+	const configDir = path.join(destRoot, '.agentic-governance');
+	fs.mkdirSync(configDir, { recursive: true });
+	const schemaPath = mode === 'pointer'
+		? 'node_modules/brainwav-agentic-governance/brainwav/governance/90-infra/agentic-config.schema.json'
+		: 'brainwav/governance/90-infra/agentic-config.schema.json';
+	const configPayload = {
+		$schema: schemaPath,
+		version: '1.0',
+		profile,
+		overlays: []
+	};
+	fs.writeFileSync(
+		path.join(configDir, 'config.json'),
+		`${JSON.stringify(configPayload, null, 2)}\n`
+	);
 }
 
 function writePointerFiles(destRoot, profile) {
@@ -83,14 +101,14 @@ function writePointerFiles(destRoot, profile) {
 		`- Path: node_modules/brainwav-agentic-governance/AGENTS.md\n` +
 		`- Hash index: node_modules/brainwav-agentic-governance/brainwav/governance/90-infra/governance-index.json\n\n` +
 		`Local overrides (tighten only):\n` +
-		`- See AGENTS.local.md (optional).\n`;
+		`- Declare overlays in .agentic-governance/config.json and use AGENTS.local.md (optional).\n`;
 
 	const pointerStub = (title, canonicalPath) =>
 		`# ${title} — Pointer\n\n` +
 		`Canonical source (lockfile-pinned):\n` +
 		`- ${canonicalPath}\n\n` +
 		`Local overrides (tighten only):\n` +
-		`- ${title}.local.md (optional).\n`;
+		`- Declare overlays in .agentic-governance/config.json and use ${title}.local.md (optional).\n`;
 
 	fs.writeFileSync(path.join(destRoot, 'AGENTS.md'), `${agentsPointer}\n`);
 	fs.writeFileSync(
@@ -124,6 +142,8 @@ function main() {
 				path.join(destRoot, '.github', 'pull_request_template.md')
 			);
 		}
+
+		writeConfigFile(destRoot, profile, mode);
 
 		// Ensure workflows folder
 		fs.mkdirSync(path.join(destRoot, '.github'), { recursive: true });

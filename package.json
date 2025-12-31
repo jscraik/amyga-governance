@@ -48,6 +48,7 @@
     "governance:bootstrap-consumer": "node scripts/bootstrap-consumer.mjs",
     "commands:daily-summary": "node brainwav/governance/commands/daily-summary.mjs",
     "commands:memorize": "node brainwav/governance/commands/memorize.mjs",
-    "commands:recall": "node brainwav/governance/commands/recall.mjs"
+    "commands:recall": "node brainwav/governance/commands/recall.mjs",
+    "commands:docs-list": "node brainwav/governance/commands/docs-list.mjs"
   }
 }

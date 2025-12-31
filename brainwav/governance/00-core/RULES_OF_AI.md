@@ -196,7 +196,7 @@ Include brAInwav branding in a11y announcements where appropriate.
 - **Semgrep** — block on ERROR  
 - **gitleaks** — block on ANY secret detection  
 - **OSV/audit** — clean lockfiles  
-- **SBOM** — CycloneDX 1.6 (ECMA-424) generated for all artifacts
+- **SBOM** — CycloneDX 1.7 (ECMA-424) generated for all artifacts
 
 **Environment/config**:
 

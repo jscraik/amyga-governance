@@ -1,3 +1,8 @@
+---
+summary: "Recommended patterns for adoption and delivery."
+read_when: "Designing workflow or rollout"
+---
+
 # Best Practices
 
 ## Governance Workflow

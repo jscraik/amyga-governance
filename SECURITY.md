@@ -32,6 +32,10 @@ Only the latest release on the `main` branch receives security fixes. Governance
 
 ## Standards & References (Dec 2025)
 
+Pinned versions live in `brainwav/governance/90-infra/standards.versions.json` and are treated as the source of truth for this section.
+
+If you update standards versions, update the registry first, then run `pnpm governance:sync-hashes` to refresh the governance index.
+
 We align governance controls and verification with the following public standards/frameworks:
 
 ### OWASP Top 10 (Web/AppSec)

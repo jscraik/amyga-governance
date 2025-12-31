@@ -1,8 +1,17 @@
+---
+summary: "Entry point and doc map."
+read_when: "Finding the right doc"
+---
+
 # Agentic Governance Framework Documentation
 
 ![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
 
 Central entry point for the brAInwav Agentic Governance Framework documentation.
+
+> For a CLI list with summaries, run: `node brainwav/governance/commands/docs-list.mjs`
+
+**Adopters should start with:** Introduction → Getting Started → Configuration.
 
 ## What This Framework Provides
 

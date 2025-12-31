@@ -18,6 +18,7 @@
 - **Adapters**: GitHub Actions templates and stack-specific command mappings.
 
 Controls-as-data live in `90-infra/control-registry.core.yaml` with schema validation.
+Standards versions are pinned in `90-infra/standards.versions.json`.
 
 ## 📂 Directory Structure
 
@@ -60,6 +61,10 @@ Unified checklist source covering:
 ### For Maintainers
 
 **Infrastructure guide**: [`90-infra/governance-maintainers.md`](./90-infra/governance-maintainers.md)
+
+### For Adopters
+
+**Recommended path**: [`docs/introduction.md`](./docs/introduction.md) → [`docs/getting-started.md`](./docs/getting-started.md) → [`docs/configuration.md`](./docs/configuration.md)
 
 Comprehensive guide for:
 

@@ -1,3 +1,8 @@
+---
+summary: "Version history and notable changes."
+read_when: "Checking what changed"
+---
+
 # Changelog
 
 All notable changes to the Agentic Governance Framework are documented here.

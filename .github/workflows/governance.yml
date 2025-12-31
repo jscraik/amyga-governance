@@ -5,6 +5,10 @@ on:
   push:
     branches: [main]
 
+env:
+  GOVERNANCE_MODE: delivery
+  GOVERNANCE_PROFILE: core
+
 jobs:
   readiness:
     runs-on: ubuntu-latest

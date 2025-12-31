@@ -1,3 +1,8 @@
+---
+summary: "Framework purpose and philosophy."
+read_when: "First orientation to governance"
+---
+
 # Introduction
 
 The brAInwav Agentic Governance Framework provides a portable, project-neutral set of policies, workflows, templates, and automation for governing human + AI collaboration. It is designed to be copied into any repository to inherit structured development practices.

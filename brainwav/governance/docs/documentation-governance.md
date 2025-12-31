@@ -1,3 +1,8 @@
+---
+summary: "Doc quality and JSDoc enforcement rules."
+read_when: "Writing or updating docs"
+---
+
 # Documentation Governance
 
 This documentation governance policy is mandatory for all docs in this repo.

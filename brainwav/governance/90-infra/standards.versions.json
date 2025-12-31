@@ -1,0 +1,117 @@
+{
+  "version": "2025.12",
+  "updated": "2025-12-31",
+  "as_of": "2025-12-31",
+  "notes": "Pinned versions reflect industry standards as of Dec 2025.",
+  "standards": {
+    "owasp_top10": {
+      "name": "OWASP Top 10",
+      "version": "2025",
+      "status": "final",
+      "references": [
+        "https://owasp.org/Top10/",
+        "https://owasp.org/Top10/2025/0x00_2025-Introduction/"
+      ]
+    },
+    "owasp_asvs": {
+      "name": "OWASP Application Security Verification Standard",
+      "version": "5.0.0",
+      "status": "current",
+      "references": [
+        "https://owasp.org/www-project-application-security-verification-standard/",
+        "https://github.com/OWASP/ASVS"
+      ]
+    },
+    "owasp_llm_top10": {
+      "name": "OWASP Top 10 for LLMs",
+      "version": "2025 (v1.1)",
+      "status": "current",
+      "references": [
+        "https://genai.owasp.org/llm-top-10/"
+      ]
+    },
+    "nist_ssdf": {
+      "name": "NIST SSDF",
+      "version": "SP 800-218 v1.1",
+      "status": "current",
+      "references": [
+        "https://csrc.nist.gov/pubs/sp/800/218/final"
+      ]
+    },
+    "nist_ai_rmf": {
+      "name": "NIST AI RMF",
+      "version": "1.0 + GenAI Profile",
+      "status": "current",
+      "references": [
+        "https://www.nist.gov/itl/ai-risk-management-framework",
+        "https://www.nist.gov/itl/ai-risk-management-framework/generative-ai-profile"
+      ]
+    },
+    "wcag": {
+      "name": "WCAG",
+      "version": "2.2 (ISO/IEC 40500:2025)",
+      "status": "current",
+      "references": [
+        "https://www.w3.org/TR/WCAG22/",
+        "https://www.w3.org/2025/02/wcag-2-2-iso.html"
+      ]
+    },
+    "iso_iec_42001": {
+      "name": "ISO/IEC 42001",
+      "version": "2023",
+      "status": "current",
+      "references": [
+        "https://www.iso.org/standard/42001.html"
+      ]
+    },
+    "slsa": {
+      "name": "SLSA Provenance",
+      "version": "v1.2",
+      "status": "current",
+      "references": [
+        "https://slsa.dev/spec/v1.2/provenance"
+      ]
+    },
+    "cyclonedx": {
+      "name": "CycloneDX",
+      "version": "1.7",
+      "status": "current",
+      "references": [
+        "https://cyclonedx.org/news/cyclonedx-v1-7-released",
+        "https://github.com/CycloneDX/specification"
+      ]
+    },
+    "spdx": {
+      "name": "SPDX",
+      "version": "3.0.1",
+      "status": "current",
+      "references": [
+        "https://spdx.github.io/spdx-spec/v3.0.1/"
+      ]
+    },
+    "sigstore_cosign": {
+      "name": "Sigstore Cosign",
+      "version": "current",
+      "status": "current",
+      "references": [
+        "https://docs.sigstore.dev/cosign/signing/overview/"
+      ]
+    },
+    "openssf_scorecard": {
+      "name": "OpenSSF Scorecard",
+      "version": "current",
+      "status": "current",
+      "references": [
+        "https://github.com/ossf/scorecard-action"
+      ]
+    },
+    "mitre_atlas": {
+      "name": "MITRE ATLAS",
+      "version": "current",
+      "status": "current",
+      "references": [
+        "https://atlas.mitre.org/"
+      ]
+    }
+  }
+}

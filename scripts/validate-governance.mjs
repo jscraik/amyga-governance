@@ -13,7 +13,9 @@ import { formatPointerHint, resolveGovernancePaths } from './governance-paths.mj
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
-const { govRoot, indexPath, pointerPath, packageRoot } = resolveGovernancePaths(repoRoot);
+const { govRoot, indexPath, pointerPath, packageRoot, configPath } = resolveGovernancePaths(repoRoot);
+const CONFIG_SCHEMA_RELATIVE_PATH = path.join('brainwav', 'governance', '90-infra', 'agentic-config.schema.json');
+const ALLOWED_PROFILES = new Set(['creative', 'core', 'full']);
 
 function read(file) {
 	return fs.readFileSync(file, 'utf8');
@@ -64,8 +66,86 @@ function checkTasks() {
 	return failures;
 }
 
+function readConfig() {
+	if (!configPath || !fs.existsSync(configPath)) return null;
+	try {
+		return JSON.parse(read(configPath));
+	} catch (error) {
+		return { __parseError: error };
+	}
+}
+
+function checkConfig() {
+	const failures = [];
+	const config = readConfig();
+	if (!config) return failures;
+	if (config.__parseError) {
+		failures.push(`config parse error in ${configPath}: ${config.__parseError.message}`);
+		return failures;
+	}
+	if (config.profile && !ALLOWED_PROFILES.has(config.profile)) {
+		failures.push(`config profile must be one of ${Array.from(ALLOWED_PROFILES).join(', ')}`);
+	}
+	if ('overlays' in config && !Array.isArray(config.overlays)) {
+		failures.push('config overlays must be an array when provided');
+		return failures;
+	}
+	if (!Array.isArray(config.overlays)) return failures;
+	config.overlays.forEach((overlay, index) => {
+		if (!overlay || typeof overlay !== 'object') {
+			failures.push(`overlay[${index}] must be an object`);
+			return;
+		}
+		if (!overlay.name) failures.push(`overlay[${index}] missing name`);
+		if (!Array.isArray(overlay.paths) || overlay.paths.length === 0) {
+			failures.push(`overlay[${index}] paths must be a non-empty array`);
+			return;
+		}
+		const allowWeaken = overlay.allowWeaken === true;
+		if (allowWeaken) {
+			failures.push(`overlay[${index}] allowWeaken must remain false (weakening is not permitted)`);
+		}
+		overlay.paths.forEach((overlayPath) => {
+			if (typeof overlayPath !== 'string') {
+				failures.push(`overlay[${index}] path must be a string`);
+				return;
+			}
+			const normalized = overlayPath.replace(/^\/*/, '');
+			const target = path.join(repoRoot, normalized);
+			if (!fs.existsSync(target)) {
+				failures.push(`overlay[${index}] path not found: ${overlayPath}`);
+				return;
+			}
+			const relativeTarget = path.relative(repoRoot, target).replace(/\\/g, '/');
+			const normalizedTarget = relativeTarget.startsWith('.') ? relativeTarget : `./${relativeTarget}`;
+			const governanceRoot = govRoot;
+			if (target.startsWith(governanceRoot)) {
+				failures.push(`overlay[${index}] must not target governance pack files: ${overlayPath}`);
+				return;
+			}
+			const isAllowed = normalized.endsWith('.local.md') || normalized.includes('.agentic-governance/overlays/');
+			if (!isAllowed) {
+				failures.push(`overlay[${index}] path must be .local.md or under .agentic-governance/overlays/ (got ${overlayPath})`);
+				return;
+			}
+			if (!fs.statSync(target).isFile()) {
+				failures.push(`overlay[${index}] path must be a file: ${overlayPath}`);
+				return;
+			}
+			if (normalizedTarget.includes('..')) {
+				failures.push(`overlay[${index}] path must not traverse directories: ${overlayPath}`);
+			}
+		});
+	});
+	const schemaTarget = path.join(govRoot, '90-infra', 'agentic-config.schema.json');
+	if (!fs.existsSync(schemaTarget)) {
+		failures.push(`config schema missing at ${CONFIG_SCHEMA_RELATIVE_PATH}`);
+	}
+	return failures;
+}
+
 function main() {
-	const failures = [...checkTokens(), ...checkTasks()];
+	const failures = [...checkTokens(), ...checkTasks(), ...checkConfig()];
 	if (failures.length) {
 		console.error('[brAInwav] validate-governance FAILED:');
 		failures.forEach((f) => console.error(` - ${f}`));

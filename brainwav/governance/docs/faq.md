@@ -1,3 +1,8 @@
+---
+summary: "Frequently asked questions."
+read_when: "Quick answers"
+---
+
 # FAQ
 
 ## General

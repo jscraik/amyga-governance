@@ -1,3 +1,8 @@
+---
+summary: "End-to-end task workflow and evidence requirements."
+read_when: "Planning or running a task"
+---
+
 # brAInwav governance framework Task Management Guide
 
 **Version**: 1.0.0  

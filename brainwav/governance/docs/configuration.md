@@ -1,6 +1,45 @@
+---
+summary: "Environment, MCP, config and overlay setup."
+read_when: "Configuring governance for a repo"
+---
+
 # Configuration
 
 The governance framework uses environment variables and configuration files for customization.
+
+## Governance Config (Profiles + Overlays)
+
+Use `.agentic-governance/config.json` to select local profiles and declare policy overlays. This file is validated by `scripts/validate-governance.mjs` and MUST NOT weaken base governance.
+
+```json
+{
+  "$schema": "brainwav/governance/90-infra/agentic-config.schema.json",
+  "version": "1.0",
+  "profile": "creative",
+  "overlays": [
+    {
+      "name": "org-tightening",
+      "description": "Org-specific tightenings (no weakening)",
+      "paths": [
+        "AGENTS.local.md",
+        ".agentic-governance/overlays/security-additions.md"
+      ]
+    }
+  ]
+}
+```
+
+**Overlay rules:**
+- Overlays may only **tighten** or clarify policy; weakening is forbidden.
+- Overlay files must be `*.local.md` or live under `.agentic-governance/overlays/`.
+- Base governance files under `brainwav/governance/**` are immutable; changes there require governance index hash updates.
+
+**Verify:**
+- `pnpm governance:validate` should report `validate-governance OK`.
+
+**Common mistakes:**
+- Overlay path points into `brainwav/governance/**` (blocked).
+- Overlay file is not `*.local.md` and not under `.agentic-governance/overlays/`.
 
 ## MCP Client Configuration
 

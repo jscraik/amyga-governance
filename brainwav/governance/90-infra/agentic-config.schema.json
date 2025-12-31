@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://governance.example.com/schemas/agentic-config.schema.json",
+  "title": "brAInwav Governance Config",
+  "description": "Configures local governance profiles and overlay declarations for consumer repositories.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "type": "string", "default": "1.0" },
+    "profile": {
+      "type": "string",
+      "enum": ["creative", "core", "full"],
+      "default": "creative"
+    },
+    "overlays": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "paths"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "paths": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          },
+          "allowWeaken": { "type": "boolean", "default": false }
+        }
+      }
+    }
+  }
+}
