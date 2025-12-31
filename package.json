@@ -46,9 +46,13 @@
     "governance:check-nx": "node scripts/check-nx.mjs",
     "governance:validate-evidence": "node scripts/validate-task-evidence.mjs",
     "governance:bootstrap-consumer": "node scripts/bootstrap-consumer.mjs",
+    "governance:generate-control-docs": "node scripts/generate-control-docs.mjs",
     "commands:daily-summary": "node brainwav/governance/commands/daily-summary.mjs",
     "commands:memorize": "node brainwav/governance/commands/memorize.mjs",
     "commands:recall": "node brainwav/governance/commands/recall.mjs",
     "commands:docs-list": "node brainwav/governance/commands/docs-list.mjs"
+  },
+  "dependencies": {
+    "yaml": "^2.8.2"
   }
 }

@@ -30,9 +30,9 @@ When using Cortex Aegis MCP:
 
 Temporary exceptions require:
 
-1. Waiver document at `.cortex/waivers/<waiver_id>.md`
+1. Waiver document at `brainwav/governance/audit/waivers/<waiver_id>.md`
 2. Maintainer approval via Apply Waiver workflow
-3. Expiry date (max 90 days)
+3. Expiry date (max 30 days)
 4. Link to workflow run showing approval
 
 See [AGENTS.md §27](../../../AGENTS.md) for waiver details.

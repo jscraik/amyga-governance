@@ -1,144 +1,161 @@
-version: "1.0.0"
+version: "2.0.0"
 metadata:
   generatedAt: "2025-12-31"
   owner: "brAInwav Governance"
-  profile: "core"
+  catalog: "core"
+  schemaVersion: "control-catalog-v1"
 controls:
-  - id: CORE-GOV-001
+  - control_id: "BW-GOV-001"
+    title: "Hash-pinned governance index"
     intent: "Prevent policy drift via hash-pinned governance index."
-    risk: "Unauthorized governance changes or stale policy enforcement."
-    owner: "Governance"
-    pack: core
-    modes: ["creative", "delivery"]
-    automation:
-      local: ["pnpm governance:sync-hashes:check"]
-      ci: ["hash-drift job"]
-    evidence:
-      type: "hash-index"
-      paths:
-        - "brainwav/governance/90-infra/governance-index.json"
+    rationale: "Hash pinning ensures governance changes are explicit, auditable, and cannot silently drift."
+    enforcement: "hard"
+    scope: ["creative", "delivery"]
+    gates: ["G0", "G5"]
+    evidence_required:
+      - "brainwav/governance/90-infra/governance-index.json"
+    exceptions:
+      waiver_format: "brainwav/governance/audit/waivers/<waiver_id>.md"
+      max_ttl_days: 30
     mappings:
       - standard: "NIST SSDF v1.1"
         ref: "PO (Prepare the Organization)"
+    owner: "Governance"
+    pack: "core"
+    status: "active"
 
-  - id: CORE-GOV-002
+  - control_id: "BW-GOV-002"
+    title: "Evidence Triplet required for behavioral change"
     intent: "Require Evidence Triplet for behavioral change."
-    risk: "Unverifiable changes and weak audit trails."
-    owner: "Delivery"
-    pack: core
-    modes: ["delivery"]
-    automation:
-      local: ["pnpm governance:validate-evidence"]
-      ci: ["governance-validate job"]
-    evidence:
-      type: "triplet"
-      paths:
-        - "tasks/<slug>/logs/tests/milestone.log"
-        - "tasks/<slug>/json/contracts-snapshot.json"
-        - "tasks/<slug>/json/reviewer.json"
+    rationale: "Evidence Triplet makes reviews repeatable and reduces unverifiable changes."
+    enforcement: "hard"
+    scope: ["delivery"]
+    gates: ["G5", "G6"]
+    evidence_required:
+      - "tasks/<slug>/logs/tests/milestone.log"
+      - "tasks/<slug>/json/contracts-snapshot.json"
+      - "tasks/<slug>/json/reviewer.json"
+    exceptions:
+      waiver_format: "brainwav/governance/audit/waivers/<waiver_id>.md"
+      max_ttl_days: 30
     mappings:
       - standard: "NIST SSDF v1.1"
         ref: "PW (Produce Well-Secured Software)"
-
-  - id: CORE-GOV-003
-    intent: "Keep delivery arcs small via Step Budget and Ask-First caps."
-    risk: "Large, unreviewable changes and unclear intent."
     owner: "Delivery"
-    pack: core
-    modes: ["creative", "delivery"]
-    automation:
-      local: ["pnpm governance:validate", "pnpm task:validate"]
-      ci: ["governance-validate job"]
-    evidence:
-      type: "run-manifest"
-      paths:
-        - "tasks/<slug>/json/run-manifest.json"
+    pack: "core"
+    status: "active"
+
+  - control_id: "BW-GOV-003"
+    title: "Step Budget and Ask-First limits"
+    intent: "Keep delivery arcs small via Step Budget and Ask-First caps."
+    rationale: "Small arcs reduce review risk and improve auditability."
+    enforcement: "hard"
+    scope: ["creative", "delivery"]
+    gates: ["G0", "G1"]
+    evidence_required:
+      - "tasks/<slug>/json/run-manifest.json"
+    exceptions:
+      waiver_format: "brainwav/governance/audit/waivers/<waiver_id>.md"
+      max_ttl_days: 30
     mappings:
       - standard: "NIST SSDF v1.1"
         ref: "PO, PW"
+    owner: "Delivery"
+    pack: "core"
+    status: "active"
 
-  - id: CORE-SEC-001
+  - control_id: "BW-SEC-001"
+    title: "Security scans before merge"
     intent: "Detect vulnerabilities and secrets before merge."
-    risk: "Injection, dependency and secret exposure."
-    owner: "Security"
-    pack: core
-    modes: ["delivery"]
-    automation:
-      local: ["pnpm security:scan (where configured)"]
-      ci: ["Semgrep", "Gitleaks", "OSV"]
-    evidence:
-      type: "scan-logs"
-      paths:
-        - "tasks/<slug>/logs/security/"
+    rationale: "Automated scans catch high-severity issues early in the delivery cycle."
+    enforcement: "hard"
+    scope: ["delivery"]
+    gates: ["G5"]
+    evidence_required:
+      - "tasks/<slug>/logs/security/"
+    exceptions:
+      waiver_format: "brainwav/governance/audit/waivers/<waiver_id>.md"
+      max_ttl_days: 30
     mappings:
       - standard: "OWASP Top 10:2025"
       - standard: "OWASP ASVS 5.0.0"
+    owner: "Security"
+    pack: "core"
+    status: "active"
 
-  - id: CORE-SC-001
+  - control_id: "BW-SC-001"
+    title: "Supply-chain integrity evidence"
     intent: "Maintain supply-chain integrity with SBOM, provenance, signing."
-    risk: "Supply-chain compromise or unverifiable artifacts."
-    owner: "Release"
-    pack: core
-    modes: ["delivery"]
-    automation:
-      local: ["pnpm sbom:generate", "pnpm provenance:generate"]
-      ci: ["CycloneDX", "SLSA Provenance", "Cosign", "Scorecard"]
-    evidence:
-      type: "supply-chain"
-      paths:
-        - "tasks/<slug>/sbom/"
-        - "tasks/<slug>/attestations/"
+    rationale: "SBOMs and provenance artifacts make releases auditable and tamper-evident."
+    enforcement: "hard"
+    scope: ["delivery"]
+    gates: ["G5", "G8"]
+    evidence_required:
+      - "tasks/<slug>/sbom/"
+      - "tasks/<slug>/attestations/"
+    exceptions:
+      waiver_format: "brainwav/governance/audit/waivers/<waiver_id>.md"
+      max_ttl_days: 30
     mappings:
       - standard: "SLSA Provenance v1.2"
       - standard: "CycloneDX 1.7"
       - standard: "SPDX 3.0.1"
       - standard: "OpenSSF Scorecard"
+    owner: "Release"
+    pack: "core"
+    status: "active"
 
-  - id: CORE-A11Y-001
+  - control_id: "BW-A11Y-001"
+    title: "WCAG 2.2 AA compliance"
     intent: "Ensure user-facing changes meet WCAG 2.2 AA."
-    risk: "Accessibility regressions and legal exposure."
-    owner: "UX/Accessibility"
-    pack: core
-    modes: ["delivery"]
-    automation:
-      local: ["pnpm test:a11y"]
-      ci: ["a11y-check job"]
-    evidence:
-      type: "a11y-reports"
-      paths:
-        - "tasks/<slug>/verification/wcag/"
+    rationale: "Accessibility checks prevent regressions and reduce compliance risk."
+    enforcement: "hard"
+    scope: ["delivery"]
+    gates: ["G5"]
+    evidence_required:
+      - "tasks/<slug>/verification/wcag/"
+    exceptions:
+      waiver_format: "brainwav/governance/audit/waivers/<waiver_id>.md"
+      max_ttl_days: 30
     mappings:
       - standard: "WCAG 2.2 (ISO/IEC 40500:2025)"
+    owner: "UX/Accessibility"
+    pack: "core"
+    status: "active"
 
-  - id: CORE-AI-001
+  - control_id: "BW-AI-001"
+    title: "LLM threat controls applied"
     intent: "Mitigate LLM-specific threats in agentic workflows."
-    risk: "Prompt injection, data leakage, excessive agency."
-    owner: "AI Safety"
-    pack: core
-    modes: ["creative", "delivery"]
-    automation:
-      local: ["pnpm governance:validate"]
-      ci: ["governance-validate job"]
-    evidence:
-      type: "policy"
-      paths:
-        - "brainwav/governance/00-core/llm-threat-controls.md"
+    rationale: "LLM threat controls reduce prompt injection, data leakage, and excessive agency."
+    enforcement: "hard"
+    scope: ["creative", "delivery"]
+    gates: ["G2", "G5"]
+    evidence_required:
+      - "brainwav/governance/00-core/llm-threat-controls.md"
+    exceptions:
+      waiver_format: "brainwav/governance/audit/waivers/<waiver_id>.md"
+      max_ttl_days: 30
     mappings:
       - standard: "OWASP LLM Top 10 (2025 v1.1)"
+    owner: "AI Safety"
+    pack: "core"
+    status: "active"
 
-  - id: CORE-AI-002
+  - control_id: "BW-AI-002"
+    title: "Oversight gate required"
     intent: "Align AI system governance to risk management practices."
-    risk: "Unmanaged AI risk and regulatory non-compliance."
-    owner: "AI Governance"
-    pack: core
-    modes: ["delivery"]
-    automation:
-      local: ["pnpm oversight:vibe-check"]
-      ci: ["oversight job"]
-    evidence:
-      type: "oversight"
-      paths:
-        - "tasks/<slug>/logs/vibe-check/"
+    rationale: "Oversight enforces time-freshness, licensing, and risk checks before action."
+    enforcement: "hard"
+    scope: ["delivery"]
+    gates: ["G2", "G5"]
+    evidence_required:
+      - "tasks/<slug>/logs/vibe-check/"
+    exceptions:
+      waiver_format: "brainwav/governance/audit/waivers/<waiver_id>.md"
+      max_ttl_days: 30
     mappings:
       - standard: "NIST AI RMF 1.0 + GenAI Profile"
       - standard: "ISO/IEC 42001:2023"
+    owner: "AI Governance"
+    pack: "core"
+    status: "active"

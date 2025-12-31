@@ -145,7 +145,7 @@
         },
         "governance-index.json": {
             "path": "90-infra/governance-index.json",
-            "sha256": "3322318c50eebb09b89efb7a21e24c487e2362b585c2b6a229ae4fa82871da10",
+            "sha256": "5b55447ede25abdf4cf81eb21e6e3626dfe36367173ea63712a7b411128d1ac6",
             "hash_mode": "exclude_self",
             "required_tokens": [
                 "precedence",
@@ -197,7 +197,7 @@
         },
         "README.md": {
             "path": "README.md",
-            "sha256": "a7078a3a412de66dd61e17f65ca8b0136919d93050d80799fcfb24b60ca494b2",
+            "sha256": "b39bb2b9321f513f1b3b37eccc528b72bf2c2efef7149cd7574de1a31292560f",
             "required_tokens": [
                 "governance",
                 "structure"
@@ -259,17 +259,17 @@
         },
         "control-registry.core.yaml": {
             "path": "90-infra/control-registry.core.yaml",
-            "sha256": "13c63d19be9dbb252570d293123fc3690faf515c7ca382683c27fc36b81c8a80",
+            "sha256": "588f5db0123f3a1d4ca3352da61c2edd4fabe1dd8aeab0d9fa0da07e77b69cc2",
             "required_tokens": [
-                "CORE-GOV-001",
+                "BW-GOV-001",
                 "controls"
             ]
         },
         "control-registry.schema.json": {
             "path": "90-infra/control-registry.schema.json",
-            "sha256": "fc7537d1c85e850cc11f6b9496b292afba2d7946ec5fdace5549419393badd52",
+            "sha256": "c06f5f6c0bfa201b0207fa69194501f5b708248494bc71c6a32619af3b674082",
             "required_tokens": [
-                "Control Registry",
+                "Control Catalog",
                 "controls"
             ]
         },

@@ -21,10 +21,13 @@ function read(file) {
 	return fs.readFileSync(file, 'utf8');
 }
 
+const ROOT_DOCS = new Set(['README.md', 'CODESTYLE.md', 'SECURITY.md']);
+
 function resolvePath(rel) {
+	const rootPath = path.join(repoRoot, rel);
+	if (ROOT_DOCS.has(rel) && fs.existsSync(rootPath)) return rootPath;
 	const govPath = path.join(govRoot, rel);
 	if (fs.existsSync(govPath)) return govPath;
-	const rootPath = path.join(repoRoot, rel);
 	if (fs.existsSync(rootPath)) return rootPath;
 	return null;
 }

@@ -1,16 +1,18 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "brAInwav Control Registry",
+  "title": "brAInwav Control Catalog",
   "type": "object",
-  "required": ["version", "controls"],
+  "required": ["version", "metadata", "controls"],
   "properties": {
     "version": { "type": "string" },
     "metadata": {
       "type": "object",
+      "required": ["generatedAt", "owner", "catalog", "schemaVersion"],
       "properties": {
         "generatedAt": { "type": "string" },
         "owner": { "type": "string" },
-        "profile": { "type": "string" }
+        "catalog": { "type": "string" },
+        "schemaVersion": { "type": "string" }
       },
       "additionalProperties": true
     },
@@ -18,30 +20,45 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "intent", "risk", "owner", "pack", "modes", "automation", "evidence"],
+        "required": [
+          "control_id",
+          "title",
+          "intent",
+          "rationale",
+          "enforcement",
+          "scope",
+          "gates",
+          "evidence_required",
+          "exceptions",
+          "mappings",
+          "owner",
+          "pack",
+          "status"
+        ],
         "properties": {
-          "id": { "type": "string" },
+          "control_id": { "type": "string" },
+          "title": { "type": "string" },
           "intent": { "type": "string" },
-          "risk": { "type": "string" },
-          "owner": { "type": "string" },
-          "pack": { "type": "string" },
-          "modes": {
+          "rationale": { "type": "string" },
+          "enforcement": { "type": "string", "enum": ["hard", "soft"] },
+          "scope": {
             "type": "array",
-            "items": { "type": "string", "enum": ["creative", "delivery"] }
+            "items": { "type": "string", "enum": ["creative", "delivery", "ops"] }
           },
-          "automation": {
-            "type": "object",
-            "properties": {
-              "local": { "type": "array", "items": { "type": "string" } },
-              "ci": { "type": "array", "items": { "type": "string" } }
-            },
-            "additionalProperties": false
+          "gates": {
+            "type": "array",
+            "items": { "type": "string" }
           },
-          "evidence": {
+          "evidence_required": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "exceptions": {
             "type": "object",
+            "required": ["waiver_format", "max_ttl_days"],
             "properties": {
-              "type": { "type": "string" },
-              "paths": { "type": "array", "items": { "type": "string" } }
+              "waiver_format": { "type": "string" },
+              "max_ttl_days": { "type": "integer", "minimum": 1 }
             },
             "additionalProperties": false
           },
@@ -57,6 +74,8 @@
               "additionalProperties": false
             }
           },
+          "owner": { "type": "string" },
+          "pack": { "type": "string" },
           "status": { "type": "string", "enum": ["active", "deprecated"] }
         },
         "additionalProperties": false

@@ -77,4 +77,4 @@ Optional MCP servers extend governance automation:
 
 ## Control Registry (Controls-as-Data)
 
-Controls are defined as data in `brainwav/governance/90-infra/control-registry.core.yaml` and validated by `control-registry.schema.json`. Each control specifies intent, risk, owners, automation points, evidence paths, and mappings to public standards. This makes governance auditable outside the org and reduces policy drift.
+Controls are defined as data in the control catalog `brainwav/governance/90-infra/control-registry.core.yaml` and validated by `control-registry.schema.json`. Each control specifies intent, rationale, enforcement level, scope, gates, evidence, exceptions, and mappings to public standards. This makes governance auditable outside the org and reduces policy drift.

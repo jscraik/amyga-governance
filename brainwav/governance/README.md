@@ -17,7 +17,7 @@
 - **Packs**: opt-in capability bundles (`governance-pack/packs/*`).
 - **Adapters**: GitHub Actions templates and stack-specific command mappings.
 
-Controls-as-data live in `90-infra/control-registry.core.yaml` with schema validation.
+Control catalog lives in `90-infra/control-registry.core.yaml` with schema validation in `90-infra/control-registry.schema.json`.
 Standards versions are pinned in `90-infra/standards.versions.json`.
 
 ## 📂 Directory Structure
@@ -161,6 +161,10 @@ Assurance system documentation:
 ### governance-index.json
 
 Canonical registry of governance documents with SHA-256 hashes and precedence order.
+
+### generated/
+
+Machine-generated views from control catalog and other policy sources (do not edit directly).
 
 ### governance-maintainers.md
 

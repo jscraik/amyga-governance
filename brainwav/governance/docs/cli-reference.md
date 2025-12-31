@@ -34,6 +34,7 @@ INCIDENT_ID=INC-742 node brainwav/governance/commands/incident-review.mjs
 | `/daily-summary` | `daily-summary.mjs` | Generate standup summary with git status |
 | `/incident-review` | `incident-review.mjs` | Prepare structured post-incident review |
 | `/docs-list` | `docs-list.mjs` | Print governance docs with summaries for fast discovery |
+| `governance:generate-control-docs` | `generate-control-docs.mjs` | Generate control catalog docs from YAML |
 | `/gather` | `gather.md` | LLM prompt for context collection |
 | `/reframe` | `reframe.md` | LLM prompt for plan validation |
 | `/truth` | `truth.md` | LLM prompt for factual audits |

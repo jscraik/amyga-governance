@@ -68,11 +68,14 @@ function fragmentSha256(filePath, startMarker, endMarker) {
  * @returns {string|null} Absolute path if file exists, null otherwise.
  */
 function resolvePath(docPath) {
+	// docs at repo root (README.md, CODESTYLE.md, SECURITY.md) should win if present
+	const rootPath = path.join(repoRoot, docPath);
+	if (['README.md', 'CODESTYLE.md', 'SECURITY.md'].includes(docPath) && fs.existsSync(rootPath)) {
+		return rootPath;
+	}
 	// docs under brainwav/governance/
 	const govPath = path.join(govRoot, docPath);
 	if (fs.existsSync(govPath)) return govPath;
-	// docs at repo root (README.md, CODESTYLE.md, SECURITY.md)
-	const rootPath = path.join(repoRoot, docPath);
 	if (fs.existsSync(rootPath)) return rootPath;
 	return null;
 }

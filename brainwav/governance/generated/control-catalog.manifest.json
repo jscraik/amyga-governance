@@ -1,0 +1,9 @@
+{
+  "generatedAt": "2025-12-31T21:50:19.901Z",
+  "sourceCatalog": "brainwav/governance/90-infra/control-registry.core.yaml",
+  "output": "brainwav/governance/generated/control-catalog.md",
+  "checksums": {
+    "catalog_sha256": "588f5db0123f3a1d4ca3352da61c2edd4fabe1dd8aeab0d9fa0da07e77b69cc2",
+    "output_sha256": "7f4faa873ed161cd8ea90cac60e86266b903d79a61f0b0418c92cc2b9c532f17"
+  }
+}

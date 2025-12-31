@@ -94,6 +94,7 @@ pnpm readiness:check
 - `pnpm governance:check-nx` — run Nx graph when nx.json exists (skips if absent); included in CI template.
 - `pnpm governance:validate-evidence` — verify Evidence Triplet files, memory IDs, trace context, and academic research logs are present and non-empty.
 - `pnpm commands:docs-list` — list governance docs with summaries for fast discovery.
+- `pnpm governance:generate-control-docs` — generate control catalog docs into `brainwav/governance/generated/`.
 
 Customize `AGENTS.md`, `brainwav/governance/00-core/constitution.md`, and templates under `brainwav/governance/templates/` with your maintainers, escalation paths, and brand wording. Use `.agentic-governance/config.json` for profile selection and overlays (local tightenings only). Update `.agentic-governance/mcp.runtime.json` in consumer repos if you add or relocate MCP transports.
 
@@ -135,7 +136,7 @@ tasks/<slug>/                 # Per-task folders with run manifests + evidence t
 **Capability packs (opt-in):** security-appsec, supply-chain, a11y, ai-risk, compliance-overlays.  
 **Adapters:** GitHub Actions templates and stack-specific command mappings (policy text stays identical).
 
-Controls are stored as data in `brainwav/governance/90-infra/control-registry.core.yaml` and mapped to public standards for auditability.
+Controls are stored as data in the control catalog `brainwav/governance/90-infra/control-registry.core.yaml` (schema in `control-registry.schema.json`) and mapped to public standards for auditability.
 
 ---
 
