@@ -108,9 +108,19 @@ export function runReadinessCheck(targetRoot = repoRoot, profile = 'release') {
  * CLI entry point for readiness check.
  * @returns {void} No return value.
  */
+function parseProfileArg() {
+	const args = process.argv.slice(2);
+	const index = args.indexOf('--profile');
+	if (index !== -1 && args[index + 1]) return args[index + 1];
+	return null;
+}
+
 function main() {
 	try {
-		const result = runReadinessCheck(repoRoot);
+		const profileArg = parseProfileArg();
+		const profileEnv = process.env.GOVERNANCE_PROFILE || process.env.BRAINWAV_PROFILE;
+		const profile = profileArg || profileEnv || 'release';
+		const result = runReadinessCheck(repoRoot, profile);
 		if (!result.ok) {
 			throw new Error(result.failures.join('; '));
 		}
