@@ -24,6 +24,9 @@ Thumbs.db
 # Node modules (if any JS tools are used)
 node_modules/
 
+# Local governance state
+.agentic-governance/
+
 # Python cache (if any Python tools are used)
 __pycache__/
 *.pyc
