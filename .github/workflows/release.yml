@@ -23,13 +23,11 @@ env:
   MARKDOWNLINT_VERSION: "0.20.0"
   COSIGN_VERSION: "v3.0.3"
   CYCLONEDX_NPM_VERSION: "4.1.2"
+  NPM_ACCESS: "restricted"
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    env:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -105,11 +103,8 @@ jobs:
           draft: true
           files: dist/*
           generate_release_notes: true
-      - name: Configure npm auth token (fallback)
-        if: ${{ env.NODE_AUTH_TOKEN != '' }}
-        run: npm config set //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
       - name: Publish to npm
-        run: npm publish ./dist/*.tgz --access restricted --provenance --registry https://registry.npmjs.org/
+        run: npm publish ./dist/*.tgz --access ${NPM_ACCESS} --registry https://registry.npmjs.org/
       - name: Canary validation
         env:
           RELEASE_VERSION: ${{ github.ref_name }}
