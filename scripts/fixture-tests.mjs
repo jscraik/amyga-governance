@@ -37,6 +37,7 @@ function createTempDir(name) {
  * @param {string[]} args - CLI arguments.
  * @param {string} cwd - Working directory.
  * @param {number[]} allowedStatuses - Allowed exit codes.
+ * @param {string|null} reportPath - Optional report path for failure details.
  * @returns {void} No return value.
  */
 function runCli(args, cwd, allowedStatuses = [0], reportPath = null) {
