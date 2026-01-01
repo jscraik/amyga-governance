@@ -1,0 +1,22 @@
+pack:
+  id: apple-release
+  version: 1.0.0
+  default: false
+  summary: "Apple release evidence for codesign + notarization."
+  ci:
+    runner: macos-latest
+    permissions:
+      contents: read
+  checks:
+    validate:
+      - id: release-codesign
+        severity: high
+        category: pack
+        message: "codesign evidence must be recorded for Apple releases"
+      - id: release-notarization
+        severity: high
+        category: pack
+        message: "notarization evidence must be recorded for Apple releases"
+  standards:
+    - "Apple notarization"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

@@ -103,6 +103,28 @@ By default, `upgrade` preserves existing files. Use `--force` to overwrite exist
 
 - See `docs/packs.md` for the generated pack catalog (IDs, dependencies, runners, docs, checks).
 - If `AGENTS.pack.md` or `CODESTYLE.pack.md` is missing for a pack, install/upgrade synthesizes the section from the manifest.
+- Swift/AppKit quick-start (packOptions.swift-appkit):
+
+```json
+{
+  "packOptions": {
+    "swift-appkit": {
+      "xcode": {
+        "project": "MyApp.xcodeproj",
+        "scheme": "MyApp-macOS",
+        "destination": "platform=macOS,arch=arm64"
+      },
+      "entitlements": {
+        "paths": ["MyApp/MyApp.entitlements"]
+      },
+      "privacy": {
+        "plists": ["MyApp/Info.plist"],
+        "requiredKeys": ["NSCameraUsageDescription", "NSMicrophoneUsageDescription"]
+      }
+    }
+  }
+}
+```
 
 ### Automation scripts (wired)
 

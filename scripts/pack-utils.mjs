@@ -16,7 +16,7 @@ const PRESETS = {
 	'web': ['ts-base', 'react-vite', 'tailwind', 'storybook'],
 	'edge': ['ts-base', 'cloudflare-workers'],
 	'mcp': ['ts-base', 'mcp-server-ts'],
-	'apple': ['swift-appkit']
+	'apple': ['swift-core', 'swift-xcode', 'swift-appkit', 'apple-release']
 };
 
 /**

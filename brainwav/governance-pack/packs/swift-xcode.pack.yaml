@@ -1,0 +1,31 @@
+pack:
+  id: swift-xcode
+  version: 1.0.0
+  default: false
+  summary: "Xcode workspace/project configuration for Swift targets."
+  ci:
+    runner: macos-latest
+    permissions:
+      contents: read
+  inputs:
+    required:
+      - "xcode.project|xcode.workspace"
+      - "xcode.scheme"
+      - "xcode.destination"
+  checks:
+    validate:
+      - id: xcode-project
+        severity: high
+        category: pack
+        message: "xcode project/workspace must exist and be configured"
+      - id: xcode-scheme
+        severity: high
+        category: pack
+        message: "xcode scheme must be configured"
+      - id: xcode-destination
+        severity: high
+        category: pack
+        message: "xcode destination must be configured"
+  standards:
+    - "Xcode CLI builds"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

@@ -264,7 +264,15 @@ function main() {
 				'swift-appkit': {
 					xcode: {
 						project: 'SampleApp.xcodeproj',
-						scheme: 'SampleApp'
+						scheme: 'SampleApp',
+						destination: 'platform=macOS,arch=x86_64'
+					},
+					entitlements: {
+						paths: ['SampleApp.entitlements']
+					},
+					privacy: {
+						plists: ['Info.plist'],
+						requiredKeys: ['NSCameraUsageDescription']
 					}
 				}
 			}

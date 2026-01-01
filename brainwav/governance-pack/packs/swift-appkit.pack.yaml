@@ -2,7 +2,10 @@ pack:
   id: swift-appkit
   version: 1.0.0
   default: false
-  summary: "Swift/AppKit conventions for concurrency and releases."
+  summary: "Swift/AppKit conventions for concurrency and macOS release hygiene."
+  depends_on:
+    - swift-core
+    - swift-xcode
   ci:
     runner: macos-latest
     permissions:
@@ -15,9 +18,18 @@ pack:
     required:
       - "xcode.project|xcode.workspace"
       - "xcode.scheme"
+      - "xcode.destination"
   checks:
     validate:
       - id: xcode-project
         severity: high
         category: pack
         message: "xcode project/workspace must exist and be configured"
+      - id: entitlements
+        severity: high
+        category: pack
+        message: "entitlements must be declared and reviewed for AppKit releases"
+      - id: privacy-usage
+        severity: high
+        category: pack
+        message: "privacy usage descriptions must be declared for AppKit releases"

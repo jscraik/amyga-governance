@@ -1,0 +1,24 @@
+pack:
+  id: swift-core
+  version: 1.0.0
+  default: false
+  summary: "Swift formatting and linting baselines."
+  ci:
+    runner: macos-latest
+    permissions:
+      contents: read
+  checks:
+    validate:
+      - id: swift-format-config
+        severity: medium
+        category: pack
+        message: ".swift-format is required"
+      - id: swiftlint-config
+        severity: medium
+        category: pack
+        message: ".swiftlint.yml is required"
+  standards:
+    - "Swift 5.9+"
+    - "SwiftFormat"
+    - "SwiftLint"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

@@ -68,6 +68,17 @@ const CHECK_REGISTRY = new Set([
 	'pack.present'
 ]);
 
+const HIGH_RISK_ENTITLEMENTS = new Set([
+	'com.apple.developer.networking.networkextension',
+	'com.apple.developer.system-extension',
+	'com.apple.developer.system-extension.install',
+	'com.apple.security.cs.allow-unsigned-executable-memory',
+	'com.apple.security.cs.disable-library-validation',
+	'com.apple.security.device.audio-input',
+	'com.apple.security.device.camera',
+	'com.apple.security.network.server'
+]);
+
 /**
  * Print CLI usage information.
  * @returns {void} No return value.
@@ -552,7 +563,7 @@ function collectMissingPackInputs({ rootPath, manifests, packOptions, profile })
 	const pkg = readPackageJson(rootPath);
 
 	manifests.forEach((manifest) => {
-		const options = packOptions?.[manifest.id] ?? {};
+		const options = resolvePackOptionsForPack(packOptions, manifest.id);
 		const required = Array.isArray(manifest.inputs?.required) ? manifest.inputs.required : [];
 		required.forEach((req) => {
 			const tokens = String(req).split('|').map((token) => token.trim()).filter(Boolean);
@@ -641,6 +652,53 @@ function statusFromProfile(profile) {
 }
 
 /**
+ * Resolve fail or warn status with release-only enforcement.
+ * @param {string} profile - Profile name.
+ * @returns {string} Status value.
+ */
+function statusFromRelease(profile) {
+	return profile === 'release' ? 'fail' : 'warn';
+}
+
+/**
+ * Normalize a value into a string array.
+ * @param {string|string[]|undefined|null} value - Candidate value.
+ * @returns {string[]} Normalized list.
+ */
+function normalizeStringList(value) {
+	if (!value) return [];
+	if (Array.isArray(value)) return value.filter(Boolean);
+	return [String(value)];
+}
+
+/**
+ * Read text content from a path if present.
+ * @param {string|null} filePath - File path.
+ * @returns {string|null} File contents or null.
+ */
+function readTextFile(filePath) {
+	if (!filePath) return null;
+	try {
+		return fs.readFileSync(filePath, 'utf8');
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * Resolve pack options with legacy fallbacks.
+ * @param {Record<string, unknown>} packOptions - Pack options map.
+ * @param {string} packId - Pack identifier.
+ * @returns {Record<string, unknown>} Resolved options.
+ */
+function resolvePackOptionsForPack(packOptions, packId) {
+	const direct = packOptions?.[packId];
+	if (direct && typeof direct === 'object') return direct;
+	if (packId === 'swift-xcode' && packOptions?.['swift-appkit']) return packOptions['swift-appkit'];
+	return {};
+}
+
+/**
  * Resolve a candidate path against a root.
  * @param {string} rootPath - Repo root.
  * @param {string|null} candidate - Path candidate.
@@ -658,8 +716,52 @@ function resolveRootPath(rootPath, candidate) {
  */
 function evaluatePackCheck({ rootPath, manifest, entry, packOptions, profile }) {
 	const packId = manifest.id;
-	const options = packOptions?.[packId] ?? {};
+	const options = resolvePackOptionsForPack(packOptions, packId);
 	const checkId = entry.id;
+
+	if (packId === 'swift-core' && checkId === 'swift-format-config') {
+		const configPath = path.join(rootPath, '.swift-format');
+		if (fs.existsSync(configPath)) {
+			return { status: 'pass', message: '.swift-format present' };
+		}
+		return {
+			status: statusFromProfile(profile),
+			message: 'missing .swift-format at repo root'
+		};
+	}
+
+	if (packId === 'swift-core' && checkId === 'swiftlint-config') {
+		const configPath = path.join(rootPath, '.swiftlint.yml');
+		if (fs.existsSync(configPath)) {
+			return { status: 'pass', message: '.swiftlint.yml present' };
+		}
+		return {
+			status: statusFromProfile(profile),
+			message: 'missing .swiftlint.yml at repo root'
+		};
+	}
+
+	if (packId === 'swift-spm' && checkId === 'package-swift') {
+		const manifestPath = resolveRootPath(rootPath, options?.spm?.manifest ?? 'Package.swift');
+		if (manifestPath && fs.existsSync(manifestPath)) {
+			return { status: 'pass', message: 'Package.swift present' };
+		}
+		return {
+			status: statusFromProfile(profile),
+			message: 'missing Package.swift for swift-spm pack'
+		};
+	}
+
+	if (packId === 'swift-spm' && checkId === 'package-resolved') {
+		const resolvedPath = resolveRootPath(rootPath, options?.spm?.resolved ?? 'Package.resolved');
+		if (resolvedPath && fs.existsSync(resolvedPath)) {
+			return { status: 'pass', message: 'Package.resolved present' };
+		}
+		return {
+			status: statusFromRelease(profile),
+			message: 'missing Package.resolved for swift-spm pack'
+		};
+	}
 
 	if (packId === 'ts-base' && checkId === 'tsconfig') {
 		const tsconfig = path.join(rootPath, 'tsconfig.json');
@@ -687,7 +789,7 @@ function evaluatePackCheck({ rootPath, manifest, entry, packOptions, profile }) 
 		};
 	}
 
-	if (packId === 'swift-appkit' && checkId === 'xcode-project') {
+	if ((packId === 'swift-xcode' || packId === 'swift-appkit') && checkId === 'xcode-project') {
 		const project = options?.xcode?.project;
 		const workspace = options?.xcode?.workspace;
 		const target = project || workspace;
@@ -712,6 +814,121 @@ function evaluatePackCheck({ rootPath, manifest, entry, packOptions, profile }) 
 			};
 		}
 		return { status: 'pass', message: 'xcode project/workspace resolved' };
+	}
+
+	if ((packId === 'swift-xcode' || packId === 'swift-appkit') && checkId === 'xcode-scheme') {
+		if (options?.xcode?.scheme) {
+			return { status: 'pass', message: 'xcode scheme configured' };
+		}
+		return {
+			status: statusFromProfile(profile),
+			message: 'missing xcode scheme config'
+		};
+	}
+
+	if ((packId === 'swift-xcode' || packId === 'swift-appkit') && checkId === 'xcode-destination') {
+		if (options?.xcode?.destination) {
+			return { status: 'pass', message: 'xcode destination configured' };
+		}
+		return {
+			status: statusFromProfile(profile),
+			message: 'missing xcode destination config'
+		};
+	}
+
+	if (packId === 'swift-appkit' && checkId === 'entitlements') {
+		const entitlementsPaths = normalizeStringList(options?.entitlements?.paths ?? options?.entitlements?.path);
+		if (entitlementsPaths.length === 0) {
+			return {
+				status: statusFromRelease(profile),
+				message: 'missing entitlements paths in packOptions.swift-appkit.entitlements'
+			};
+		}
+		const resolvedPaths = entitlementsPaths.map((entry) => resolveRootPath(rootPath, entry));
+		const missing = resolvedPaths.filter((entry) => !entry || !fs.existsSync(entry));
+		if (missing.length > 0) {
+			return {
+				status: statusFromRelease(profile),
+				message: `entitlements file(s) not found: ${missing.join(', ')}`
+			};
+		}
+		const allowlist = new Set(
+			normalizeStringList(options?.entitlements?.highRiskAllowlist).concat(Array.from(HIGH_RISK_ENTITLEMENTS))
+		);
+		const highRiskHits = [];
+		resolvedPaths.forEach((entry) => {
+			const content = readTextFile(entry) ?? '';
+			allowlist.forEach((key) => {
+				if (content.includes(key)) highRiskHits.push(key);
+			});
+		});
+		if (highRiskHits.length > 0) {
+			const justification = options?.entitlements?.justification;
+			const justificationPath = resolveRootPath(rootPath, justification);
+			if (!justification || !justificationPath || !fs.existsSync(justificationPath)) {
+				return {
+					status: statusFromRelease(profile),
+					message: `high-risk entitlements require justification file (found: ${[...new Set(highRiskHits)].join(', ')})`
+				};
+			}
+		}
+		return { status: 'pass', message: 'entitlements declared' };
+	}
+
+	if (packId === 'swift-appkit' && checkId === 'privacy-usage') {
+		const plistPaths = normalizeStringList(options?.privacy?.plists ?? options?.privacy?.plist);
+		const requiredKeys = normalizeStringList(options?.privacy?.requiredKeys ?? options?.privacy?.keys);
+		if (plistPaths.length === 0) {
+			return {
+				status: statusFromRelease(profile),
+				message: 'missing privacy plist paths in packOptions.swift-appkit.privacy'
+			};
+		}
+		if (requiredKeys.length === 0) {
+			return {
+				status: statusFromRelease(profile),
+				message: 'missing privacy.requiredKeys in packOptions.swift-appkit.privacy'
+			};
+		}
+		const resolvedPlists = plistPaths.map((entry) => resolveRootPath(rootPath, entry));
+		const missingPlists = resolvedPlists.filter((entry) => !entry || !fs.existsSync(entry));
+		if (missingPlists.length > 0) {
+			return {
+				status: statusFromRelease(profile),
+				message: `privacy plist(s) not found: ${missingPlists.join(', ')}`
+			};
+		}
+		const contents = resolvedPlists.map((entry) => readTextFile(entry) ?? '');
+		const missingKeys = requiredKeys.filter((key) => !contents.some((text) => text.includes(`<key>${key}</key>`)));
+		if (missingKeys.length > 0) {
+			return {
+				status: statusFromRelease(profile),
+				message: `missing privacy usage keys: ${missingKeys.join(', ')}`
+			};
+		}
+		return { status: 'pass', message: 'privacy usage descriptions declared' };
+	}
+
+	if (packId === 'apple-release' && checkId === 'release-codesign') {
+		const codesignPath = resolveRootPath(rootPath, options?.evidence?.codesignLog ?? options?.codesignLog);
+		if (codesignPath && fs.existsSync(codesignPath)) {
+			return { status: 'pass', message: 'codesign evidence present' };
+		}
+		return {
+			status: statusFromRelease(profile),
+			message: 'missing codesign evidence log'
+		};
+	}
+
+	if (packId === 'apple-release' && checkId === 'release-notarization') {
+		const notarizationPath = resolveRootPath(rootPath, options?.evidence?.notarizationLog ?? options?.notarizationLog);
+		if (notarizationPath && fs.existsSync(notarizationPath)) {
+			return { status: 'pass', message: 'notarization evidence present' };
+		}
+		return {
+			status: statusFromRelease(profile),
+			message: 'missing notarization evidence log'
+		};
 	}
 
 	return {

@@ -1,0 +1,18 @@
+pack:
+  id: swift-spm
+  version: 1.0.0
+  default: false
+  summary: "Swift Package Manager conventions and dependency hygiene."
+  checks:
+    validate:
+      - id: package-swift
+        severity: medium
+        category: pack
+        message: "Package.swift must be present for SwiftPM projects"
+      - id: package-resolved
+        severity: low
+        category: pack
+        message: "Package.resolved should be tracked for dependency hygiene"
+  standards:
+    - "Swift Package Manager"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"
