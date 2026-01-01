@@ -78,6 +78,7 @@ jobs:
       - name: SBOM (CycloneDX)
         run: |
           npx @cyclonedx/cyclonedx-npm@${CYCLONEDX_NPM_VERSION} \
+            --ignore-npm-errors \
             --output-format JSON \
             --output-file dist/sbom.cdx.json
       - name: Build provenance
