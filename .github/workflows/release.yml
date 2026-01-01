@@ -115,7 +115,10 @@ jobs:
           version="${RELEASE_VERSION#v}"
           git clone https://github.com/jscraik/brainwav-governance-canary.git /tmp/brainwav-governance-canary
           cd /tmp/brainwav-governance-canary
-          npm config set //registry.npmjs.org/:_authToken "${NODE_AUTH_TOKEN}"
+          npmrc="${RUNNER_TEMP}/.npmrc"
+          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > "${npmrc}"
+          echo "always-auth=true" >> "${npmrc}"
+          export NPM_CONFIG_USERCONFIG="${npmrc}"
           pnpm add -D "@brainwav/brainwav-agentic-governance@${version}"
           pnpm exec brainwav-governance install --root . --mode pointer --profile core --yes
           pnpm exec brainwav-governance validate --root . --strict
