@@ -9,41 +9,56 @@ on:
 permissions:
   contents: write
   id-token: write
+  attestations: write
 
 env:
   NODE_VERSION: "24.11.0"
   PNPM_VERSION: "10.26.0"
+  NPM_VERSION: "11.5.1"
+  GO_VERSION: "1.25.5"
+  SEMGREP_VERSION: "1.146.0"
+  GITLEAKS_VERSION: "8.30.0"
+  OSV_SCANNER_VERSION: "1.9.2"
+  TRIVY_VERSION: "0.68.2"
+  MARKDOWNLINT_VERSION: "0.20.0"
+  COSIGN_VERSION: "v3.0.3"
+  CYCLONEDX_NPM_VERSION: "4.1.2"
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
         with:
           version: ${{ env.PNPM_VERSION }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
-      - uses: actions/setup-go@v5
+          registry-url: "https://registry.npmjs.org"
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
-          go-version: "stable"
+          go-version: ${{ env.GO_VERSION }}
       - name: Install toolchain for doctor
         run: |
           sudo apt-get update
           sudo apt-get install -y ripgrep fd-find jq python3-pip curl unzip
           sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd
-          python3 -m pip install --user semgrep
+          python3 -m pip install --user semgrep==${SEMGREP_VERSION}
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          go install github.com/zricethezav/gitleaks/v8@latest
-          go install github.com/google/osv-scanner/cmd/osv-scanner@latest
+          go install github.com/zricethezav/gitleaks/v8@v${GITLEAKS_VERSION}
+          go install github.com/google/osv-scanner/cmd/osv-scanner@v${OSV_SCANNER_VERSION}
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
-          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
-          npm install -g markdownlint-cli2
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin v${TRIVY_VERSION}
+          npm install -g markdownlint-cli2@${MARKDOWNLINT_VERSION}
+      - name: Pin npm CLI
+        run: npm install -g npm@${{ env.NPM_VERSION }}
       - name: Install cosign
-        uses: sigstore/cosign-installer@v3
-      - run: pnpm install --frozen-lockfile=false
+        uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
+        with:
+          cosign-release: ${{ env.COSIGN_VERSION }}
+      - run: pnpm install --frozen-lockfile
       - name: Lint
         run: pnpm lint:ci
       - name: CLI tests
@@ -60,11 +75,11 @@ jobs:
           npm pack --pack-destination dist
       - name: SBOM (CycloneDX)
         run: |
-          npx @cyclonedx/cyclonedx-npm \
+          npx @cyclonedx/cyclonedx-npm@${CYCLONEDX_NPM_VERSION} \
             --output-format JSON \
             --output-file dist/sbom.cdx.json
       - name: Build provenance
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3.0.0
         with:
           subject-path: |
             dist/*.tgz
@@ -81,6 +96,17 @@ jobs:
                 "$artifact"
             fi
           done
+      - name: Create draft GitHub Release
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
+        with:
+          draft: true
+          files: dist/*
+          generate_release_notes: true
+      - name: Configure npm auth token (fallback)
+        if: ${{ secrets.NPM_TOKEN != '' }}
+        run: npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+      - name: Publish to npm
+        run: npm publish dist/*.tgz --access public --provenance --registry https://registry.npmjs.org/
       - name: Canary validation
         env:
           RELEASE_VERSION: ${{ github.ref_name }}
@@ -91,11 +117,7 @@ jobs:
           pnpm add -D "brainwav-agentic-governance@${version}"
           pnpm exec brainwav-governance install --root . --mode pointer --profile core --yes
           pnpm exec brainwav-governance validate --root . --strict
-      - name: Publish to npm
+      - name: Publish GitHub Release
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public --provenance --registry https://registry.npmjs.org/
-      - name: GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: dist/*
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release edit "${{ github.ref_name }}" --draft=false
