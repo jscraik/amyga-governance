@@ -33,7 +33,7 @@ owner: "Governance Team"
 1. Install governance into your repo:
 
 ```bash
-pnpm governance:install --dest /path/to/your-project --mode pointer --profile release
+brainwav-governance install --root /path/to/your-project --mode pointer --profile release
 ```
 
 2. In the consumer repo, verify:
@@ -72,7 +72,7 @@ cp -R brainwav-agentic-governance/brainwav /path/to/your-project/
 ### 2b. Pointer-mode install (recommended for low-drift)
 
 ```bash
-pnpm governance:install --dest /path/to/your-project --mode pointer --profile release
+brainwav-governance install --root /path/to/your-project --mode pointer --profile release
 ```
 
 - Adds `.agentic-governance/pointer.json` and pointer stubs for AGENTS/CODESTYLE/SECURITY.  

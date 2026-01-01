@@ -27,6 +27,16 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile=false
+      - name: Lint
+        run: pnpm lint:ci
+      - name: CLI tests
+        run: pnpm test:cli
+      - name: Fixture tests
+        run: pnpm test:fixtures
+      - name: Generate pack docs
+        run: pnpm docs:generate-packs
+      - name: Verify pack docs are committed
+        run: git diff --exit-code docs/packs.md
       - name: Pack release artifact
         run: |
           mkdir -p dist
@@ -65,6 +75,16 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public --provenance --registry https://registry.npmjs.org/
+      - name: Canary validation
+        env:
+          RELEASE_VERSION: ${{ github.ref_name }}
+        run: |
+          version="${RELEASE_VERSION#v}"
+          git clone https://github.com/jscraik/brainwav-governance-canary.git /tmp/brainwav-governance-canary
+          cd /tmp/brainwav-governance-canary
+          pnpm add -D "brainwav-agentic-governance@${version}"
+          pnpm exec brainwav-governance install --root . --mode pointer --profile core --yes
+          pnpm exec brainwav-governance validate --root . --strict
       - name: GitHub Release
         uses: softprops/action-gh-release@v2
         with:

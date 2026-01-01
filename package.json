@@ -1,6 +1,6 @@
 {
   "name": "brainwav-agentic-governance",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": false,
   "type": "module",
   "description": "Governance automation scripts and MCP helpers",
@@ -30,6 +30,7 @@
   ],
   "bin": {
     "brainwav-governance": "scripts/governance-cli.mjs",
+    "brainwav-agentic-governance": "scripts/governance-cli.mjs",
     "ensure-tools": "scripts/ensure-tools.mjs",
     "cortex-governance-bootstrap": "scripts/cortex-governance-bootstrap.mjs",
     "readiness-check": "scripts/readiness-check.mjs",
@@ -53,6 +54,7 @@
     "governance:validate-evidence": "node scripts/validate-task-evidence.mjs",
     "governance:bootstrap-consumer": "node scripts/bootstrap-consumer.mjs",
     "governance:generate-control-docs": "node scripts/generate-control-docs.mjs",
+    "docs:generate-packs": "node scripts/generate-packs-docs.mjs",
     "commands:daily-summary": "node brainwav/governance/commands/daily-summary.mjs",
     "commands:memorize": "node brainwav/governance/commands/memorize.mjs",
     "commands:recall": "node brainwav/governance/commands/recall.mjs",

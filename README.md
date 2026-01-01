@@ -69,23 +69,24 @@ pnpm readiness:check
 
 1. From this repo: `pnpm install` (Node 24.11.x, pnpm 10.26.x).  
 2. Install governance into the target repo (local clone):  
-   `pnpm governance:install --dest /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
+   `brainwav-governance install --root /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
 3. Install governance into the target repo (published package):  
-   `pnpm dlx brainwav-agentic-governance@<version> install --dest /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
+   `pnpm dlx brainwav-agentic-governance@<version> install --root /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
    Or, if installed as a dependency:  
-   `pnpm exec brainwav-governance install --dest /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
+   `pnpm exec brainwav-governance install --root /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
    - Default profile is `release` (gold standard).
    - `full` copies AGENTS, CODESTYLE, SECURITY, `brainwav/governance/**`, issue/PR templates, and the GitHub Actions workflow.  
-   - `pointer` writes pointer stubs + `.agentic-governance/pointer.json` and expects a lockfile-pinned `brainwav-agentic-governance` dependency (invoke scripts from `node_modules/brainwav-agentic-governance/scripts` or via `pnpm dlx`).
+   - `pointer` writes pointer stubs + `.agentic-governance/pointer.json` and expects a lockfile-pinned `brainwav-agentic-governance` dependency.
+   - The CLI binary is available as both `brainwav-governance` and `brainwav-agentic-governance`.
 4. In the consumer repo, run:  
-   `pnpm governance:validate` (checks required tokens + Step Budget ≤7 + overlay rules)  
-   `pnpm governance:sync-hashes:check` (ensures hashes match the index)
+   `pnpm exec brainwav-governance validate --root .` (checks required tokens + Step Budget ≤7 + overlay rules)  
+   `pnpm exec brainwav-governance validate --root . --strict` (fail on warnings in CI)
 5. Commit the added files and ensure the consumer CI uses Node 24.11.x + pnpm 10.26.x. The included `governance.yml` workflow will enforce readiness, hash drift, oversight, security scans, dependency boundaries, and task scaffolds on every PR.
 
 ### Upgrade in a consumer project
 
 ```bash
-pnpm dlx brainwav-agentic-governance@<version> upgrade --dest /path/to/consumer-repo [--packs a11y,supply-chain]
+pnpm dlx brainwav-agentic-governance@<version> upgrade --root /path/to/consumer-repo [--packs a11y,supply-chain]
 ```
 
 `upgrade` refreshes pointer stubs + workflows, updates the pinned dependency, and runs `pnpm install` when a pnpm lockfile is present.
@@ -94,9 +95,14 @@ By default, `upgrade` preserves existing files. Use `--force` to overwrite exist
 
 ### Verify (quick sanity checks)
 
-- `pnpm governance:validate` should print `validate-governance OK`.
+- `pnpm exec brainwav-governance validate --root .` should succeed.
 - `pnpm governance:sync-hashes:check` should report no drift.
 - `pnpm governance:validate-evidence` should pass once at least one task folder exists with evidence placeholders.
+
+### Packs catalog
+
+- See `docs/packs.md` for the generated pack catalog (IDs, dependencies, runners, docs, checks).
+- If `AGENTS.pack.md` or `CODESTYLE.pack.md` is missing for a pack, install/upgrade synthesizes the section from the manifest.
 
 ### Automation scripts (wired)
 
@@ -104,16 +110,16 @@ By default, `upgrade` preserves existing files. Use `--force` to overwrite exist
 - `pnpm cortex:governance-bootstrap` — writes `.agentic-governance/agent-context.json` with AGENTS.md hash and workflow pointers.
 - `pnpm oversight:vibe-check --goal "..." --plan "..." [--session <id>] [--slug <task>]` — posts to the Cortex Aegis HTTP endpoint (default `http://127.0.0.1:2091/vibe_check`) and logs JSON under the task.
 - `pnpm readiness:check` — confirms core governance files exist and required tools are present.
-- `pnpm governance:install --dest <path>` — copy governance pack + CI workflow into another repo.
-- `pnpm governance:validate` — verify required tokens and Step Budget ≤7 across tasks.
+- `brainwav-governance install --root <path>` — copy governance pack + CI workflow into another repo.
+- `brainwav-governance validate --root <path>` — verify required tokens and Step Budget ≤7 across tasks.
 - `pnpm governance:validate-standards` — check standards link freshness and `as_of` age in `standards.versions.json`.
 - `pnpm governance:sync-hashes:check` — fail on governance hash drift (non-writing).
 - `pnpm task:scaffold --slug <id>` / `pnpm task:validate --slug <id>` — create and check task folders for Evidence Triplet placeholders.
 - `pnpm governance:check-nx` — run Nx graph when nx.json exists (skips if absent); included in CI template.
 - `pnpm governance:validate-evidence` — verify Evidence Triplet files, memory IDs, trace context, and academic research logs are present and non-empty.
-- `pnpm governance:upgrade` — refresh installs + update dependency in a consumer repo.
-- `pnpm governance:doctor` — readiness + tooling checks.
-- `brainwav-governance <command>` — CLI wrapper for install/upgrade/validate/doctor.
+- `brainwav-governance upgrade --root <path>` — refresh installs + update dependency in a consumer repo.
+- `brainwav-governance doctor --root <path>` — readiness + tooling checks.
+- `brainwav-governance <command>` — CLI wrapper for install/upgrade/validate/doctor (alias: `brainwav-agentic-governance`).
 - `pnpm commands:docs-list` — list governance docs with summaries for fast discovery.
 - `pnpm governance:generate-control-docs` — generate control catalog docs into `brainwav/governance/generated/`.
 
@@ -225,6 +231,9 @@ INCIDENT_ID=INC-742 node brainwav/governance/commands/incident-review.mjs
 - Releases are automated on tag push matching `v0.x.y`.
 - npm is the canonical distribution source (public package `brainwav-agentic-governance`).
 - GitHub Releases attach the packed tarball, SBOM, provenance, and signatures generated in CI.
+- Release gating runs `pnpm lint:ci`, `pnpm test:cli`, and `pnpm test:fixtures`.
+- `docs/packs.md` is regenerated during release; the workflow fails if the file is out of date.
+- Post-publish canary validation runs against `brainwav-governance-canary` to confirm install + validate.
 - Keep `0.x` versions until fixture-based CLI tests cover all target stacks.
 
 ---
@@ -295,6 +304,7 @@ tasks/<slug>/
 - [AGENTS.md](AGENTS.md) – Operational policy, Oversight gate, Reuse-first rules.
 - [CODESTYLE.md](CODESTYLE.md) – Architectural conventions, dependency boundaries.
 - [SECURITY.md](SECURITY.md) – Standards & References (Jan 2026), CI gate requirements.
+- [docs/packs.md](docs/packs.md) – Generated pack catalog (IDs, runners, checks).
 - [brainwav/governance/10-flow/agentic-coding-workflow.md](brainwav/governance/10-flow/agentic-coding-workflow.md) – Detailed G0–G10 guidance.
 - [brainwav/governance/docs/cortex-aegis.md](brainwav/governance/docs/cortex-aegis.md) – Oversight MCP installation and evidence expectations.
 - [brainwav/governance/templates/](brainwav/governance/templates/) – Feature, research, and TDD plan templates.

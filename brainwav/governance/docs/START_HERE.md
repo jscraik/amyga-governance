@@ -22,7 +22,7 @@ CI enforces **Release** gates by default for gold-standard delivery.
 ## One‑command install
 
 ```bash
-pnpm governance:install --dest /path/to/your-project --mode pointer --profile release
+brainwav-governance install --root /path/to/your-project --mode pointer --profile release
 ```
 
 ## One‑command start (per task)
