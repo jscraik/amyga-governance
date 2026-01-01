@@ -21,6 +21,11 @@ jobs:
         with:
           node-version: '24.11.0'
           cache: 'pnpm'
+      - name: Install minimal tooling (core profile)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ripgrep fd-find jq
+          sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd
       - run: pnpm install --frozen-lockfile=false
       - run: pnpm readiness:check
 
