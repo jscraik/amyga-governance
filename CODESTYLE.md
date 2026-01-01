@@ -301,18 +301,23 @@ See `docs/troubleshooting/typescript-config.md` for:
 
 Stack-specific guidance lives in packs to keep core standards portable. Apply the relevant pack(s) for your repo:
 
-- `pack-ts-base` – TypeScript strictness, schema validation, lint/testing norms.
-- `pack-react-vite` – React 19 + Vite conventions (framework-agnostic).
-- `pack-react-next` – React 19 + Next.js 16 (RSC, App Router).
-- `pack-tailwind` – Tailwind v4 class sorting and linting policy.
-- `pack-storybook` – Storybook setup, a11y/interaction testing.
-- `pack-cloudflare-workers` – Workers runtime constraints and tests.
-- `pack-mcp-server-ts` – MCP tool schemas, auth, audit logs, egress allowlists.
-- `pack-swift-appkit` – AppKit/Swift concurrency, linting, release checklist.
-- `pack-openai-apps-sdk-ui` – OpenAI Apps SDK UI integration and safety.
-- `pack-python-uv` – Python (uv) lint/format/testing conventions.
-- `pack-rust-cli` – Rust 2024 CLI/TUI conventions.
-- `pack-nx` – Nx affected-only orchestration and diagnostics.
+- `ts-base` – TypeScript strictness, schema validation, lint/testing norms.
+- `react-vite` – React 19 + Vite conventions (framework-agnostic).
+- `react-next` – React 19 + Next.js 16 (RSC, App Router).
+- `tailwind` – Tailwind v4 class sorting and linting policy.
+- `storybook` – Storybook setup, a11y/interaction testing.
+- `cloudflare-workers` – Workers runtime constraints and tests.
+- `mcp-server-ts` – MCP tool schemas, auth, audit logs, egress allowlists.
+- `swift-core` – Swift language standards (format + lint baseline).
+- `swift-xcode` – Xcode project/workspace build + test conventions.
+- `swift-spm` – Swift Package Manager dependency policy (optional).
+- `swift-appkit` – macOS AppKit governance (entitlements, privacy keys).
+- `swift-uikit` – iOS UIKit governance (entitlements, privacy keys).
+- `apple-release` – Apple signing/notarization release evidence checks.
+- `openai-apps-sdk-ui` – OpenAI Apps SDK UI integration and safety.
+- `python-uv` – Python (uv) lint/format/testing conventions.
+- `rust-cli` – Rust 2024 CLI/TUI conventions.
+- `nx` – Nx affected-only orchestration and diagnostics.
 
 Pack docs live in `brainwav/governance/docs/packs/`; pack metadata lives in `brainwav/governance-pack/packs/`.
 

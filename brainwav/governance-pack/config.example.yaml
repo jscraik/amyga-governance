@@ -70,8 +70,8 @@ sbomSpec: cyclonedx@1.7
 slsaLevel: "1.2"
 signingSpec: cosign-v3-bundle
 evidenceTokens:
-  - Step Budget ≤ ${stepBudget}
-  - Ask-First ≤ ${askFirst}
+  - Step Budget <= ${stepBudget}
+  - Ask-First <= ${askFirst}
   - Evidence Triplet
   - service:
   - traceparent

@@ -109,7 +109,7 @@ jobs:
         if: ${{ env.NODE_AUTH_TOKEN != '' }}
         run: npm config set //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
       - name: Publish to npm
-        run: npm publish ./dist/*.tgz --access public --provenance --registry https://registry.npmjs.org/
+        run: npm publish ./dist/*.tgz --access restricted --provenance --registry https://registry.npmjs.org/
       - name: Canary validation
         env:
           RELEASE_VERSION: ${{ github.ref_name }}
@@ -117,7 +117,7 @@ jobs:
           version="${RELEASE_VERSION#v}"
           git clone https://github.com/jscraik/brainwav-governance-canary.git /tmp/brainwav-governance-canary
           cd /tmp/brainwav-governance-canary
-          pnpm add -D "brainwav-agentic-governance@${version}"
+          pnpm add -D "@brainwav/brainwav-agentic-governance@${version}"
           pnpm exec brainwav-governance install --root . --mode pointer --profile core --yes
           pnpm exec brainwav-governance validate --root . --strict
       - name: Publish GitHub Release

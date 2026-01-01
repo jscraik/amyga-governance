@@ -14,13 +14,13 @@ import { runGovernanceValidation } from './validate-governance.mjs';
 import { runReadinessCheck } from './readiness-check.mjs';
 import { runTaskEvidenceValidation } from './validate-task-evidence.mjs';
 import { runGovernanceUpgrade } from './upgrade-governance.mjs';
-import { resolvePacks, loadPackManifestFromRoot } from './pack-utils.mjs';
+import { resolvePacks, loadPackManifestFromRoot, PRESETS } from './pack-utils.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
 
-const COMMANDS = new Set(['init', 'install', 'upgrade', 'validate', 'doctor']);
+const COMMANDS = new Set(['init', 'install', 'upgrade', 'validate', 'doctor', 'packs']);
 const COMMON_FLAGS = new Set(['--mode', '--profile', '--packs', '--dry-run', '--yes', '--force']);
 const GLOBAL_FLAGS = new Set([
 	'-h',
@@ -90,6 +90,7 @@ Initialize, install, upgrade, validate, and diagnose Brainwav governance in a re
 
 Usage:
   brainwav-governance [global flags] <init|install|upgrade|validate|doctor> [flags]
+  brainwav-governance packs list [--json]
 `);
 }
 
@@ -117,7 +118,7 @@ function parseArgs(argv) {
 	const flags = {
 		mode: 'pointer',
 		modeProvided: false,
-		profile: 'core',
+		profile: 'release',
 		profileProvided: false,
 		packs: [],
 		dryRun: false,
@@ -317,6 +318,83 @@ function buildMeta(inputs) {
 		version: pkg.version,
 		timestamp: nowIso(),
 		inputs
+	};
+}
+
+/**
+ * Collect pack IDs from a packs root.
+ * @param {string} packsRoot - Packs directory root.
+ * @param {Set<string>} ids - Set to populate.
+ * @returns {void}
+ */
+function collectPackIds(packsRoot, ids) {
+	if (!packsRoot || !fs.existsSync(packsRoot)) return;
+	const entries = fs.readdirSync(packsRoot, { withFileTypes: true });
+	entries.forEach((entry) => {
+		if (entry.isDirectory()) {
+			ids.add(entry.name);
+			return;
+		}
+		if (entry.isFile() && entry.name.endsWith('.pack.yaml')) {
+			ids.add(entry.name.replace('.pack.yaml', ''));
+		}
+	});
+}
+
+/**
+ * List available pack IDs from package + local sources.
+ * @param {string} rootPath - Repo root.
+ * @returns {string[]} Sorted pack IDs.
+ */
+function listAvailablePackIds(rootPath) {
+	const ids = new Set();
+	const packagePacksRoot = path.join(repoRoot, 'brainwav', 'governance-pack', 'packs');
+	collectPackIds(packagePacksRoot, ids);
+	const localPacksRoot = path.join(rootPath, '.agentic-governance', 'packs');
+	collectPackIds(localPacksRoot, ids);
+	const vendorRoot = path.join(rootPath, '.agentic-governance', 'vendor');
+	if (fs.existsSync(vendorRoot)) {
+		const versions = fs.readdirSync(vendorRoot, { withFileTypes: true })
+			.filter((dirent) => dirent.isDirectory())
+			.map((dirent) => dirent.name);
+		versions.forEach((version) => {
+			const vendorPacksRoot = path.join(vendorRoot, version, 'governance-pack', 'packs');
+			collectPackIds(vendorPacksRoot, ids);
+		});
+	}
+	return Array.from(ids).sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * Build a normalized pack summary.
+ * @param {object|null} manifest - Pack manifest.
+ * @param {string} packId - Pack identifier.
+ * @returns {Record<string, unknown>} Summary payload.
+ */
+function buildPackSummary(manifest, packId) {
+	if (!manifest) {
+		return {
+			id: packId,
+			missing: true
+		};
+	}
+	return {
+		id: manifest.id,
+		description: manifest.description ?? '',
+		depends_on: manifest.depends_on ?? [],
+		runner: manifest.ci?.runner ?? 'ubuntu-latest',
+		inputs: {
+			required: Array.isArray(manifest.inputs?.required) ? manifest.inputs.required : [],
+			optional: manifest.inputs?.optional ?? {}
+		},
+		checks: {
+			validate: Array.isArray(manifest.checks?.validate)
+				? manifest.checks.validate.map((entry) => entry?.id ?? entry)
+				: [],
+			doctor: Array.isArray(manifest.checks?.doctor)
+				? manifest.checks.doctor.map((entry) => entry?.id ?? entry)
+				: []
+		}
 	};
 }
 
@@ -1156,6 +1234,45 @@ async function main() {
 
 	if (global.noInput && (!command || !COMMANDS.has(command))) {
 		exitWithCode(2);
+		return;
+	}
+
+	if (command === 'packs') {
+		const subcommand = positionalOutput ?? 'list';
+		if (subcommand !== 'list') {
+			console.error(`[brAInwav] Unknown packs subcommand "${subcommand}".`);
+			exitWithCode(2);
+			return;
+		}
+		const packIds = listAvailablePackIds(rootPath);
+		const packs = packIds.map((packId) => buildPackSummary(loadPackManifestFromRoot(rootPath, packId), packId));
+		const report = {
+			schema: 'brainwav.governance.packs.v1',
+			meta: buildMeta({ root: rootPath }),
+			data: {
+				packs,
+				presets: PRESETS
+			}
+		};
+		if (global.json) {
+			console.log(JSON.stringify(report, null, 2));
+		} else if (!global.quiet) {
+			console.log('Packs:');
+			packs.forEach((pack) => {
+				const depends = pack.depends_on?.length ? pack.depends_on.join(', ') : '-';
+				const required = pack.inputs?.required?.length ? pack.inputs.required.join(', ') : '-';
+				const runner = pack.runner ?? '-';
+				console.log(`- ${pack.id} | runner: ${runner} | depends: ${depends} | required: ${required}`);
+			});
+			console.log('Presets:');
+			Object.entries(PRESETS).forEach(([presetId, presetPacks]) => {
+				console.log(`- preset:${presetId}: ${presetPacks.join(', ')}`);
+			});
+		}
+		if (global.output) {
+			writeReport(outputPath, report);
+		}
+		exitWithCode(0);
 		return;
 	}
 

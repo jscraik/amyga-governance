@@ -12,7 +12,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const packsRoot = path.join(repoRoot, 'brainwav', 'governance-pack', 'packs');
 
-const PRESETS = {
+export const PRESETS = {
 	'web': ['ts-base', 'react-vite', 'tailwind', 'storybook'],
 	'edge': ['ts-base', 'cloudflare-workers'],
 	'mcp': ['ts-base', 'mcp-server-ts'],
@@ -127,7 +127,7 @@ export function resolvePackManifestPath(rootPath, packId) {
 			const pointer = readJson(pointerPath);
 			const packageRoot = pointer?.packageRoot
 				? path.resolve(rootPath, pointer.packageRoot)
-				: path.join(rootPath, 'node_modules', 'brainwav-agentic-governance');
+				: path.join(rootPath, 'node_modules', '@brainwav', 'brainwav-agentic-governance');
 			const pointerJson = path.join(packageRoot, 'brainwav', 'governance-pack', 'packs', packId, 'pack.json');
 			const pointerYaml = path.join(packageRoot, 'brainwav', 'governance-pack', 'packs', `${packId}.pack.yaml`);
 			if (fs.existsSync(pointerJson)) return pointerJson;

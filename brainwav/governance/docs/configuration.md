@@ -77,10 +77,10 @@ Add MCP servers to your client configuration:
 
 ## Pointer Mode Configuration
 
-Pointer mode is enabled by `.agentic-governance/pointer.json`. It redirects governance validation and hashing to the pinned package under `node_modules/brainwav-agentic-governance` and keeps local overrides small.
+Pointer mode is enabled by `.agentic-governance/pointer.json`. It redirects governance validation and hashing to the pinned package under `node_modules/@brainwav/brainwav-agentic-governance` and keeps local overrides small.
 
 Key fields:
-- `package`: npm package name (default `brainwav-agentic-governance`)
+- `package`: npm package name (default `@brainwav/brainwav-agentic-governance`)
 - `packageRoot`: `node_modules/...` path
 - `governanceRoot`: canonical governance docs path
 - `governanceIndexPath`: canonical hash index path

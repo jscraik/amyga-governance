@@ -89,24 +89,31 @@ touch governance/my-new-policy.md
 
 ### Step 2: Add to Governance Index
 
-Edit `governance/governance-index.json`:
+Edit `brainwav/governance/90-infra/governance-index.json`:
 
 ```json
 {
   "precedence": [
-    "AGENT_CHARTER.md#fragment",
-    "my-new-policy.md",  // Add to precedence list
-    ...
+    "00-core/AGENT_CHARTER.md",
+    "10-flow/my-new-policy.md"
+  ],
+  "infra": [
+    "90-infra/compat.json"
+  ],
+  "reference": [
+    "docs/research/example.md"
   ],
   "docs": {
-    ...
     "my-new-policy.md": {
-      "path": "/governance/my-new-policy.md",
+      "path": "10-flow/my-new-policy.md",
       "sha256": "PLACEHOLDER_WILL_BE_COMPUTED",
       "required_tokens": [
         "policy keyword",
         "required phrase"
-      ]
+      ],
+      "class": "normative",
+      "owner": "brAInwav Development Team",
+      "change_class": "docs"
     }
   }
 }

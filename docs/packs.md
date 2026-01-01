@@ -25,6 +25,7 @@ is synthesized from the manifest during install/upgrade.
 | swift-appkit | Swift/AppKit conventions for concurrency and macOS release hygiene. | swift-core, swift-xcode | macos-latest | AGENTS.pack.md, CODESTYLE.pack.md | xcode-project, entitlements, privacy-usage | - |
 | swift-core | Swift formatting and linting baselines. | - | macos-latest | AGENTS.pack.md, CODESTYLE.pack.md | swift-format-config, swiftlint-config | - |
 | swift-spm | Swift Package Manager conventions and dependency hygiene. | - | ubuntu-latest | - | package-swift, package-resolved | - |
+| swift-uikit | Swift/UIKit conventions for iOS apps. | swift-core, swift-xcode | macos-latest | AGENTS.pack.md, CODESTYLE.pack.md | - | - |
 | swift-xcode | Xcode workspace/project configuration for Swift targets. | - | macos-latest | - | xcode-project, xcode-scheme, xcode-destination | - |
 | tailwind | Tailwind v4 class sorting and composition policy. | - | ubuntu-latest | - | - | - |
 | ts-base | TypeScript base standards and strictness. | - | ubuntu-latest | AGENTS.pack.md, CODESTYLE.pack.md | tsconfig, typescript-dependency | - |

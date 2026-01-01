@@ -76,7 +76,7 @@ brainwav-governance install --root /path/to/your-project --mode pointer --profil
 ```
 
 - Adds `.agentic-governance/pointer.json` and pointer stubs for AGENTS/CODESTYLE/SECURITY.  
-- Requires `brainwav-agentic-governance` as a dev dependency, pinned in the lockfile (run scripts from `node_modules/brainwav-agentic-governance/scripts` or via `pnpm dlx`).
+- Requires `@brainwav/brainwav-agentic-governance` as a dev dependency, pinned in the lockfile (run scripts from `node_modules/@brainwav/brainwav-agentic-governance/scripts` or via `pnpm dlx`).
 - Sets `.agentic-governance/config.json` with the selected profile (creative/delivery/release). CI enforces **release** gates by default. `core/full` are accepted as legacy synonyms.
 
 ### Verify (expected outputs)

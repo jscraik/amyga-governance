@@ -235,6 +235,8 @@
       "required": ["precedence", "hashIndexPath", "requireHashVerification"],
       "properties": {
         "precedence": {"type": "array", "items": {"type": "string"}},
+        "infra": {"type": "array", "items": {"type": "string"}},
+        "reference": {"type": "array", "items": {"type": "string"}},
         "hashIndexPath": {"type": "string"},
         "requireHashVerification": {"type": "boolean"}
       }

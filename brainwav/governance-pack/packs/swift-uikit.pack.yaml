@@ -1,0 +1,17 @@
+pack:
+  id: swift-uikit
+  version: 1.0.0
+  default: false
+  summary: "Swift/UIKit conventions for iOS apps."
+  depends_on:
+    - swift-core
+    - swift-xcode
+  ci:
+    runner: macos-latest
+    permissions:
+      contents: read
+  standards:
+    - "UIKit"
+    - "Apple HIG"
+    - "WCAG 2.2 AA"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

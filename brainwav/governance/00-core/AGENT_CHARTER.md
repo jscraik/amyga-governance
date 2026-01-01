@@ -30,7 +30,7 @@
 
 All agents executing workstreams MUST obey these rules:
 
-### 1️⃣ **Step Budget ≤ 7** [AGENTS-STP-001]
+### 1️⃣ **Step Budget <= 7** [AGENTS-STP-001]
 
 - Each execution arc MUST complete within **seven discrete plan/act iterations**
 - Larger efforts MUST be split into multiple arcs
@@ -41,7 +41,7 @@ All agents executing workstreams MUST obey these rules:
 
 ---
 
-### 2️⃣ **Ask-First ≤ 3** [AGENTS-ASK-002]
+### 2️⃣ **Ask-First <= 3** [AGENTS-ASK-002]
 
 - Agents MAY ask at most **three clarifying questions** before writing code
 - Each question MUST enumerate **concrete options and consequences**

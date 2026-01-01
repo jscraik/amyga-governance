@@ -29,6 +29,32 @@
       "governance:sync-hashes:check",
       "scorecard"
     ],
+    "toolchain_profiles": {
+      "creative": [
+        "rg",
+        "fd",
+        "jq"
+      ],
+      "delivery": [
+        "rg",
+        "fd",
+        "jq",
+        "semgrep",
+        "gitleaks",
+        "markdownlint-cli2"
+      ],
+      "release": [
+        "rg",
+        "fd",
+        "jq",
+        "semgrep",
+        "gitleaks",
+        "trivy",
+        "cosign",
+        "osv-scanner",
+        "markdownlint-cli2"
+      ]
+    },
     "required_toolchain": [
       "rg",
       "fd",

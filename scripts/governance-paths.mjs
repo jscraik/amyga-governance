@@ -42,7 +42,7 @@ export function resolveGovernancePaths(repoRoot) {
 	}
 
 	const pointer = readJson(pointerPath);
-	const packageName = pointer.package || 'brainwav-agentic-governance';
+	const packageName = pointer.package || '@brainwav/brainwav-agentic-governance';
 	const packageRoot = pointer.packageRoot || path.join(repoRoot, 'node_modules', packageName);
 	const govRoot = pointer.governanceRoot || path.join(packageRoot, 'brainwav', 'governance');
 	const agentsPath = pointer.agentsPath || path.join(packageRoot, 'AGENTS.md');

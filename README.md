@@ -71,12 +71,12 @@ pnpm readiness:check
 2. Install governance into the target repo (local clone):  
    `brainwav-governance install --root /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
 3. Install governance into the target repo (published package):  
-   `pnpm dlx brainwav-agentic-governance@<version> install --root /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
+   `pnpm dlx @brainwav/brainwav-agentic-governance@<version> install --root /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
    Or, if installed as a dependency:  
    `pnpm exec brainwav-governance install --root /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
    - Default profile is `release` (gold standard).
    - `full` copies AGENTS, CODESTYLE, SECURITY, `brainwav/governance/**`, issue/PR templates, and the GitHub Actions workflow.  
-   - `pointer` writes pointer stubs + `.agentic-governance/pointer.json` and expects a lockfile-pinned `brainwav-agentic-governance` dependency.
+   - `pointer` writes pointer stubs + `.agentic-governance/pointer.json` and expects a lockfile-pinned `@brainwav/brainwav-agentic-governance` dependency.
    - The CLI binary is available as both `brainwav-governance` and `brainwav-agentic-governance`.
 4. In the consumer repo, run:  
    `pnpm exec brainwav-governance validate --root .` (checks required tokens + Step Budget ≤7 + overlay rules)  
@@ -86,7 +86,7 @@ pnpm readiness:check
 ### Upgrade in a consumer project
 
 ```bash
-pnpm dlx brainwav-agentic-governance@<version> upgrade --root /path/to/consumer-repo [--packs a11y,supply-chain]
+pnpm dlx @brainwav/brainwav-agentic-governance@<version> upgrade --root /path/to/consumer-repo [--packs a11y,supply-chain]
 ```
 
 `upgrade` refreshes pointer stubs + workflows, updates the pinned dependency, and runs `pnpm install` when a pnpm lockfile is present.
@@ -133,7 +133,8 @@ By default, `upgrade` preserves existing files. Use `--force` to overwrite exist
 - `pnpm oversight:vibe-check --goal "..." --plan "..." [--session <id>] [--slug <task>]` — posts to the Cortex Aegis HTTP endpoint (default `http://127.0.0.1:2091/vibe_check`) and logs JSON under the task.
 - `pnpm readiness:check` — confirms core governance files exist and required tools are present.
 - `brainwav-governance install --root <path>` — copy governance pack + CI workflow into another repo.
-- `brainwav-governance validate --root <path>` — verify required tokens and Step Budget ≤7 across tasks.
+- `brainwav-governance validate --root <path>` — verify required tokens and Step Budget <=7 across tasks.
+- `brainwav-governance packs list [--json]` — list available packs/presets for discovery.
 - `pnpm governance:validate-standards` — check standards link freshness and `as_of` age in `standards.versions.json`.
 - `pnpm governance:sync-hashes:check` — fail on governance hash drift (non-writing).
 - `pnpm task:scaffold --slug <id>` / `pnpm task:validate --slug <id>` — create and check task folders for Evidence Triplet placeholders.
@@ -172,7 +173,7 @@ brainwav/governance/
 └── templates/                # Feature, research, TDD plan templates
 
 AGENTS.md                     # Root operational policy (ArcTDD charter, Oversight rules)
-CODESTYLE.md                  # Code + architecture standards (named exports, ≤40-line funcs)
+CODESTYLE.md                  # Code + architecture standards (named exports, <=40-line funcs)
 SECURITY.md                   # Standards & References (Jan 2026) + CI gate expectations
 tasks/<slug>/                 # Per-task folders with run manifests + evidence triplets
 ```
@@ -251,7 +252,7 @@ INCIDENT_ID=INC-742 node brainwav/governance/commands/incident-review.mjs
 ## Release Process (Maintainers)
 
 - Releases are automated on tag push matching `v0.x.y`.
-- npm is the canonical distribution source (public package `brainwav-agentic-governance`).
+- npm is the canonical distribution source (private package `@brainwav/brainwav-agentic-governance`).
 - A draft GitHub Release attaches the packed tarball, SBOM, provenance, and signatures generated in CI; it is published after npm + canary succeed.
 - Release gating runs `pnpm lint:ci`, `pnpm test:cli`, and `pnpm test:fixtures`.
 - `docs/packs.md` is regenerated during release; the workflow fails if the file is out of date.

@@ -197,13 +197,19 @@ Dependency cruiser configuration for memory-related packages.
 
 ### Precedence Order
 
-When documents overlap or conflict:
+When documents overlap or conflict, the **precedence list** in
+`brainwav/governance/90-infra/governance-index.json` is authoritative:
 
 1. **00-core/constitution.md** (supreme law)
 2. **00-core/AGENT_CHARTER.md** (agent behavior & rules)
 3. **10-flow/** documents (operational workflows)
 4. **20-checklists/** documents (quality gates)
-5. **90-infra/** documents (infrastructure config)
+5. **30-compliance/** documents (regulatory requirements)
+6. **CODESTYLE.md** + **SECURITY.md** (repo-wide standards)
+
+Infrastructure registries (schemas, compatibility pins, control catalogs) are
+listed under `infra`, and research summaries live under `reference`. Those lists
+inform tooling and context, but do not override normative policy.
 
 ### Recent Consolidations (2025-11-22)
 

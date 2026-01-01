@@ -41,7 +41,7 @@ Profiles live in `governance.core.yaml` (templates), `governance.yaml` (defaults
 
 ## Pointer mode distribution
 
-For low-drift adoption, repos can use pointer mode (`brainwav-governance install --root . --mode pointer`) and pin `brainwav-agentic-governance` via their lockfile. Pointer mode keeps local files minimal while validation resolves canonical docs from `node_modules/brainwav-agentic-governance`.
+For low-drift adoption, repos can use pointer mode (`brainwav-governance install --root . --mode pointer`) and pin `@brainwav/brainwav-agentic-governance` via their lockfile. Pointer mode keeps local files minimal while validation resolves canonical docs from `node_modules/@brainwav/brainwav-agentic-governance`.
 
 ## Operational action sets (Q1–Q5)
 

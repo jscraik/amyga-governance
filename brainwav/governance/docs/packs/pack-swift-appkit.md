@@ -5,13 +5,14 @@ applies_to: ["pack-swift-appkit"]
 owner: "Governance Team"
 ---
 
-# Pack: Swift + AppKit
+# Pack: Swift + AppKit (macOS)
 
 ## Standards
 
 - Use Swift Concurrency with explicit `@MainActor` boundaries.
 - Format with SwiftFormat and lint with SwiftLint (via `swift-core`).
 - Avoid blocking the main thread; offload I/O to background tasks.
+  - AppKit is macOS-only. For iOS, use the `swift-uikit` pack instead.
 
 ## Release Hygiene
 

@@ -9,11 +9,11 @@ limits:
   stepBudget:
     file: AGENTS.md
     anchor: "PACK:limits.stepBudget"
-    regex: "step Budget ≤?\\s*(\\d+)"
+    regex: "step Budget (?:<=|≤)\\s*(\\d+)"
   askFirst:
     file: AGENTS.md
     anchor: "PACK:limits.askFirst"
-    regex: "Ask-First ≤?\\s*(\\d+)"
+    regex: "Ask-First (?:<=|≤)\\s*(\\d+)"
 
 evidence:
   tripletRequired:

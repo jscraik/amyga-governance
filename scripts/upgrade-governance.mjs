@@ -4,7 +4,7 @@
  * @license Apache-2.0
  *
  * Usage:
- *   pnpm governance:upgrade --dest /path/to/consumer [--mode full|pointer] [--profile creative|delivery|release] [--no-install] [--preserve-config] [--force] [--dry-run]
+ *   pnpm governance:upgrade --root /path/to/consumer [--mode full|pointer] [--profile creative|delivery|release] [--no-install] [--preserve-config] [--force] [--dry-run]
  */
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -23,6 +23,7 @@ const repoRoot = path.resolve(__dirname, '..');
 function parseArgs() {
 	const args = process.argv.slice(2);
 	let dest;
+	let usedDestFlag = false;
 	let mode;
 	let profile;
 	let noInstall = false;
@@ -30,7 +31,11 @@ function parseArgs() {
 	let force = false;
 	let dryRun = false;
 	for (let i = 0; i < args.length; i++) {
-		if (args[i] === '--dest' && args[i + 1]) dest = args[i + 1];
+		if (args[i] === '--dest' && args[i + 1]) {
+			dest = args[i + 1];
+			usedDestFlag = true;
+		}
+		if (args[i] === '--root' && args[i + 1]) dest = args[i + 1];
 		if (args[i] === '--mode' && args[i + 1]) mode = args[i + 1];
 		if (args[i] === '--profile' && args[i + 1]) profile = args[i + 1];
 		if (args[i] === '--no-install') noInstall = true;
@@ -39,7 +44,10 @@ function parseArgs() {
 		if (args[i] === '--force') force = true;
 		if (args[i] === '--dry-run') dryRun = true;
 	}
-	if (!dest) throw new Error('Missing --dest <path> for target project');
+	if (!dest) throw new Error('Missing --root <path> for target project');
+	if (usedDestFlag) {
+		console.warn('[brAInwav] --dest is deprecated; use --root instead.');
+	}
 	return { dest: path.resolve(dest), mode, profile, noInstall, preserveConfig, force, dryRun };
 }
 
@@ -261,7 +269,7 @@ export function runGovernanceUpgrade({
 		resolvedPacks,
 		packOptions
 	);
-	const packageName = readPointerPackage(destRoot) ?? 'brainwav-agentic-governance';
+	const packageName = readPointerPackage(destRoot) ?? '@brainwav/brainwav-agentic-governance';
 	const version = resolvePackageVersion();
 	if (!dryRun) {
 		updateDependency(destRoot, packageName, version);

@@ -4,7 +4,7 @@
  * @license Apache-2.0
  *
  * Usage:
- *   pnpm governance:install --dest /path/to/consumer [--mode full|pointer] [--profile creative|delivery|release] [--preserve-config]
+ *   pnpm governance:install --root /path/to/consumer [--mode full|pointer] [--profile creative|delivery|release] [--preserve-config]
  *
  * Copies:
  * - AGENTS.md, CODESTYLE.md, SECURITY.md
@@ -38,6 +38,7 @@ const COPY_LIST = [
 function parseArgs() {
 	const args = process.argv.slice(2);
 	let dest;
+	let usedDestFlag = false;
 	let mode = 'full';
 	let profile = 'release';
 	let profileWasProvided = false;
@@ -45,7 +46,11 @@ function parseArgs() {
 	let force = false;
 	let dryRun = false;
 	for (let i = 0; i < args.length; i++) {
-		if (args[i] === '--dest' && args[i + 1]) dest = args[i + 1];
+		if (args[i] === '--dest' && args[i + 1]) {
+			dest = args[i + 1];
+			usedDestFlag = true;
+		}
+		if (args[i] === '--root' && args[i + 1]) dest = args[i + 1];
 		if (args[i] === '--mode' && args[i + 1]) mode = args[i + 1];
 		if (args[i] === '--profile' && args[i + 1]) {
 			profile = args[i + 1];
@@ -56,7 +61,10 @@ function parseArgs() {
 		if (args[i] === '--dry-run') dryRun = true;
 	}
 	if (!dest) {
-		throw new Error('Missing --dest <path> for target project');
+		throw new Error('Missing --root <path> for target project');
+	}
+	if (usedDestFlag) {
+		console.warn('[brAInwav] --dest is deprecated; use --root instead.');
 	}
 	if (!['full', 'pointer'].includes(mode)) {
 		throw new Error('Invalid --mode. Use "full" or "pointer".');
@@ -150,7 +158,7 @@ function writeConfigFile(destRoot, profile, mode, overlays = [], packs, packOpti
 	const configDir = path.dirname(configPath);
 	if (!dryRun) fs.mkdirSync(configDir, { recursive: true });
 	const schemaPath = mode === 'pointer'
-		? 'node_modules/brainwav-agentic-governance/brainwav/governance/90-infra/agentic-config.schema.json'
+		? 'node_modules/@brainwav/brainwav-agentic-governance/brainwav/governance/90-infra/agentic-config.schema.json'
 		: 'brainwav/governance/90-infra/agentic-config.schema.json';
 	const configPayload = {
 		$schema: schemaPath,
@@ -283,12 +291,12 @@ function writePointerFiles(destRoot, profile, { force, dryRun, actions }) {
 	const pointerPayload = {
 		mode: 'pointer',
 		profile,
-		package: 'brainwav-agentic-governance',
-		packageRoot: 'node_modules/brainwav-agentic-governance',
-		governanceRoot: 'node_modules/brainwav-agentic-governance/brainwav/governance',
+		package: '@brainwav/brainwav-agentic-governance',
+		packageRoot: 'node_modules/@brainwav/brainwav-agentic-governance',
+		governanceRoot: 'node_modules/@brainwav/brainwav-agentic-governance/brainwav/governance',
 		governanceIndexPath:
-			'node_modules/brainwav-agentic-governance/brainwav/governance/90-infra/governance-index.json',
-		agentsPath: 'node_modules/brainwav-agentic-governance/AGENTS.md',
+			'node_modules/@brainwav/brainwav-agentic-governance/brainwav/governance/90-infra/governance-index.json',
+		agentsPath: 'node_modules/@brainwav/brainwav-agentic-governance/AGENTS.md',
 		installedAt: new Date().toISOString()
 	};
 	const pointerPath = path.join(pointerDir, 'pointer.json');
@@ -305,9 +313,9 @@ function writePointerFiles(destRoot, profile, { force, dryRun, actions }) {
 		`This repository consumes the brAInwav Agentic Governance pack via pointer mode.\n` +
 		`Canonical policies live in the pinned npm package release (lockfile-controlled).\n\n` +
 		`Canonical source (immutable via lockfile):\n` +
-		`- Package: brainwav-agentic-governance (pin exact version in package.json)\n` +
-		`- Path: node_modules/brainwav-agentic-governance/AGENTS.md\n` +
-		`- Hash index: node_modules/brainwav-agentic-governance/brainwav/governance/90-infra/governance-index.json\n\n` +
+		`- Package: @brainwav/brainwav-agentic-governance (pin exact version in package.json)\n` +
+		`- Path: node_modules/@brainwav/brainwav-agentic-governance/AGENTS.md\n` +
+		`- Hash index: node_modules/@brainwav/brainwav-agentic-governance/brainwav/governance/90-infra/governance-index.json\n\n` +
 		`Local overrides (tighten only):\n` +
 		`- Declare overlays in .agentic-governance/config.json and use AGENTS.local.md (optional).\n`;
 
@@ -333,7 +341,7 @@ function writePointerFiles(destRoot, profile, { force, dryRun, actions }) {
 		if (!dryRun) {
 			fs.writeFileSync(
 				codeStylePath,
-				`${pointerStub('CODESTYLE', 'node_modules/brainwav-agentic-governance/CODESTYLE.md')}\n`
+				`${pointerStub('CODESTYLE', 'node_modules/@brainwav/brainwav-agentic-governance/CODESTYLE.md')}\n`
 			);
 		}
 		recordAction(actions, 'write', null, codeStylePath, dryRun ? 'planned' : 'written', null);
@@ -345,7 +353,7 @@ function writePointerFiles(destRoot, profile, { force, dryRun, actions }) {
 		if (!dryRun) {
 			fs.writeFileSync(
 				securityPath,
-				`${pointerStub('SECURITY', 'node_modules/brainwav-agentic-governance/SECURITY.md')}\n`
+				`${pointerStub('SECURITY', 'node_modules/@brainwav/brainwav-agentic-governance/SECURITY.md')}\n`
 			);
 		}
 		recordAction(actions, 'write', null, securityPath, dryRun ? 'planned' : 'written', null);
@@ -734,7 +742,7 @@ function main() {
 		);
 		if (mode === 'pointer') {
 			console.log(
-				'[brAInwav] Pointer mode: add brainwav-agentic-governance as a dev dependency and pin its version in the lockfile.'
+				'[brAInwav] Pointer mode: add @brainwav/brainwav-agentic-governance as a dev dependency and pin its version in the lockfile.'
 			);
 		}
 	} catch (error) {

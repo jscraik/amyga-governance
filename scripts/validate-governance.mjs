@@ -2,7 +2,7 @@
 /**
  * @fileoverview Validate governance tokens and basic task constraints.
  * - Verifies required tokens from governance-index.json are present in referenced docs.
- * - If tasks exist, checks run-manifest arcs length (Step Budget ≤7).
+ * - If tasks exist, checks run-manifest arcs length (Step Budget <=7).
  * @license Apache-2.0
  */
 import fs from 'node:fs';
@@ -54,6 +54,16 @@ function resolvePath(rel, govRoot, rootPath) {
 function checkTokens(indexPath, govRoot, rootPath) {
 	const index = JSON.parse(read(indexPath));
 	const failures = [];
+	const docPaths = new Set(Object.values(index.docs || {}).map((entry) => entry.path));
+	['precedence', 'infra', 'reference'].forEach((listKey) => {
+		const list = index[listKey];
+		if (!Array.isArray(list)) return;
+		list.forEach((docPath) => {
+			if (!docPaths.has(docPath)) {
+				failures.push(`${listKey} entry missing in docs map: ${docPath}`);
+			}
+		});
+	});
 	Object.entries(index.docs).forEach(([key, entry]) => {
 		if (!entry.required_tokens) return;
 		const target = resolvePath(entry.path, govRoot, rootPath);
@@ -86,9 +96,9 @@ function checkTasks(rootPath) {
 		if (!fs.existsSync(manifestPath)) return;
 		const manifest = JSON.parse(read(manifestPath));
 		const arcs = manifest.arcs || [];
-		if (arcs.length > 7) {
-			failures.push(`task ${slug}: arcs length ${arcs.length} exceeds Step Budget ≤7`);
-		}
+	if (arcs.length > 7) {
+			failures.push(`task ${slug}: arcs length ${arcs.length} exceeds Step Budget <=7`);
+	}
 	});
 	return failures;
 }

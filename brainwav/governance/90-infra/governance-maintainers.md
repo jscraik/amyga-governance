@@ -24,11 +24,20 @@ This document consolidates all governance infrastructure maintenance procedures,
     "00-core/constitution.md",
     "00-core/AGENT_CHARTER.md"
   ],
-  "documents": {
-    "constitution": {
+  "infra": [
+    "90-infra/compat.json",
+    "90-infra/standards.versions.json"
+  ],
+  "reference": [
+    "docs/research/arxiv-agentic-governance-summary.md"
+  ],
+  "docs": {
+    "constitution.md": {
       "path": "00-core/constitution.md",
       "sha256": "<hash>",
-      "lastUpdated": "2025-12-03"
+      "class": "normative",
+      "owner": "brAInwav Development Team",
+      "change_class": "docs"
     }
   }
 }
@@ -139,7 +148,7 @@ The `agents-governance.yml` workflow validates:
 ### Adding New Governance Documents
 
 1. Create document in appropriate directory (00-core, 10-flow, 20-checklists, 90-infra)
-2. Add entry to `governance-index.json` precedence array if normative
+2. Add entry to `governance-index.json` precedence/infra/reference arrays as appropriate
 3. Run `pnpm governance:sync-hashes`
 4. Update references in related documents
 5. Test CI validation
