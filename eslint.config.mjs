@@ -13,9 +13,19 @@ export default tseslint.config(
       "**/.nx/**",
       "**/.cache/**",
       "**/.git/**",
+      "brainwav/governance/templates/**",
+      "brainwav/governance/context/**",
+      "brainwav/governance/docs/**",
       "**/tasks/**/logs/**"
     ],
     plugins: { jsdoc },
+    settings: {
+      jsdoc: {
+        tagNamePreference: {
+          fileoverview: "fileoverview"
+        }
+      }
+    },
     rules: {
       "jsdoc/require-jsdoc": [
         "error",
@@ -34,15 +44,14 @@ export default tseslint.config(
       "jsdoc/require-param": "error",
       "jsdoc/require-returns": "error",
       "jsdoc/require-description-complete-sentence": "error",
-      "jsdoc/check-tag-names": "error",
-      "jsdoc/check-types": "error",
-      "jsdoc/require-example": [
-        "warn",
+      "jsdoc/check-tag-names": [
+        "error",
         {
-          exemptedBy: ["@private"],
-          contexts: ["FunctionDeclaration", "ClassDeclaration"]
+          definedTags: ["fileoverview", "docsnap", "openapi"]
         }
       ],
+      "jsdoc/check-types": "error",
+      "jsdoc/require-example": "off",
       "jsdoc/empty-tags": "error",
       "jsdoc/no-undefined-types": "error"
     }

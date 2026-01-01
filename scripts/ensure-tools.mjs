@@ -26,15 +26,15 @@ import process from 'node:process';
  * @type {Array<{name: string, reason: string, install: string}>}
  */
 const tools = [
-	{ name: 'rg', reason: 'fast search (ripgrep)', install: 'brew install ripgrep' },
-	{ name: 'fd', reason: 'fast file find', install: 'brew install fd' },
-	{ name: 'jq', reason: 'JSON processor', install: 'brew install jq' },
-	{ name: 'semgrep', reason: 'SAST', install: 'brew install semgrep' },
-	{ name: 'gitleaks', reason: 'secret scanning', install: 'brew install gitleaks' },
-	{ name: 'trivy', reason: 'container/deps scan', install: 'brew install trivy' },
-	{ name: 'cosign', reason: 'artifact signing', install: 'brew install cosign' },
-	{ name: 'osv-scanner', reason: 'supply chain audit', install: 'brew install osv-scanner' },
-	{ name: 'markdownlint-cli2', reason: 'docs lint', install: 'npm i -g markdownlint-cli2' }
+	{ id: 'tool.rg', name: 'rg', reason: 'fast search (ripgrep)', install: 'brew install ripgrep' },
+	{ id: 'tool.fd', name: 'fd', reason: 'fast file find', install: 'brew install fd' },
+	{ id: 'tool.jq', name: 'jq', reason: 'JSON processor', install: 'brew install jq' },
+	{ id: 'tool.semgrep', name: 'semgrep', reason: 'SAST', install: 'brew install semgrep' },
+	{ id: 'tool.gitleaks', name: 'gitleaks', reason: 'secret scanning', install: 'brew install gitleaks' },
+	{ id: 'tool.trivy', name: 'trivy', reason: 'container/deps scan', install: 'brew install trivy' },
+	{ id: 'tool.cosign', name: 'cosign', reason: 'artifact signing', install: 'brew install cosign' },
+	{ id: 'tool.osv-scanner', name: 'osv-scanner', reason: 'supply chain audit', install: 'brew install osv-scanner' },
+	{ id: 'tool.markdownlint-cli2', name: 'markdownlint-cli2', reason: 'docs lint', install: 'npm i -g markdownlint-cli2' }
 ];
 
 /**
@@ -84,35 +84,65 @@ function compareVersions(actual, required) {
  * Sets process.exitCode = 1 if any check fails.
  * @returns {void}
  */
-function main() {
+export function runToolingChecks() {
+	const checks = [];
 	let ok = true;
 
 	const nodeCheck = checkVersion(process.argv[0], '24.11.0', 'node');
-	if (!nodeCheck.ok) {
-		console.error(`[brAInwav] Node version too low: ${nodeCheck.version} (need >=24.11.0)`);
-		ok = false;
-	}
+	checks.push({
+		id: 'tool.node',
+		severity: nodeCheck.ok ? 'info' : 'high',
+		category: 'toolchain',
+		status: nodeCheck.ok ? 'pass' : 'fail',
+		message: nodeCheck.ok
+			? `Node ${nodeCheck.version} OK`
+			: `Node version too low: ${nodeCheck.version} (need >=24.11.0)`
+	});
+	if (!nodeCheck.ok) ok = false;
 
 	const pnpmCheck = checkVersion('pnpm', '10.26.0', 'pnpm');
-	if (!pnpmCheck.ok) {
-		console.error(`[brAInwav] pnpm missing or too low: ${pnpmCheck.version} (need >=10.26.0) -> npm i -g pnpm@10.26.0`);
-		ok = false;
-	}
+	checks.push({
+		id: 'tool.pnpm',
+		severity: pnpmCheck.ok ? 'info' : 'high',
+		category: 'toolchain',
+		status: pnpmCheck.ok ? 'pass' : 'fail',
+		message: pnpmCheck.ok
+			? `pnpm ${pnpmCheck.version} OK`
+			: `pnpm missing or too low: ${pnpmCheck.version} (need >=10.26.0)`
+	});
+	if (!pnpmCheck.ok) ok = false;
 
-	const missing = tools.filter((t) => !check(t.name));
-	if (missing.length) {
-		ok = false;
-		console.error('[brAInwav] Missing required tools:');
-		for (const m of missing) {
-			console.error(`- ${m.name}: ${m.reason} (install: ${m.install})`);
-		}
-	}
+	tools.forEach((tool) => {
+		const present = check(tool.name);
+		checks.push({
+			id: tool.id,
+			severity: present ? 'info' : 'medium',
+			category: 'toolchain',
+			status: present ? 'pass' : 'fail',
+			message: present
+				? `${tool.name} present`
+				: `${tool.name} missing (${tool.reason}; install: ${tool.install})`
+		});
+		if (!present) ok = false;
+	});
 
-	if (!ok) {
+	return { ok, checks };
+}
+
+/**
+ * Run the CLI entry point for ensure:tools.
+ * @returns {void} No return value.
+ */
+function main() {
+	const result = runToolingChecks();
+	if (!result.ok) {
+		console.error('[brAInwav] Missing required tools or versions:');
+		result.checks
+			.filter((check) => check.status === 'fail')
+			.forEach((check) => console.error(`- ${check.message}`));
 		process.exitCode = 1;
 		return;
 	}
-
 	console.log('[brAInwav] ensure:tools passed — all required CLIs detected.');
 }
 

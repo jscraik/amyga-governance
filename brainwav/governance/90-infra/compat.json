@@ -1,0 +1,44 @@
+{
+  "version": "1.0",
+  "updated": "2026-01-01",
+  "compatibility_policy": {
+    "minor": "No required evidence structure changes; additive-only rules or new optional fields.",
+    "major": "May change evidence structure or required gates with migration notes."
+  },
+  "support_matrix": {
+    "node": ">=24.11.0",
+    "pnpm": ">=10.26.0",
+    "ci_providers": [
+      "github-actions"
+    ],
+    "os": [
+      "linux",
+      "macos",
+      "windows"
+    ]
+  },
+  "gold_standard": {
+    "release_artifacts": [
+      "tgz",
+      "sbom.cyclonedx@1.7",
+      "provenance.slsa@1.2",
+      "cosign.bundle.v3"
+    ],
+    "verification": [
+      "governance:validate",
+      "governance:sync-hashes:check",
+      "scorecard"
+    ],
+    "required_toolchain": [
+      "rg",
+      "fd",
+      "jq",
+      "semgrep",
+      "gitleaks",
+      "trivy",
+      "cosign",
+      "osv-scanner",
+      "markdownlint-cli2"
+    ]
+  }
+}

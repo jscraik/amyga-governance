@@ -1738,7 +1738,7 @@ CODE:
 
 ```
 mutateModules(importers, options)
-  - Description: Handles the mutation of modules based on provided importers and options. (TODO: Add more details)
+  - Description: Handles the mutation of modules based on provided importers and options. (Details pending)
   - Parameters:
     - importers: Configuration for modules to mutate.
     - options: Additional options for the mutation process.

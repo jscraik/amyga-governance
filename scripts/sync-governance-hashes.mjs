@@ -24,7 +24,6 @@ import { formatPointerHint, resolveGovernancePaths } from './governance-paths.mj
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
-const { govRoot, indexPath, pointerPath, packageRoot, mode } = resolveGovernancePaths(repoRoot);
 
 /**
  * Compute SHA-256 hash of a file.
@@ -65,34 +64,41 @@ function fragmentSha256(filePath, startMarker, endMarker) {
  * Resolve a document path to its absolute filesystem location.
  * Checks both governance directory and repository root.
  * @param {string} docPath - Relative path from the governance docs.
+ * @param {string} govRoot - Governance root path.
+ * @param {string} rootPath - Repository root.
  * @returns {string|null} Absolute path if file exists, null otherwise.
  */
-function resolvePath(docPath) {
+function resolvePath(docPath, govRoot, rootPath) {
 	// docs at repo root (README.md, CODESTYLE.md, SECURITY.md) should win if present
-	const rootPath = path.join(repoRoot, docPath);
-	if (['README.md', 'CODESTYLE.md', 'SECURITY.md'].includes(docPath) && fs.existsSync(rootPath)) {
-		return rootPath;
+	const rootDocPath = path.join(rootPath, docPath);
+	if (['README.md', 'CODESTYLE.md', 'SECURITY.md'].includes(docPath) && fs.existsSync(rootDocPath)) {
+		return rootDocPath;
 	}
 	// docs under brainwav/governance/
 	const govPath = path.join(govRoot, docPath);
 	if (fs.existsSync(govPath)) return govPath;
-	if (fs.existsSync(rootPath)) return rootPath;
+	if (fs.existsSync(rootDocPath)) return rootDocPath;
 	return null;
 }
 
 /**
- * Main entry point. Updates all hashes in governance-index.json.
- * @returns {void}
+ * Update or check governance index hashes.
+ * @param {string} targetRoot - Repository root.
+ * @param {{checkOnly?: boolean, silent?: boolean}} options - Execution options.
+ * @returns {{ok: boolean, changes: Array<object>, hint: string, updated: number, message?: string}} Result summary.
  */
-function main() {
-	const checkMode = process.argv.includes('--check');
-	if (mode === 'pointer' && !checkMode) {
+export function runGovernanceHashSync(targetRoot = repoRoot, { checkOnly = false, silent = false } = {}) {
+	const { govRoot, indexPath, pointerPath, packageRoot, mode } = resolveGovernancePaths(targetRoot);
+	if (mode === 'pointer' && !checkOnly) {
 		const hint = formatPointerHint(pointerPath, packageRoot);
-		console.error(
-			`[brAInwav] sync-governance-hashes is read-only in pointer mode. ${hint} Run --check in consumers or update hashes in the source repo.`
-		);
-		process.exitCode = 1;
-		return;
+		return {
+			ok: false,
+			changes: [],
+			hint,
+			message:
+				`sync-governance-hashes is read-only in pointer mode. ${hint} ` +
+				'Run --check in consumers or update hashes in the source repo.'
+		};
 	}
 	const index = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
 	let updated = 0;
@@ -105,9 +111,11 @@ function main() {
 		if (key === indexKey) {
 			continue;
 		}
-		const filePath = resolvePath(entry.path);
+		const filePath = resolvePath(entry.path, govRoot, targetRoot);
 		if (!filePath) {
-			console.warn(`[brAInwav] SKIP ${key}: file not found at ${entry.path}`);
+			if (!silent) {
+				console.warn(`[brAInwav] SKIP ${key}: file not found at ${entry.path}`);
+			}
 			continue;
 		}
 
@@ -115,7 +123,9 @@ function main() {
 		if (entry.fragment_markers) {
 			hash = fragmentSha256(filePath, entry.fragment_markers[0], entry.fragment_markers[1]);
 			if (!hash) {
-				console.warn(`[brAInwav] SKIP ${key}: fragment markers not found`);
+				if (!silent) {
+					console.warn(`[brAInwav] SKIP ${key}: fragment markers not found`);
+				}
 				continue;
 			}
 		} else {
@@ -150,37 +160,54 @@ function main() {
 		}
 	}
 
-	if (checkMode) {
-		if (updated > 0) {
-			console.error(
-				`[brAInwav] sync-governance-hashes --check failed: ${updated} entries drifted.\n` +
-					changes
-						.map((c) => ` - ${c.key}: ${c.from.slice(0, 8)}… -> ${c.to.slice(0, 8)}…`)
-						.join('\n')
-			);
-			process.exitCode = 1;
-			return;
-		}
-		console.log('[brAInwav] sync-governance-hashes --check passed (no drift).');
+	if (checkOnly) {
 		const hint = formatPointerHint(pointerPath, packageRoot);
-		if (hint) console.log(`[brAInwav] ${hint}`);
-		return;
+		return { ok: updated === 0, changes, hint, updated };
 	}
 
 	index.updated = new Date().toISOString().split('T')[0];
 	fs.writeFileSync(indexPath, `${JSON.stringify(index, null, 4)}\n`);
-	if (updated === 0) {
+	const hint = formatPointerHint(pointerPath, packageRoot);
+	return { ok: true, changes, hint, updated };
+}
+
+/**
+ * CLI entry point for governance hash sync.
+ * @returns {void} No return value.
+ */
+function main() {
+	const checkMode = process.argv.includes('--check');
+	const result = runGovernanceHashSync(repoRoot, { checkOnly: checkMode });
+	if (!result.ok) {
+		if (result.message) {
+			console.error(`[brAInwav] ${result.message}`);
+		} else if (checkMode) {
+			console.error(
+				`[brAInwav] sync-governance-hashes --check failed: ${result.updated} entries drifted.\n` +
+					result.changes
+						.map((c) => ` - ${c.key}: ${c.from.slice(0, 8)}… -> ${c.to.slice(0, 8)}…`)
+						.join('\n')
+			);
+		}
+		process.exitCode = 1;
+		return;
+	}
+	if (checkMode) {
+		console.log('[brAInwav] sync-governance-hashes --check passed (no drift).');
+		if (result.hint) console.log(`[brAInwav] ${result.hint}`);
+		return;
+	}
+	if (result.changes.length === 0) {
 		console.log('[brAInwav] sync-governance-hashes: no updates needed.');
 	} else {
-		changes.forEach((c) =>
+		result.changes.forEach((c) =>
 			console.log(
 				`[brAInwav] UPDATE ${c.key}: ${c.from.slice(0, 8)}… → ${c.to.slice(0, 8)}…`
 			)
 		);
-		console.log(`[brAInwav] sync-governance-hashes: ${updated} entries updated.`);
+		console.log(`[brAInwav] sync-governance-hashes: ${result.updated} entries updated.`);
 	}
-	const hint = formatPointerHint(pointerPath, packageRoot);
-	if (hint) console.log(`[brAInwav] ${hint}`);
+	if (result.hint) console.log(`[brAInwav] ${result.hint}`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

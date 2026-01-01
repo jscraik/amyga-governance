@@ -9,10 +9,20 @@ import path from 'node:path';
 const POINTER_RELATIVE_PATH = path.join('.agentic-governance', 'pointer.json');
 const CONFIG_RELATIVE_PATH = path.join('.agentic-governance', 'config.json');
 
+/**
+ * Read JSON from disk.
+ * @param {string} filePath - JSON file path.
+ * @returns {Record<string, unknown>} Parsed JSON.
+ */
 function readJson(filePath) {
 	return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
 
+/**
+ * Resolve governance paths for a repo root.
+ * @param {string} repoRoot - Repository root.
+ * @returns {Record<string, unknown>} Resolved governance paths.
+ */
 export function resolveGovernancePaths(repoRoot) {
 	const pointerPath = path.join(repoRoot, POINTER_RELATIVE_PATH);
 	const configPath = path.join(repoRoot, CONFIG_RELATIVE_PATH);
@@ -52,6 +62,12 @@ export function resolveGovernancePaths(repoRoot) {
 	};
 }
 
+/**
+ * Format a human hint for pointer mode.
+ * @param {string|null} pointerPath - Pointer JSON path.
+ * @param {string|null} packageRoot - Package root path.
+ * @returns {string} Pointer hint string.
+ */
 export function formatPointerHint(pointerPath, packageRoot) {
 	if (!pointerPath) return '';
 	return `Pointer mode active via ${pointerPath} (package root: ${packageRoot}).`;

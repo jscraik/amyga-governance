@@ -11,6 +11,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const contextRoot = path.join(repoRoot, 'brainwav', 'governance', 'context');
 
+/**
+ * Recursively list markdown files under a directory.
+ * @param {string} dir - Directory to scan.
+ * @returns {string[]} Markdown file paths.
+ */
 function listMarkdownFiles(dir) {
 	const entries = fs.readdirSync(dir, { withFileTypes: true });
 	const files = [];
@@ -22,14 +27,29 @@ function listMarkdownFiles(dir) {
 	return files;
 }
 
+/**
+ * Determine whether content already includes a TOC.
+ * @param {string} content - Markdown content.
+ * @returns {boolean} True when a TOC heading exists.
+ */
 function hasToc(content) {
 	return /^## (Table of Contents|Contents|Quick Navigation)/m.test(content);
 }
 
+/**
+ * Count words in a string.
+ * @param {string} content - Text content.
+ * @returns {number} Word count.
+ */
 function wordCount(content) {
 	return content.split(/\s+/).filter(Boolean).length;
 }
 
+/**
+ * Slugify a heading for markdown anchors.
+ * @param {string} text - Heading text.
+ * @returns {string} Slugified anchor.
+ */
 function slugify(text) {
 	return text
 		.trim()
@@ -39,6 +59,11 @@ function slugify(text) {
 		.replace(/-+/g, '-');
 }
 
+/**
+ * Build a markdown TOC for headings.
+ * @param {{level: number, title: string}[]} headings - Heading metadata.
+ * @returns {string} TOC markdown.
+ */
 function buildToc(headings) {
 	const lines = ['## Table of Contents', ''];
 	headings.forEach(({ level, title }) => {
@@ -51,6 +76,12 @@ function buildToc(headings) {
 	return lines.join('\n');
 }
 
+/**
+ * Insert TOC into markdown content.
+ * @param {string} content - Markdown content.
+ * @param {string} toc - TOC markdown.
+ * @returns {string} Updated markdown content.
+ */
 function insertToc(content, toc) {
 	// If frontmatter present, insert after it; else after first blank line following H1.
 	if (content.startsWith('---')) {
@@ -71,6 +102,10 @@ function insertToc(content, toc) {
 	return toc + '\n' + content;
 }
 
+/**
+ * Add TOCs to markdown context documents missing them.
+ * @returns {void} No return value.
+ */
 function main() {
 	const files = listMarkdownFiles(contextRoot);
 	let updated = 0;

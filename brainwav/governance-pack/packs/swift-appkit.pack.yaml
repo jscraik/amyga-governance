@@ -3,7 +3,21 @@ pack:
   version: 1.0.0
   default: false
   summary: "Swift/AppKit conventions for concurrency and releases."
+  ci:
+    runner: macos-latest
+    permissions:
+      contents: read
   standards:
     - "Apple HIG"
     - "WCAG 2.2 AA"
   controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"
+  inputs:
+    required:
+      - "xcode.project|xcode.workspace"
+      - "xcode.scheme"
+  checks:
+    validate:
+      - id: xcode-project
+        severity: high
+        category: pack
+        message: "xcode project/workspace must exist and be configured"

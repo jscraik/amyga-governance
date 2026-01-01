@@ -14,6 +14,10 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 
+/**
+ * Parse CLI arguments for task scaffolding.
+ * @returns {{slug: string, root: string}|null} Parsed args or null.
+ */
 function parseArgs() {
 	const args = process.argv.slice(2);
 	let slug = process.env.TASK_SLUG;
@@ -30,15 +34,30 @@ function parseArgs() {
 	return { slug, root };
 }
 
+/**
+ * Ensure a directory exists.
+ * @param {string} dir - Directory path.
+ * @returns {void} No return value.
+ */
 function ensureDir(dir) {
 	fs.mkdirSync(dir, { recursive: true });
 }
 
+/**
+ * Write file contents if missing.
+ * @param {string} filePath - File path.
+ * @param {string} content - File contents.
+ * @returns {void} No return value.
+ */
 function writeIfMissing(filePath, content) {
 	if (fs.existsSync(filePath)) return;
 	fs.writeFileSync(filePath, `${content}\n`);
 }
 
+/**
+ * CLI entry point for task scaffolding.
+ * @returns {void} No return value.
+ */
 function main() {
 	const args = parseArgs();
 	if (!args) return;

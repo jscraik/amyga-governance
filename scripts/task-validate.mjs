@@ -14,6 +14,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const changeClassPath = path.join(repoRoot, 'brainwav', 'governance', '90-infra', 'change-classes.json');
 
+/**
+ * Parse CLI arguments for task validation.
+ * @returns {{slug: string, root: string}} Parsed args.
+ */
 function parseArgs() {
 	const args = process.argv.slice(2);
 	let slug = process.env.TASK_SLUG;
@@ -28,10 +32,21 @@ function parseArgs() {
 	return { slug, root };
 }
 
+/**
+ * Assert that a path exists and record missing labels.
+ * @param {string} p - Path to check.
+ * @param {string} label - Missing label.
+ * @param {string[]} missing - Missing list to mutate.
+ * @returns {void} No return value.
+ */
 function mustExist(p, label, missing) {
 	if (!fs.existsSync(p)) missing.push(label);
 }
 
+/**
+ * CLI entry point for task validation.
+ * @returns {void} No return value.
+ */
 function main() {
 	try {
 		const { slug, root } = parseArgs();

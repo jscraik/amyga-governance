@@ -1,0 +1,30 @@
+name: Scorecard
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 3 * * 2"
+
+permissions:
+  contents: read
+  security-events: write
+  id-token: write
+
+jobs:
+  scorecard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: OpenSSF Scorecard
+        uses: ossf/scorecard-action@v2
+        with:
+          results_format: sarif
+          results_file: scorecard.sarif
+          publish_results: true
+      - name: Upload scorecard results
+        uses: actions/upload-artifact@v4
+        with:
+          name: scorecard-results
+          path: scorecard.sarif

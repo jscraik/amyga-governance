@@ -15,6 +15,9 @@ Thumbs.db
 # Log files
 *.log
 
+# Release artifacts
+*.tgz
+
 # IDE files
 .vscode/settings.json
 .idea/

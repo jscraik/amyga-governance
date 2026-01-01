@@ -27,6 +27,10 @@ const COPY_LIST = [
 	'.github/pull_request_template.md',
 ];
 
+/**
+ * Parse CLI args to get destination path.
+ * @returns {string} Resolved destination path.
+ */
 function parseArgs() {
 	const args = process.argv.slice(2);
 	let dest;
@@ -39,6 +43,12 @@ function parseArgs() {
 	return path.resolve(dest);
 }
 
+/**
+ * Copy a governance item into the target repo.
+ * @param {string} itemPath - Relative source path.
+ * @param {string} targetRoot - Target repository root.
+ * @returns {void} No return value.
+ */
 function copyItem(itemPath, targetRoot) {
 	const source = path.join(repoRoot, itemPath);
 	const dest = path.join(targetRoot, itemPath);
@@ -53,6 +63,10 @@ function copyItem(itemPath, targetRoot) {
 	console.log(`[brAInwav] copied ${itemPath}`);
 }
 
+/**
+ * Run the consumer bootstrap flow.
+ * @returns {void} No return value.
+ */
 function main() {
 	try {
 		const targetRoot = parseArgs();

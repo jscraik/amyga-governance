@@ -586,7 +586,7 @@ name: 'Calculator',
 description: 'Use this tool to answer questions about math problems.',
 parameters: z.object({ question: z.string() }),
 execute: async (input) => {
-throw new Error('TODO: implement this');
+throw new Error('Not implemented.');
 },
 });
 

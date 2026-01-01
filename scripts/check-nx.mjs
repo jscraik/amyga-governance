@@ -12,6 +12,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const nxConfig = path.join(repoRoot, 'nx.json');
 
+/**
+ * Run the Nx graph check when nx.json exists.
+ * @returns {void} No return value.
+ */
 function main() {
 	if (!fs.existsSync(nxConfig)) {
 		console.log('[brAInwav] Nx config not found; skipping nx graph check.');

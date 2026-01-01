@@ -20,6 +20,7 @@
         "00-core/llm-threat-controls.md",
         "00-core/skills-system-governance.md",
         "90-infra/egress-governance.md",
+        "90-infra/compat.json",
         "90-infra/standards.versions.json",
         "90-infra/change-classes.json",
         "90-infra/control-registry.core.yaml",
@@ -146,7 +147,7 @@
         },
         "governance-index.json": {
             "path": "90-infra/governance-index.json",
-            "sha256": "6b770bc05a0877d796031c9a7399166876307c1e236a433c195cceebe2b7013c",
+            "sha256": "d3962b5cbc05ed49057aac395d29352f2b691023bf34e3f7079d518350e7ef80",
             "hash_mode": "exclude_self",
             "required_tokens": [
                 "precedence",
@@ -163,7 +164,7 @@
         },
         "agentic-config.schema.json": {
             "path": "90-infra/agentic-config.schema.json",
-            "sha256": "5b4c61a36e4d9800584dc6f0d59efb73788c26c3f39e850f743bbab1361bc36a",
+            "sha256": "dd2b2fb7a4e7d6aeb79ad3bf6bb4598a4db3866775769ebef28a946a9386858c",
             "required_tokens": [
                 "Governance Config",
                 "profile",
@@ -206,7 +207,7 @@
         },
         "README.md": {
             "path": "README.md",
-            "sha256": "1a6193d7d6a346df34d25d68848fc34668b530ef94ab5ad10b66460159e9cfa4",
+            "sha256": "c7156896a6f3235f2d1d69722ff5f4c43e728ae1f1cef9b1cb1a7ca8bd05ea13",
             "required_tokens": [
                 "governance",
                 "structure"
@@ -264,6 +265,15 @@
                 "egress",
                 "allowlist",
                 "rate limit"
+            ]
+        },
+        "compat.json": {
+            "path": "90-infra/compat.json",
+            "sha256": "532e456fe35712dab02d896b032b57bb18a15d7bd385e4eca8999fc3857af9dd",
+            "required_tokens": [
+                "compatibility_policy",
+                "support_matrix",
+                "gold_standard"
             ]
         },
         "control-registry.core.yaml": {

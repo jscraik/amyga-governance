@@ -19,15 +19,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
-import ensureTools from './ensure-tools.mjs';
 import { formatPointerHint, resolveGovernancePaths } from './governance-paths.mjs';
+import { runToolingChecks } from './ensure-tools.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 
 /**
  * Verify a required file exists at the specified path.
- * @param {string} relPath - Relative path from repository root.
+ * @param {string} filePath - File path to check.
  * @param {string} label - Human-readable label for error messages.
  * @returns {string} Absolute path to the file.
  * @throws {Error} When the file does not exist.
@@ -41,27 +41,80 @@ function requireFileAbsolute(filePath, label) {
 }
 
 /**
- * Main entry point. Validates all governance files and tools.
- * Sets process.exitCode = 1 if any check fails.
- * @returns {void}
+ * Run readiness checks against a target root.
+ * @param {string} targetRoot - Repository root.
+ * @returns {{ok: boolean, checks: Array<object>, failures: string[], hint: string}} Result summary.
+ */
+export function runReadinessCheck(targetRoot = repoRoot) {
+	const checks = [];
+	const failures = [];
+	const { govRoot, indexPath, agentsPath, pointerPath, packageRoot } =
+		resolveGovernancePaths(targetRoot);
+	const hint = formatPointerHint(pointerPath, packageRoot);
+
+	const requiredFiles = [
+		{ id: 'file.agents', label: 'AGENTS.md (canonical)', path: agentsPath },
+		{ id: 'file.index', label: 'governance-index.json', path: indexPath },
+		{
+			id: 'file.charter',
+			label: 'AGENT_CHARTER.md',
+			path: path.join(govRoot, '00-core', 'AGENT_CHARTER.md')
+		},
+		{
+			id: 'file.workflow',
+			label: 'agentic-coding-workflow.md',
+			path: path.join(govRoot, '10-flow', 'agentic-coding-workflow.md')
+		},
+		{
+			id: 'file.checklists',
+			label: 'checklists.md',
+			path: path.join(govRoot, '20-checklists', 'checklists.md')
+		}
+	];
+
+	requiredFiles.forEach((entry) => {
+		try {
+			requireFileAbsolute(entry.path, entry.label);
+			checks.push({
+				id: entry.id,
+				severity: 'info',
+				category: 'policy',
+				status: 'pass',
+				message: `${entry.label} present`
+			});
+		} catch (error) {
+			failures.push(error.message);
+			checks.push({
+				id: entry.id,
+				severity: 'high',
+				category: 'policy',
+				status: 'fail',
+				message: error.message
+			});
+		}
+	});
+
+	const tooling = runToolingChecks();
+	checks.push(...tooling.checks);
+	if (!tooling.ok) {
+		failures.push('toolchain checks failed');
+	}
+
+	return { ok: failures.length === 0, checks, failures, hint };
+}
+
+/**
+ * CLI entry point for readiness check.
+ * @returns {void} No return value.
  */
 function main() {
 	try {
-		const { govRoot, indexPath, agentsPath, pointerPath, packageRoot } =
-			resolveGovernancePaths(repoRoot);
-		const hint = formatPointerHint(pointerPath, packageRoot);
-
-		requireFileAbsolute(agentsPath, 'AGENTS.md (canonical)');
-		requireFileAbsolute(indexPath, 'governance-index.json');
-		requireFileAbsolute(path.join(govRoot, '00-core', 'AGENT_CHARTER.md'), 'AGENT_CHARTER.md');
-		requireFileAbsolute(
-			path.join(govRoot, '10-flow', 'agentic-coding-workflow.md'),
-			'agentic-coding-workflow.md'
-		);
-		requireFileAbsolute(path.join(govRoot, '20-checklists', 'checklists.md'), 'checklists.md');
-		ensureTools();
+		const result = runReadinessCheck(repoRoot);
+		if (!result.ok) {
+			throw new Error(result.failures.join('; '));
+		}
 		console.log('[brAInwav] readiness:check passed. Governance files present and tools verified.');
-		if (hint) console.log(`[brAInwav] ${hint}`);
+		if (result.hint) console.log(`[brAInwav] ${result.hint}`);
 	} catch (error) {
 		console.error(`[brAInwav] readiness:check failed: ${error.message}`);
 		process.exitCode = 1;

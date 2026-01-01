@@ -77,8 +77,10 @@ jobs:
           node-version: '24.11.0'
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile=false
+      - run: pnpm lint:ci
       - run: pnpm governance:validate
       - run: pnpm governance:validate-evidence
+      - run: pnpm test:cli
 
   oversight:
     runs-on: ubuntu-latest

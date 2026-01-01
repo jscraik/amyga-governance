@@ -13,32 +13,50 @@ import { formatPointerHint, resolveGovernancePaths } from './governance-paths.mj
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
-const { govRoot, indexPath, pointerPath, packageRoot, configPath } = resolveGovernancePaths(repoRoot);
 const CONFIG_SCHEMA_RELATIVE_PATH = path.join('brainwav', 'governance', '90-infra', 'agentic-config.schema.json');
 const ALLOWED_PROFILES = new Set(['creative', 'delivery', 'release', 'core', 'full']);
 const LEGACY_PROFILES = new Set(['core', 'full']);
 
+/**
+ * Read file contents as UTF-8.
+ * @param {string} file - File path.
+ * @returns {string} File contents.
+ */
 function read(file) {
 	return fs.readFileSync(file, 'utf8');
 }
 
 const ROOT_DOCS = new Set(['README.md', 'CODESTYLE.md', 'SECURITY.md']);
 
-function resolvePath(rel) {
-	const rootPath = path.join(repoRoot, rel);
-	if (ROOT_DOCS.has(rel) && fs.existsSync(rootPath)) return rootPath;
+/**
+ * Resolve a governance doc path to disk.
+ * @param {string} rel - Relative doc path.
+ * @param {string} govRoot - Governance root.
+ * @param {string} rootPath - Repository root.
+ * @returns {string|null} Resolved path or null.
+ */
+function resolvePath(rel, govRoot, rootPath) {
+	const rootDocPath = path.join(rootPath, rel);
+	if (ROOT_DOCS.has(rel) && fs.existsSync(rootDocPath)) return rootDocPath;
 	const govPath = path.join(govRoot, rel);
 	if (fs.existsSync(govPath)) return govPath;
-	if (fs.existsSync(rootPath)) return rootPath;
+	if (fs.existsSync(rootDocPath)) return rootDocPath;
 	return null;
 }
 
-function checkTokens() {
+/**
+ * Check required tokens from the governance index.
+ * @param {string} indexPath - Governance index path.
+ * @param {string} govRoot - Governance root.
+ * @param {string} rootPath - Repository root.
+ * @returns {string[]} Failure messages.
+ */
+function checkTokens(indexPath, govRoot, rootPath) {
 	const index = JSON.parse(read(indexPath));
 	const failures = [];
 	Object.entries(index.docs).forEach(([key, entry]) => {
 		if (!entry.required_tokens) return;
-		const target = resolvePath(entry.path);
+		const target = resolvePath(entry.path, govRoot, rootPath);
 		if (!target) {
 			failures.push(`missing doc for ${key} at ${entry.path}`);
 			return;
@@ -53,8 +71,13 @@ function checkTokens() {
 	return failures;
 }
 
-function checkTasks() {
-	const tasksDir = path.join(repoRoot, 'tasks');
+/**
+ * Check task manifests for Step Budget compliance.
+ * @param {string} rootPath - Repository root.
+ * @returns {string[]} Failure messages.
+ */
+function checkTasks(rootPath) {
+	const tasksDir = path.join(rootPath, 'tasks');
 	if (!fs.existsSync(tasksDir)) return [];
 	const failures = [];
 	const tasks = fs.readdirSync(tasksDir);
@@ -70,7 +93,12 @@ function checkTasks() {
 	return failures;
 }
 
-function readConfig() {
+/**
+ * Read the governance config file.
+ * @param {string|null} configPath - Config path.
+ * @returns {Record<string, unknown>|null} Parsed config or null.
+ */
+function readConfig(configPath) {
 	if (!configPath || !fs.existsSync(configPath)) return null;
 	try {
 		return JSON.parse(read(configPath));
@@ -79,9 +107,15 @@ function readConfig() {
 	}
 }
 
-function checkConfig() {
+/**
+ * Validate the governance config.
+ * @param {string|null} configPath - Config path.
+ * @param {string} govRoot - Governance root.
+ * @returns {string[]} Failure messages.
+ */
+function checkConfig(configPath, govRoot) {
 	const failures = [];
-	const config = readConfig();
+	const config = readConfig(configPath);
 	if (!config) return failures;
 	if (config.__parseError) {
 		failures.push(`config parse error in ${configPath}: ${config.__parseError.message}`);
@@ -153,17 +187,39 @@ function checkConfig() {
 	return failures;
 }
 
+/**
+ * Run governance validation on a target repository.
+ * @param {string} targetRoot - Repository root.
+ * @param {string|null} configOverride - Optional config path override.
+ * @returns {{ok: boolean, failures: string[], hint: string}} Validation result.
+ */
+export function runGovernanceValidation(targetRoot = repoRoot, configOverride = null) {
+	const { govRoot, indexPath, pointerPath, packageRoot, configPath } =
+		resolveGovernancePaths(targetRoot);
+	const hint = formatPointerHint(pointerPath, packageRoot);
+	const resolvedConfigPath = configOverride ?? configPath;
+	const failures = [
+		...checkTokens(indexPath, govRoot, targetRoot),
+		...checkTasks(targetRoot),
+		...checkConfig(resolvedConfigPath, govRoot)
+	];
+	return { ok: failures.length === 0, failures, hint };
+}
+
+/**
+ * CLI entry point for validate-governance.
+ * @returns {void} No return value.
+ */
 function main() {
-	const failures = [...checkTokens(), ...checkTasks(), ...checkConfig()];
-	if (failures.length) {
+	const result = runGovernanceValidation(repoRoot);
+	if (!result.ok) {
 		console.error('[brAInwav] validate-governance FAILED:');
-		failures.forEach((f) => console.error(` - ${f}`));
+		result.failures.forEach((f) => console.error(` - ${f}`));
 		process.exitCode = 1;
 		return;
 	}
 	console.log('[brAInwav] validate-governance OK');
-	const hint = formatPointerHint(pointerPath, packageRoot);
-	if (hint) console.log(`[brAInwav] ${hint}`);
+	if (result.hint) console.log(`[brAInwav] ${result.hint}`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('validate-governance.mjs')) {

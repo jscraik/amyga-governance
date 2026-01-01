@@ -13,10 +13,20 @@ const repoRoot = path.resolve(__dirname, '..', '..', '..');
 const docsRoot = path.join(repoRoot, 'brainwav', 'governance', 'docs');
 const REQUIRED_FIELDS = ['summary', 'read_when', 'applies_to', 'owner'];
 
+/**
+ * Read file contents as UTF-8.
+ * @param {string} filePath - Path to the file.
+ * @returns {string} File contents.
+ */
 function readFile(filePath) {
 	return fs.readFileSync(filePath, 'utf8');
 }
 
+/**
+ * Extract YAML frontmatter from a markdown document.
+ * @param {string} content - Markdown contents.
+ * @returns {Record<string, string>|null} Frontmatter map or null.
+ */
 function extractFrontmatter(content) {
 	if (!content.startsWith('---')) return null;
 	const endIndex = content.indexOf('\n---', 3);
@@ -32,6 +42,11 @@ function extractFrontmatter(content) {
 	return data;
 }
 
+/**
+ * Extract a short summary from markdown content.
+ * @param {string} content - Markdown contents.
+ * @returns {string} Summary string.
+ */
 function extractSummary(content) {
 	const lines = content.split('\n');
 	for (const line of lines) {
@@ -46,6 +61,11 @@ function extractSummary(content) {
 	return 'No summary available.';
 }
 
+/**
+ * Recursively list markdown files under a directory.
+ * @param {string} dir - Directory to scan.
+ * @returns {string[]} Absolute file paths.
+ */
 function walkDocs(dir) {
 	const entries = fs.readdirSync(dir, { withFileTypes: true });
 	const files = [];
@@ -60,6 +80,10 @@ function walkDocs(dir) {
 	return files;
 }
 
+/**
+ * Print the governance docs index to stdout.
+ * @returns {void} No return value.
+ */
 function listDocs() {
 	if (!fs.existsSync(docsRoot)) {
 		console.error(`[brAInwav] docs folder not found: ${docsRoot}`);

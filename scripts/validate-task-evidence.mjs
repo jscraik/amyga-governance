@@ -11,13 +11,25 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
-const changeClassPath = path.join(repoRoot, 'brainwav', 'governance', '90-infra', 'change-classes.json');
 
+/**
+ * Check whether a path exists and is non-empty.
+ * @param {string} p - Path to check.
+ * @returns {boolean} True if file exists and has content.
+ */
 function existsNonEmpty(p) {
 	return fs.existsSync(p) && fs.statSync(p).size > 0;
 }
 
-function validateTask(taskRoot, slug) {
+/**
+ * Validate evidence files for a task.
+ * @param {string} taskRoot - Task directory.
+ * @param {string} slug - Task slug.
+ * @param {string} repoRootPath - Repository root.
+ * @param {string} changeClassPath - Change class registry path.
+ * @returns {string[]} Failure messages.
+ */
+function validateTask(taskRoot, slug, repoRootPath, changeClassPath) {
 	const failures = [];
 	const manifestPath = path.join(taskRoot, 'json', 'run-manifest.json');
 	if (!fs.existsSync(manifestPath)) {
@@ -26,9 +38,9 @@ function validateTask(taskRoot, slug) {
 	}
 	const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 	const triplet = manifest.evidence_triplet || {};
-	const milestone = path.join(repoRoot, triplet.milestone_test || '');
-	const contract = path.join(repoRoot, triplet.contract_snapshot || '');
-	const reviewer = path.join(repoRoot, triplet.reviewer_pointer || '');
+	const milestone = path.join(repoRootPath, triplet.milestone_test || '');
+	const contract = path.join(repoRootPath, triplet.contract_snapshot || '');
+	const reviewer = path.join(repoRootPath, triplet.reviewer_pointer || '');
 
 	if (!existsNonEmpty(milestone)) failures.push(`${slug}: milestone test log missing/empty (${milestone})`);
 	if (!existsNonEmpty(contract)) failures.push(`${slug}: contract snapshot missing/empty (${contract})`);
@@ -73,6 +85,8 @@ function validateTask(taskRoot, slug) {
 /**
  * Ensure a task slug is a simple, safe directory name.
  * Disallows path traversal components and path separators.
+ * @param {string} slug - Task slug.
+ * @returns {boolean} True when slug is safe.
  */
 function isSafeSlug(slug) {
 	if (typeof slug !== 'string') return false;
@@ -84,11 +98,22 @@ function isSafeSlug(slug) {
 	return true;
 }
 
-function main() {
-	const tasksRoot = path.join(repoRoot, 'tasks');
+/**
+ * Run evidence validation across tasks.
+ * @param {string} targetRoot - Repository root.
+ * @returns {{ok: boolean, failures: string[], skipped: boolean}} Result summary.
+ */
+export function runTaskEvidenceValidation(targetRoot = repoRoot) {
+	const tasksRoot = path.join(targetRoot, 'tasks');
+	const changeClassPath = path.join(
+		targetRoot,
+		'brainwav',
+		'governance',
+		'90-infra',
+		'change-classes.json'
+	);
 	if (!fs.existsSync(tasksRoot)) {
-		console.log('[brAInwav] No tasks directory; skipping evidence validation.');
-		return;
+		return { ok: true, failures: [], skipped: true };
 	}
 	const slugs = fs
 		.readdirSync(tasksRoot, { withFileTypes: true })
@@ -100,11 +125,24 @@ function main() {
 		)
 		.map((dirent) => dirent.name);
 	const failures = slugs.flatMap((slug) =>
-		validateTask(path.join(tasksRoot, slug), slug)
+		validateTask(path.join(tasksRoot, slug), slug, targetRoot, changeClassPath)
 	);
-	if (failures.length) {
+	return { ok: failures.length === 0, failures, skipped: false };
+}
+
+/**
+ * CLI entry point for evidence validation.
+ * @returns {void} No return value.
+ */
+function main() {
+	const result = runTaskEvidenceValidation(repoRoot);
+	if (result.skipped) {
+		console.log('[brAInwav] No tasks directory; skipping evidence validation.');
+		return;
+	}
+	if (!result.ok) {
 		console.error('[brAInwav] validate-task-evidence FAILED:');
-		failures.forEach((f) => console.error(` - ${f}`));
+		result.failures.forEach((f) => console.error(` - ${f}`));
 		process.exitCode = 1;
 		return;
 	}

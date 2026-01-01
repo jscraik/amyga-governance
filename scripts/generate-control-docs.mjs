@@ -18,14 +18,28 @@ const outputDir = path.join(repoRoot, 'brainwav', 'governance', 'generated');
 const outputFile = path.join(outputDir, 'control-catalog.md');
 const manifestFile = path.join(outputDir, 'control-catalog.manifest.json');
 
+/**
+ * Compute SHA-256 hash for content.
+ * @param {string} content - Content to hash.
+ * @returns {string} Hex digest.
+ */
 function sha256(content) {
 	return createHash('sha256').update(content).digest('hex');
 }
 
+/**
+ * Ensure a directory exists.
+ * @param {string} dir - Directory path.
+ * @returns {void} No return value.
+ */
 function ensureDir(dir) {
 	fs.mkdirSync(dir, { recursive: true });
 }
 
+/**
+ * Load and validate the control catalog YAML.
+ * @returns {{raw: string, data: Record<string, unknown>}} Catalog content.
+ */
 function loadCatalog() {
 	if (!fs.existsSync(catalogPath)) {
 		throw new Error(`Control catalog not found: ${catalogPath}`);
@@ -38,6 +52,11 @@ function loadCatalog() {
 	return { raw, data };
 }
 
+/**
+ * Render the control table as markdown.
+ * @param {Array<Record<string, unknown>>} controls - Control entries.
+ * @returns {string} Markdown table.
+ */
 function renderTable(controls) {
 	const header = '| ID | Title | Enforcement | Scope | Gates | Owner | Evidence |';
 	const divider = '| --- | --- | --- | --- | --- | --- | --- |';
@@ -52,6 +71,11 @@ function renderTable(controls) {
 	return [header, divider, ...rows].join('\n');
 }
 
+/**
+ * Summarize control counts by status and enforcement.
+ * @param {Array<Record<string, unknown>>} controls - Control entries.
+ * @returns {{total: number, active: number, deprecated: number, hard: number, soft: number}} Summary.
+ */
 function summarize(controls) {
 	const total = controls.length;
 	const active = controls.filter((c) => c.status === 'active').length;
@@ -61,6 +85,11 @@ function summarize(controls) {
 	return { total, active, deprecated, hard, soft };
 }
 
+/**
+ * Build the generated markdown content.
+ * @param {Record<string, unknown>} data - Parsed catalog data.
+ * @returns {string} Generated markdown.
+ */
 function buildMarkdown(data) {
 	const controls = data.controls;
 	const summary = summarize(controls);
@@ -78,6 +107,12 @@ function buildMarkdown(data) {
 		`${renderTable(controls)}\n`;
 }
 
+/**
+ * Write the generation manifest for traceability.
+ * @param {string} markdown - Generated markdown.
+ * @param {string} catalogRaw - Raw catalog YAML.
+ * @returns {void} No return value.
+ */
 function writeManifest(markdown, catalogRaw) {
 	const manifest = {
 		generatedAt: new Date().toISOString(),
@@ -91,6 +126,10 @@ function writeManifest(markdown, catalogRaw) {
 	fs.writeFileSync(manifestFile, `${JSON.stringify(manifest, null, 2)}\n`);
 }
 
+/**
+ * Generate the control catalog documentation.
+ * @returns {void} No return value.
+ */
 function main() {
 	try {
 		const { raw, data } = loadCatalog();

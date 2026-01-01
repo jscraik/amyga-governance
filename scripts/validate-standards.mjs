@@ -20,15 +20,31 @@ const MAX_AGE_DAYS = Number.parseInt(process.env.STANDARDS_MAX_AGE_DAYS || '90',
 const STRICT_LINKS = process.env.STANDARDS_STRICT_LINKS === 'true';
 const CONCURRENCY = Number.parseInt(process.env.STANDARDS_LINK_CONCURRENCY || '6', 10);
 
+/**
+ * Read JSON from disk.
+ * @param {string} filePath - JSON file path.
+ * @returns {Record<string, unknown>} Parsed JSON.
+ */
 function readJson(filePath) {
 	return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
 
+/**
+ * Compute whole days between two dates.
+ * @param {Date} a - Start date.
+ * @param {Date} b - End date.
+ * @returns {number} Day count.
+ */
 function daysBetween(a, b) {
 	const ms = Math.abs(b.getTime() - a.getTime());
 	return Math.floor(ms / (1000 * 60 * 60 * 24));
 }
 
+/**
+ * Fetch HTTP status for a URL.
+ * @param {string} url - URL to check.
+ * @returns {Promise<number|{error: Error}>} Status or error wrapper.
+ */
 async function fetchStatus(url) {
 	try {
 		const res = await fetch(url, { method: 'HEAD', redirect: 'follow' });
@@ -42,6 +58,13 @@ async function fetchStatus(url) {
 	}
 }
 
+/**
+ * Run async tasks with concurrency.
+ * @param {Array<string>} items - Items to process.
+ * @param {(item: string) => Promise<unknown>} worker - Worker function.
+ * @param {number} concurrency - Concurrency limit.
+ * @returns {Promise<Array<unknown>>} Worker results.
+ */
 async function runQueue(items, worker, concurrency) {
 	const results = [];
 	let index = 0;
@@ -55,6 +78,10 @@ async function runQueue(items, worker, concurrency) {
 	return results;
 }
 
+/**
+ * CLI entry point for standards validation.
+ * @returns {Promise<void>} Resolves when complete.
+ */
 async function main() {
 	if (!fs.existsSync(standardsPath)) {
 		console.error(`[brAInwav] standards.versions.json not found at ${standardsPath}`);

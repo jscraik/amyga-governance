@@ -16,6 +16,7 @@ The brAInwav framework packages policies, workflows, templates, and automation f
 - [Architecture: Core + Packs + Adapters](#architecture-core--packs--adapters)
 - [Creative vs Delivery Modes](#creative-vs-delivery-modes)
 - [Profiles & Overlays (local-only defaults)](#profiles--overlays-local-only-defaults)
+- [Compatibility Policy (Gold Standard)](#compatibility-policy-gold-standard)
 - [Adoption Paths (Jan 2026 best practice)](#adoption-paths-jan-2026-best-practice)
 - [Governance Commands](#governance-commands)
 
@@ -66,15 +67,29 @@ pnpm readiness:check
 > Use this when you want to drop governance into an existing repo.
 
 1. From this repo: `pnpm install` (Node 24.11.x, pnpm 10.26.x).  
-2. Install governance into the target repo:  
-   `pnpm governance:install --dest /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release]`  
+2. Install governance into the target repo (local clone):  
+   `pnpm governance:install --dest /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
+3. Install governance into the target repo (published package):  
+   `pnpm dlx brainwav-agentic-governance@<version> install --dest /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
+   Or, if installed as a dependency:  
+   `pnpm exec brainwav-governance install --dest /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
    - Default profile is `release` (gold standard).
    - `full` copies AGENTS, CODESTYLE, SECURITY, `brainwav/governance/**`, issue/PR templates, and the GitHub Actions workflow.  
    - `pointer` writes pointer stubs + `.agentic-governance/pointer.json` and expects a lockfile-pinned `brainwav-agentic-governance` dependency (invoke scripts from `node_modules/brainwav-agentic-governance/scripts` or via `pnpm dlx`).
-3. In the consumer repo, run:  
+4. In the consumer repo, run:  
    `pnpm governance:validate` (checks required tokens + Step Budget ≤7 + overlay rules)  
    `pnpm governance:sync-hashes:check` (ensures hashes match the index)
-4. Commit the added files and ensure the consumer CI uses Node 24.11.x + pnpm 10.26.x. The included `governance.yml` workflow will enforce readiness, hash drift, oversight, security scans, dependency boundaries, and task scaffolds on every PR.
+5. Commit the added files and ensure the consumer CI uses Node 24.11.x + pnpm 10.26.x. The included `governance.yml` workflow will enforce readiness, hash drift, oversight, security scans, dependency boundaries, and task scaffolds on every PR.
+
+### Upgrade in a consumer project
+
+```bash
+pnpm dlx brainwav-agentic-governance@<version> upgrade --dest /path/to/consumer-repo [--packs a11y,supply-chain]
+```
+
+`upgrade` refreshes pointer stubs + workflows, updates the pinned dependency, and runs `pnpm install` when a pnpm lockfile is present.
+
+By default, `upgrade` preserves existing files. Use `--force` to overwrite existing governance files when you intend to replace local edits.
 
 ### Verify (quick sanity checks)
 
@@ -95,6 +110,9 @@ pnpm readiness:check
 - `pnpm task:scaffold --slug <id>` / `pnpm task:validate --slug <id>` — create and check task folders for Evidence Triplet placeholders.
 - `pnpm governance:check-nx` — run Nx graph when nx.json exists (skips if absent); included in CI template.
 - `pnpm governance:validate-evidence` — verify Evidence Triplet files, memory IDs, trace context, and academic research logs are present and non-empty.
+- `pnpm governance:upgrade` — refresh installs + update dependency in a consumer repo.
+- `pnpm governance:doctor` — readiness + tooling checks.
+- `brainwav-governance <command>` — CLI wrapper for install/upgrade/validate/doctor.
 - `pnpm commands:docs-list` — list governance docs with summaries for fast discovery.
 - `pnpm governance:generate-control-docs` — generate control catalog docs into `brainwav/governance/generated/`.
 
@@ -155,6 +173,12 @@ Local profile selection (creative/delivery/release) lives in `.agentic-governanc
 - **Profiles** (`creative`, `delivery`, `release`) only affect local defaults. CI enforces **release** gates by default.
 - **Overlays** let consumer repos tighten rules without editing base governance files.
 - **Base governance is immutable**: files under `brainwav/governance/**` are hash-pinned; modify only via upstream changes and hash updates.
+
+---
+
+## Compatibility Policy (Gold Standard)
+
+`brainwav/governance/90-infra/compat.json` defines the supported toolchain (Node/pnpm), CI provider baseline (GitHub Actions), and the compatibility policy. Minor releases are additive and must not change required evidence structure; majors may do so with migration notes.
 
 ---
 

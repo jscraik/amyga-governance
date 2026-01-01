@@ -14,7 +14,8 @@
     "url": "https://github.com/jscraik/brainwav-agentic-governance"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "files": [
     "AGENTS.md",
@@ -27,6 +28,7 @@
     ".agentic-governance/"
   ],
   "bin": {
+    "brainwav-governance": "scripts/governance-cli.mjs",
     "ensure-tools": "scripts/ensure-tools.mjs",
     "cortex-governance-bootstrap": "scripts/cortex-governance-bootstrap.mjs",
     "readiness-check": "scripts/readiness-check.mjs",
@@ -40,6 +42,8 @@
     "governance:sync-hashes": "node scripts/sync-governance-hashes.mjs",
     "governance:sync-hashes:check": "node scripts/sync-governance-hashes.mjs --check",
     "governance:install": "node scripts/install-governance.mjs",
+    "governance:upgrade": "node scripts/upgrade-governance.mjs",
+    "governance:doctor": "node scripts/readiness-check.mjs",
     "task:scaffold": "node scripts/task-scaffold.mjs",
     "task:validate": "node scripts/task-validate.mjs",
     "governance:validate": "node scripts/validate-governance.mjs",
@@ -51,9 +55,18 @@
     "commands:daily-summary": "node brainwav/governance/commands/daily-summary.mjs",
     "commands:memorize": "node brainwav/governance/commands/memorize.mjs",
     "commands:recall": "node brainwav/governance/commands/recall.mjs",
-    "commands:docs-list": "node brainwav/governance/commands/docs-list.mjs"
+    "commands:docs-list": "node brainwav/governance/commands/docs-list.mjs",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:ci": "eslint . --max-warnings 0",
+    "test:cli": "node scripts/cli-tests.mjs"
   },
   "dependencies": {
     "yaml": "^2.8.2"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.2",
+    "eslint-plugin-jsdoc": "^50.8.0",
+    "typescript-eslint": "^8.51.0"
   }
 }

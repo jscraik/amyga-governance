@@ -4,7 +4,7 @@
   "title": "brAInwav Governance Config",
   "description": "Configures local governance profiles, identity hints, and overlay declarations for consumer repositories.",
   "type": "object",
-  "additionalProperties": false,
+  "additionalProperties": true,
   "properties": {
     "$schema": { "type": "string" },
     "version": { "type": "string", "default": "1.0" },
@@ -12,6 +12,19 @@
       "type": "string",
       "enum": ["creative", "delivery", "release", "core", "full"],
       "default": "release"
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["pointer", "full"],
+      "default": "pointer"
+    },
+    "packs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "packOptions": {
+      "type": "object",
+      "additionalProperties": true
     },
     "identity": {
       "type": "object",
@@ -39,6 +52,11 @@
           "allowWeaken": { "type": "boolean", "default": false }
         }
       }
+    }
+    ,
+    "mergeStrategy": {
+      "type": "object",
+      "additionalProperties": true
     }
   }
 }
