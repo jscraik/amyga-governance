@@ -75,7 +75,14 @@ function copyFixture(name) {
  * @returns {void} No return value.
  */
 function syncRootDocs(repoRootPath) {
-	fs.copyFileSync(path.join(repoRoot, 'README.md'), path.join(repoRootPath, 'README.md'));
+	const docs = ['README.md', 'CODESTYLE.md', 'SECURITY.md'];
+	docs.forEach((doc) => {
+		const source = path.join(repoRoot, doc);
+		const dest = path.join(repoRootPath, doc);
+		if (fs.existsSync(source)) {
+			fs.copyFileSync(source, dest);
+		}
+	});
 }
 
 /**
