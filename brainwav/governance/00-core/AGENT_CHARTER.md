@@ -90,9 +90,9 @@ All agents executing workstreams MUST obey these rules:
 
 ---
 
-### 6️⃣ **Brand Logs** [AGENTS-BRD-006]
+### 6️⃣ **Service Identity Logs** [AGENTS-BRD-006]
 
-- Runtime and workflow logs MUST emit both: (1) a human-readable prefix `[brAInwav]` and (2) structured JSON payloads containing `brand:"brAInwav"`, ISO-8601 timestamp with timezone offset, a 32-character lowercase `trace_id`, and the HTTP `traceparent` captured at ingress/egress.
+- Runtime and workflow logs MUST emit both: (1) a human-readable prefix `[<service>]` and (2) structured JSON payloads containing `service:"<service_name>"` (plus optional `brand:"<org>"`), ISO-8601 timestamp with timezone offset, a 32-character lowercase `trace_id`, and the HTTP `traceparent` captured at ingress/egress.
 - OPA/Conftest policies enforce the following tokens in every charter-governed log line:
   - `MODELS:LIVE:OK` when model health passes
   - Latency markers (e.g., `LATENCY:123ms` or structured JSON `latency_ms` field)
@@ -100,7 +100,7 @@ All agents executing workstreams MUST obey these rules:
   - `NORTH_STAR:GREEN_AFTER` once the acceptance turns green
 - First failing acceptance must log `marker:"NORTH_STAR:RED_FIRST"`; the passing acceptance must log `marker:"NORTH_STAR:GREEN_AFTER"`.
 - Emit `model_status:"MODELS:LIVE:OK"` **only** after live model health checks succeed.
-- **Enforcement**: Grep validation in CI; missing brand tokens or trace context fails the build.
+- **Enforcement**: Grep validation in CI; missing service identity tokens or trace context fails the build.
 
 **Rationale:** Ensures observability and traceability across distributed systems.
 
@@ -109,6 +109,7 @@ All agents executing workstreams MUST obey these rules:
 ```json
 {
   "timestamp": "2025-10-28T19:22:11.402-07:00",
+  "service": "governance-pack",
   "brand": "brAInwav",
   "phase": "north_star",
   "marker": "NORTH_STAR:RED_FIRST",
@@ -121,7 +122,7 @@ All agents executing workstreams MUST obey these rules:
 ```
 
 ```text
-[brAInwav] 2025-10-28T19:22:11.402-07:00 LATENCY:742ms MODELS:LIVE:OK NORTH_STAR:RED_FIRST traceparent=00-c6f2b0d7a9124f6c9c1d77cd2a4f6aa1-1234567890abcdef-01 Acceptance failed as expected
+[governance-pack] 2025-10-28T19:22:11.402-07:00 LATENCY:742ms MODELS:LIVE:OK NORTH_STAR:RED_FIRST traceparent=00-c6f2b0d7a9124f6c9c1d77cd2a4f6aa1-1234567890abcdef-01 Acceptance failed as expected
 ```
 
 ---
@@ -150,18 +151,18 @@ Never claim "production-ready/complete/operational" if any prod path contains:
 - `TODO/FIXME/HACK`, `console.warn("not implemented")`
 - Fake metrics/telemetry
 
-#### Rule 2 — brAInwav truthfulness standard
+#### Rule 2 — Service truthfulness standard
 
 - Verify claims against actual code & passing gates.
 - Distinguish test scaffolding from production.
-- Include brAInwav branding in outputs/errors.
+- Include service identity (service name) in outputs/errors; brand may be added by overlays.
 - Do not inflate readiness/completion metrics.
 
 #### Rule 3 — Production validation requirements
 
 - [ ] Placeholders eliminated  
 - [ ] Real integrations in place (no fake data)  
-- [ ] Errors/logs branded `[brAInwav]` / `brand:"brAInwav"`  
+- [ ] Errors/logs include service identity and trace context  
 - [ ] Docs match code  
 - [ ] Tests validate real functionality
 
@@ -182,7 +183,7 @@ Never claim "production-ready/complete/operational" if any prod path contains:
 - **No `any` in TypeScript** (except tests/justified compat shims)
 - **No cross-domain imports** — use A2A topics/MCP tools/declared contracts
 - **async/await + AbortSignal** — no `.then()` chains
-- **Structured logging** — `brand:"brAInwav"`, request/run IDs, OTel traces
+- **Structured logging** — `service:"<service_name>"`, request/run IDs, OTel traces
 
 ### Security & Supply Chain
 
@@ -272,10 +273,10 @@ Never claim "production-ready/complete/operational" if any prod path contains:
 - No color-only signaling; consistent focus order
 - CLI/TUI: support `--plain` output + high-contrast mode
 
-Include brAInwav branding in a11y announcements where appropriate.
+Include service identity in a11y announcements where appropriate.
 
 ```text
-[brAInwav] 2025-10-28T19:22:11.402-07:00 LATENCY:742ms MODELS:LIVE:OK NORTH_STAR:RED_FIRST Acceptance failed as expected
+[governance-pack] 2025-10-28T19:22:11.402-07:00 LATENCY:742ms MODELS:LIVE:OK NORTH_STAR:RED_FIRST Acceptance failed as expected
 ```
 
 Once the acceptance passes, emit `NORTH_STAR:GREEN_AFTER` with the same envelope. Emit `MODELS:LIVE:OK` only after hybrid model health checks succeed; stale connectors MUST prevent emission.
@@ -344,18 +345,18 @@ Detection relies on CI Conftest failures, observability counters tracking `NORTH
     {
       "pointer": "/preflight/logs/0",
       "artifact_path": "logs/vibe-check/arc-17.json",
-      "raw_text": "[brAInwav] 2025-10-28T19:22:11.402-07:00 LATENCY:742ms MODELS:LIVE:OK NORTH_STAR:RED_FIRST Acceptance failed as expected",
+      "raw_text": "[governance-pack] 2025-10-28T19:22:11.402-07:00 LATENCY:742ms MODELS:LIVE:OK NORTH_STAR:RED_FIRST Acceptance failed as expected",
       "sha256": "d41d8cd98f00b204e9800998ecf8427e"
     },
     {
       "pointer": "/preflight/logs/1",
       "artifact_path": "logs/vibe-check/arc-17.json",
-      "raw_text": "[brAInwav] 2025-10-28T19:27:49.115-07:00 LATENCY:285ms MODELS:LIVE:OK NORTH_STAR:GREEN_AFTER Acceptance passed"
+      "raw_text": "[governance-pack] 2025-10-28T19:27:49.115-07:00 LATENCY:285ms MODELS:LIVE:OK NORTH_STAR:GREEN_AFTER Acceptance passed"
     },
     {
       "pointer": "/preflight/logs/connector-health",
       "artifact_path": "research/connectors-health.log",
-      "raw_text": "[brAInwav] 2025-10-28T19:20:04.010-07:00 LATENCY:93ms CONNECTOR:WIKIDATA MODELS:LIVE:OK status=200"
+      "raw_text": "[governance-pack] 2025-10-28T19:20:04.010-07:00 LATENCY:93ms CONNECTOR:WIKIDATA MODELS:LIVE:OK status=200"
     }
   ]
 }
@@ -397,7 +398,7 @@ Pointers MUST align with the manifest schema, artifact paths MUST remain accessi
 | Explain-While-Doing (#3) | `narrated-diff.ts` check | PR template requires | Request amendment |
 | Proof Required (#4) | CI Evidence Triplet check | Template scaffolds tests | Add retroactive proof |
 | Recap Rule (#5) | Token counter | Template auto-generates | Trim to ≤500 tokens |
-| Brand Logs (#6) | `grep -r 'brand.*brAInwav'` | Logger wrapper | Patch log calls |
+| Service Identity Logs (#6) | `grep -r '\"service\"'` | Logger wrapper | Patch log calls |
 | Arc Protocol (#7) | `validate-run-manifest.ts` (arc structure, milestone test, contract snapshot) | Task scaffolding enforces arc template | Add missing arc artifacts |
 | North-Star Test (#8) | `validate-run-manifest.ts` (`north_star.acceptance_test_path` required) | `pnpm changelog:new` generates acceptance test scaffold | Write missing north-star test |
 | Preflight Guards (#9) | CI checks for `logs/vibe-check/*.json`, model health logs, trace context, SBOM | PR template checklist requires preflight evidence | Execute missing guards and attach logs |
@@ -552,7 +553,7 @@ remediation_plan:
 | AGENTS-EXP-003 | Explain-While-Doing                    | `narrated-diff`      | `scripts/governance/narrated-diff.ts`            |
 | AGENTS-PRF-004 | Proof Required (Evidence Triplet)      | `evidence-check`     | `scripts/governance/validate-evidence-triplet.ts`|
 | AGENTS-RCP-005 | Recap ≤ 500 tokens                     | `recap-guard`        | Token counter in `evidence/recaps.log`           |
-| AGENTS-BRD-006 | Brand Logs                             | `brand-guard`        | `grep -r 'brand.*brAInwav'` in logs              |
+| AGENTS-BRD-006 | Service Identity Logs                  | `identity-guard`     | `grep -r '\"service\"'` in logs                  |
 | AGENTS-ARC-007 | Arc Protocol                           | `validate-manifest`  | `validate-run-manifest.ts` (arc structure)       |
 | AGENTS-NST-008 | North-Star Test                        | `validate-manifest`  | `validate-run-manifest.ts` (north_star path)     |
 | AGENTS-PRV-009 | Preflight Guards                       | `preflight-check`    | Check for logs in `logs/vibe-check/`, SBOM, etc. |

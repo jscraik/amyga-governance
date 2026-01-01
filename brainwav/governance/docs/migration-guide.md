@@ -1,6 +1,8 @@
 ---
 summary: "Upgrade steps between governance versions."
 read_when: "Upgrading the pack"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # Migration Guide

@@ -12,6 +12,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
+const changeClassPath = path.join(repoRoot, 'brainwav', 'governance', '90-infra', 'change-classes.json');
 
 function parseArgs() {
 	const args = process.argv.slice(2);
@@ -36,6 +37,11 @@ function main() {
 		const { slug, root } = parseArgs();
 		const taskRoot = path.join(repoRoot, root, slug);
 		const missing = [];
+		const changeClasses = new Set();
+		if (fs.existsSync(changeClassPath)) {
+			const raw = JSON.parse(fs.readFileSync(changeClassPath, 'utf8'));
+			Object.keys(raw.classes || {}).forEach((key) => changeClasses.add(key));
+		}
 
 	mustExist(path.join(taskRoot, 'implementation-plan.md'), 'implementation-plan.md', missing);
 	mustExist(path.join(taskRoot, 'tdd-plan.md'), 'tdd-plan.md', missing);
@@ -51,6 +57,20 @@ function main() {
 			const arcs = manifest.arcs || [];
 			if (arcs.length > 7) {
 				missing.push('Step Budget exceeded: arcs > 7');
+			}
+			const declaredClasses = Array.isArray(manifest.change_classes)
+				? manifest.change_classes
+				: manifest.change_class
+					? [manifest.change_class]
+					: [];
+			if (declaredClasses.length === 0) {
+				missing.push('run-manifest.json missing change_class/change_classes');
+			} else if (changeClasses.size > 0) {
+				declaredClasses.forEach((value) => {
+					if (!changeClasses.has(value)) {
+						missing.push(`run-manifest.json unknown change_class: ${value}`);
+					}
+				});
 			}
 		}
 

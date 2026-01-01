@@ -7,9 +7,10 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
+const servicePrefix = process.env.SERVICE_PREFIX ?? process.env.SERVICE_NAME ?? 'brAInwav';
 const incidentId = process.env.INCIDENT_ID ?? process.argv[2];
 if (!incidentId) {
-	console.error('[brAInwav] Missing incident ID. Pass via INCIDENT_ID env or argv.');
+	console.error(`[${servicePrefix}] Missing incident ID. Pass via INCIDENT_ID env or argv.`);
 	console.error('Usage: node incident-review.mjs INC-742 [--since="24 hours ago"]');
 	process.exitCode = 1;
 	process.exit();
@@ -22,7 +23,7 @@ const outputJson = args.includes('--json');
 
 const homeDir = process.env.HOME ?? process.env.USERPROFILE;
 if (!homeDir) {
-	console.error('[brAInwav] Unable to resolve HOME directory.');
+	console.error(`[${servicePrefix}] Unable to resolve HOME directory.`);
 	process.exitCode = 1;
 	process.exit();
 }
@@ -69,17 +70,17 @@ function getJournalLogs(servicePattern, sinceTime) {
 
 	// Check if service exists
 	const serviceCheck = safeExec(
-		`systemctl list-units --type=service --all 2>/dev/null | grep -q "brAInwav-${servicePattern}" && echo "found"`,
+		`systemctl list-units --type=service --all 2>/dev/null | grep -q "${servicePrefix}-${servicePattern}" && echo "found"`,
 		''
 	);
 
 	if (!serviceCheck) {
-		return { available: true, logs: [], message: `Service brAInwav-${servicePattern} not found` };
+		return { available: true, logs: [], message: `Service ${servicePrefix}-${servicePattern} not found` };
 	}
 
 	// Fetch logs
 	const logs = safeExec(
-		`journalctl -u brAInwav-${servicePattern} --since "${sinceTime}" --no-pager 2>/dev/null | tail -n 50`,
+		`journalctl -u ${servicePrefix}-${servicePattern} --since "${sinceTime}" --no-pager 2>/dev/null | tail -n 50`,
 		''
 	);
 
@@ -151,8 +152,8 @@ function getRecentCommits(pattern, count = 5) {
 async function main() {
 	const timestamp = now();
 
-	console.log(`[brAInwav] incident-review — analyzing: ${incidentId}`);
-	console.log(`[brAInwav] Searching logs since: ${since}`);
+	console.log(`[${servicePrefix}] incident-review — analyzing: ${incidentId}`);
+	console.log(`[${servicePrefix}] Searching logs since: ${since}`);
 
 	const journalLogs = getJournalLogs(incidentId, since);
 	const runbooks = findRelatedRunbooks(incidentId);
@@ -176,7 +177,7 @@ async function main() {
 	if (outputJson) {
 		output = JSON.stringify(review, null, 2);
 	} else {
-		output = `# brAInwav Incident Review: ${incidentId}
+		output = `# ${servicePrefix} Incident Review: ${incidentId}
 
 **Generated:** ${timestamp}  
 **Log Period:** since ${since}
@@ -286,7 +287,7 @@ _[5 Whys or similar analysis]_
 	fs.writeFileSync(logFile, output.replace(/^\[brAInwav\].*\n/gm, ''));
 	fs.writeFileSync(jsonFile, JSON.stringify(review, null, 2));
 
-	console.log(`[brAInwav] incident-review written: ${logFile}`);
+	console.log(`[${servicePrefix}] incident-review written: ${logFile}`);
 
 	return review;
 }

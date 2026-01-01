@@ -214,7 +214,7 @@ echo '{"academicResearchMemoryId": "'$(memory-store --type academic-research --p
 1. **Research Completeness**: All academic databases queried with relevant results
 2. **Evidence Integration**: Plan steps include research citations and confidence levels
 3. **Governance Compliance**: All evidence stored in correct locations with proper formatting
-4. **Brand Compliance**: All logs include `[brAInwav]` and `brand:"brAInwav"`
+4. **Identity Compliance**: All logs include `[<service>]` and `service:"<service_name>"` (brand optional unless required by overlays)
 5. **Trace Context**: All research queries include W3C trace IDs for correlation
 
 ---

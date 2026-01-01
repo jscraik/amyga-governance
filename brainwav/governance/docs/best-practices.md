@@ -1,6 +1,8 @@
 ---
 summary: "Recommended patterns for adoption and delivery."
 read_when: "Designing workflow or rollout"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # Best Practices
@@ -11,7 +13,7 @@ read_when: "Designing workflow or rollout"
 - **Use the Phase Machine** – Follow R→G→F→REVIEW for all changes.
 - **Keep arcs small** – ≤7 steps per arc, ≤120 minutes per vertical slice.
 - **Run oversight before acting** – Vibe check, academic research, license validation.
-- **Use Creative vs Delivery modes** – Creative for ideation (no side effects), Delivery for merge/release (full gates).
+- **Use Creative/Delivery/Release modes** – Creative for ideation (no side effects), Delivery for standard work (full gates), Release for supply‑chain and publication hardening.
 
 ## Evidence & Documentation
 

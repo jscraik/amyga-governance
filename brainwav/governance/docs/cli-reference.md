@@ -1,6 +1,8 @@
 ---
 summary: "Command catalog for governance scripts."
 read_when: "Need a command and usage"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # CLI Reference

@@ -93,7 +93,7 @@ startup_sequence:
     
   5_announce_goal:
     action: "Log session goal"
-    output: "[brAInwav] Session starting: <goal>"
+    output: "[<service>] Session starting: <goal>"
     purpose: "Clear audit trail of session intent"
 ```
 
@@ -277,10 +277,10 @@ fixer_agent:
 
 Every session must produce:
 
-- `[brAInwav] Session start: <session_id> resuming from <checkpoint_id>`
-- `[brAInwav] Health check: <pass|fail>`
-- `[brAInwav] Checkpoint created: <checkpoint_id>`
-- `[brAInwav] Session end: <session_id> outcome=<outcome>`
+- `[<service>] Session start: <session_id> resuming from <checkpoint_id>`
+- `[<service>] Health check: <pass|fail>`
+- `[<service>] Checkpoint created: <checkpoint_id>`
+- `[<service>] Session end: <session_id> outcome=<outcome>`
 
 ### 6.2 Audit Trail
 
@@ -334,7 +334,7 @@ Long-context agents experience refusal drift and degraded task performance well 
 1. **Context Budgeting**
   - Track cumulative context processed across the session (`session_metadata.context_tokens`).
   - Configure a soft cap at 80% of the model's stable window (default: 80K for 100K models, 160K for 200K models).
-  - When the cap is reached, emit `[brAInwav] Context budget reached` and fork a fresh session that loads the latest checkpoint summary instead of raw transcripts.
+  - When the cap is reached, emit `[<service>] Context budget reached` and fork a fresh session that loads the latest checkpoint summary instead of raw transcripts.
 
 2. **Checkpoint Safety Sampling**
   - At every checkpoint, run a rapid safety probe that replays the last 2K tokens through the Sentinel Net (see `10-flow/runtime-governance-service.md`).
@@ -355,7 +355,7 @@ Long-context agents experience refusal drift and degraded task performance well 
 
 4. **Context Refresh Ritual**
   - Every 50K tokens, produce a summarized memory entry + reset the working context using that summary. This guards against subtle instruction accumulation.
-  - Mandatory log line: `[brAInwav] Context refresh complete (tokens_flushed=<n>)`.
+  - Mandatory log line: `[<service>] Context refresh complete (tokens_flushed=<n>)`.
 
 ## References
 

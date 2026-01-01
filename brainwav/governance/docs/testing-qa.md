@@ -1,6 +1,8 @@
 ---
 summary: "Test requirements and coverage/mutation gates."
 read_when: "Testing strategy or gate failures"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # Testing & QA

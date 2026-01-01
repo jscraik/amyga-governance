@@ -28,8 +28,9 @@ evidence:
     file: AGENTS.md
     anchor: "PACK:evidence.requiredTokens"
     default:
-      - brand:"brAInwav"
+      - service:
       - trace_id
+      - traceparent
 
 assurance:
   aegis:

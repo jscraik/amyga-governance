@@ -1,0 +1,9 @@
+pack:
+  id: swift-appkit
+  version: 1.0.0
+  default: false
+  summary: "Swift/AppKit conventions for concurrency and releases."
+  standards:
+    - "Apple HIG"
+    - "WCAG 2.2 AA"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

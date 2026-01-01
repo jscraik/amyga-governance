@@ -12,7 +12,7 @@
 
 [2-3 sentences describing what will be implemented and the primary goal]
 
-Example: "Implement OAuth 2.1 PKCE authentication for brAInwav Local Memory REST endpoints while maintaining local-first guarantees and full observability through OpenTelemetry instrumentation."
+Example: "Implement OAuth 2.1 PKCE authentication for Local Memory REST endpoints while maintaining local-first guarantees and full observability through OpenTelemetry instrumentation."
 
 ---
 
@@ -21,20 +21,20 @@ Example: "Implement OAuth 2.1 PKCE authentication for brAInwav Local Memory REST
 > **Integration Note**: This task aligns with PRP Runner quality gates to ensure consistent quality standards.
 
 ### Enforcement Profile Reference
-- **Source**: `[path-to-enforcement-profile.json]` or Default brAInwav Profile
+- **Source**: `[path-to-enforcement-profile.json]` or Default Delivery Profile
 - **Coverage Targets**: From PRP G2 (Test Plan gate)
   - Lines: `[XX%]` (from `enforcementProfile.budgets.coverageLines`)
   - Branches: `[XX%]` (from `enforcementProfile.budgets.coverageBranches`)
-  - Functions: 95% (brAInwav standard)
-  - Statements: 95% (brAInwav standard)
+  - Functions: 95% (gold standard)
+  - Statements: 95% (gold standard)
 - **Performance Budgets**: From PRP G2/G6
   - LCP: `[XXXXms]` (from `enforcementProfile.budgets.performanceLCP`)
   - TBT: `[XXXms]` (from `enforcementProfile.budgets.performanceTBT`)
 - **Accessibility Target**: From PRP G2
   - Score: `[XX]` (from `enforcementProfile.budgets.a11yScore`)
-  - WCAG Level: AA (brAInwav standard)
-  - WCAG Version: 2.2 (brAInwav standard)
-- **Security**: brAInwav Zero-Tolerance Policy
+  - WCAG Level: AA (gold standard)
+  - WCAG Version: 2.2 (gold standard)
+- **Security**: Zero-Tolerance Policy
   - Critical: 0
   - High: 0
   - Medium: ≤5
@@ -54,7 +54,7 @@ Example: "Implement OAuth 2.1 PKCE authentication for brAInwav Local Memory REST
 - ✅ [Specific deliverable 1]
 - ✅ [Specific deliverable 2]
 - ✅ [Specific deliverable 3]
-- ✅ brAInwav branding in all outputs and error messages
+- ✅ Service identity/branding in all outputs and error messages (per overlays)
 - ✅ Coverage targets per enforcement profile
 - ✅ WCAG 2.2 AA compliance (if UI components)
 
@@ -71,7 +71,7 @@ Example: "Implement OAuth 2.1 PKCE authentication for brAInwav Local Memory REST
 5. Security scan clean (PRP G3/G6 alignment)
 6. Constitution compliance verified
 7. No mock/placeholder code in production paths
-8. brAInwav branding consistently applied
+8. Service identity/branding consistently applied
 9. Evidence artifacts created and indexed
 
 ---
@@ -146,10 +146,10 @@ pnpm install
    - **Then**: [Expected outcome]
    - **Coverage Target**: [Function/method names]
 
-2. **Test**: `should reject [invalid input] with [error message including brAInwav branding]`
+2. **Test**: `should reject [invalid input] with [error message including service identity/branding]`
    - **Given**: [Invalid state]
    - **When**: [Action with bad input]
-   - **Then**: [Appropriate error thrown with brAInwav context]
+   - **Then**: [Appropriate error thrown with service identity context]
 
 3. **Test**: `should handle [edge case] gracefully`
    - **Given**: [Edge condition]
@@ -205,7 +205,7 @@ pnpm install
 1. **Test**: `should complete [user journey] successfully`
    - **Given**: [Starting application state]
    - **When**: [User actions in sequence]
-   - **Then**: [Complete flow succeeds with brAInwav branded output]
+   - **Then**: [Complete flow succeeds with service identity/branding]
 
 ---
 
@@ -319,7 +319,7 @@ pnpm install
 - [ ] **Domain Layer** (Business Logic)
   - [ ] Implement [core function 1] (≤40 lines)
   - [ ] Implement [core function 2] (≤40 lines)
-  - [ ] Add brAInwav branding to outputs
+  - [ ] Add service identity/branding to outputs
   - [ ] Run unit tests - verify GREEN for this layer
 
 - [ ] **Application Layer** (Orchestration)
@@ -331,14 +331,14 @@ pnpm install
 - [ ] **Infrastructure Layer** (I/O, External)
   - [ ] Implement [database interaction] (≤40 lines)
   - [ ] Implement [external API call] (≤40 lines)
-  - [ ] Add error handling with brAInwav context
+  - [ ] Add error handling with service identity context
   - [ ] Run all tests - verify ALL GREEN
 
 - [ ] **Observability**
   - [ ] Add OpenTelemetry spans for key operations
   - [ ] Add structured logging with Pino
   - [ ] Emit Prometheus metrics (if applicable)
-  - [ ] Include brAInwav context in telemetry
+  - [ ] Include service identity context in telemetry
 
 ---
 
@@ -360,7 +360,7 @@ pnpm install
   - [ ] Run performance tests - verify targets met
 
 - [ ] **Error Handling**
-  - [ ] Standardize error messages with brAInwav branding
+  - [ ] Standardize error messages with service identity/branding
   - [ ] Add error codes and structured error objects
   - [ ] Improve error recovery logic
 
@@ -381,7 +381,7 @@ pnpm install
     - [ ] Installation instructions
     - [ ] API documentation
     - [ ] Usage examples
-    - [ ] brAInwav branding
+    - [ ] Service identity/branding (per overlays)
   - [ ] Add inline code comments for complex logic
   - [ ] Update root README.md if user-facing feature
   - [ ] Create examples in `examples/` directory
@@ -429,7 +429,7 @@ pnpm install
 - [ ] **Code Review Preparation**
   - [ ] Self-review code for Constitution compliance
   - [ ] Verify no mock/placeholder code in production
-  - [ ] Check brAInwav branding throughout
+  - [ ] Check service identity/branding throughout
   - [ ] Ensure all functions ≤40 lines
 
 - [ ] **Local Memory Documentation**
@@ -444,7 +444,7 @@ pnpm install
 
 - [ ] **Git Workflow**
   - [ ] Commit with conventional commit format
-  - [ ] Include `Co-authored-by: brAInwav Development Team`
+  - [ ] Include `Co-authored-by: <Org> Development Team` (if applicable)
   - [ ] Push to feature branch
 
 ---
@@ -588,4 +588,4 @@ pnpm install
 **Tests All Green**: [Yes/No]  
 **Quality Gates Passed**: [Yes/No]
 
-Co-authored-by: brAInwav Development Team
+Co-authored-by: <Org> Development Team

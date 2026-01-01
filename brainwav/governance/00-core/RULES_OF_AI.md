@@ -36,7 +36,7 @@ This consolidation eliminates duplication between charter and rules while mainta
 
 - **Allowed at root**: AGENTS.md, CODESTYLE.md, README.md, CHANGELOG.md, model guides.
 - **Governance enforcement**: Structure Guard validates root entries against `allowedRootEntries`.
-- **Branding**: All root docs include brAInwav branding.
+- **Identity**: All root docs include service identity metadata; brand is optional unless required by overlays.
 
 **Agent responsibility**: Place specialized rules/config under the correct subdirs (`governance/rules/`, `config/`, `docs/`, etc.).
 
@@ -52,18 +52,18 @@ Never claim "production-ready/complete/operational" if any prod path contains:
 - `TODO/FIXME/HACK`, `console.warn("not implemented")`
 - Fake metrics/telemetry
 
-### Rule 2 — brAInwav truthfulness standard
+### Rule 2 — Service truthfulness standard
 
 - Verify claims against actual code & passing gates.
 - Distinguish test scaffolding from production.
-- Include brAInwav branding in outputs/errors.
+- Include service identity in outputs/errors; brand may be added by overlays.
 - Do not inflate readiness/completion metrics.
 
 ### Rule 3 — Production validation requirements
 
 - [ ] Placeholders eliminated  
 - [ ] Real integrations in place (no fake data)  
-- [ ] Errors/logs branded `[brAInwav]` / `brand:"brAInwav"`  
+- [ ] Errors/logs include service identity and trace context  
 - [ ] Docs match code  
 - [ ] Tests validate real functionality
 
@@ -102,13 +102,14 @@ All agents follow the **7-phase** workflow. Full details: **`governance/10-flow/
 
 - `AGENTS_MD_SHA:<sha>`  
 - `PHASE_TRANSITION:<from>-><to>`  
-- `brAInwav-vibe-check`  
+- `aegis-vibe-check`  
+- `service:`  
 - `MODELS:LIVE:OK engine=<ollama|frontier>`
 
 **AGENTS.md acknowledgement & Vibe-check**
 
 - At session start: load nearest `AGENTS.md`, compute `agents_sha`, log `AGENTS_MD_SHA:<sha>`.
-- After planning and **before** file writes/network calls/long runs: call **Vibe Check MCP** `vibe_check`; include `"brAInwav-vibe-check"` in logs.
+- After planning and **before** file writes/network calls/long runs: call **Vibe Check MCP** `vibe_check`; include `"aegis-vibe-check"` in logs.
 
 ---
 
@@ -185,7 +186,7 @@ NEVER use grep for project-wide searches (slow, ignores .gitignore). ALWAYS use 
 - No color-only signaling; consistent focus order
 - CLI/TUI: support `--plain` output + high-contrast mode
 
-Include brAInwav branding in a11y announcements where appropriate.
+Include service identity in a11y announcements where appropriate.
 
 ---
 
@@ -217,7 +218,7 @@ Include brAInwav branding in a11y announcements where appropriate.
 - **No `any` in TypeScript** (except tests/justified compat shims)
 - **No cross-domain imports** — use A2A topics/MCP tools/declared contracts
 - **async/await + AbortSignal** — no `.then()` chains
-- **Structured logging** — `brand:"brAInwav"`, request/run IDs, OTel traces
+- **Structured logging** — `service:"<service_name>"`, request/run IDs, OTel traces
 
 ---
 
@@ -303,7 +304,8 @@ Include brAInwav branding in a11y announcements where appropriate.
 
 **Structured logs** — include:
 
-- `brand:"brAInwav"`
+- `service:"<service_name>"`
+- optional `brand:"<org>"`
 - `component:"<package-name>"`
 - `trace_id`, `request_id`, `run_id`
 - `level`, `msg`, `timestamp` (ISO-8601)
@@ -334,7 +336,7 @@ pnpm structure:validate && pnpm security:scan && pnpm models:health
 
 **PR requirements**:
 
-- Evidence tokens in logs (`AGENTS_MD_SHA`, `brAInwav-vibe-check`, `MODELS:LIVE:OK`)
+- Evidence tokens in logs (`AGENTS_MD_SHA`, `aegis-vibe-check`, `MODELS:LIVE:OK`, `service:`)
 - TDD plan + coverage reports attached
 - a11y validation (axe reports)
 - Security scan results (clean)
@@ -352,7 +354,7 @@ This document is **immutable ethics** (highest precedence in Governance Pack).
 
 **Violations**: Policy violations trigger incident review per Constitution.
 
-**Amendment**: Core principles (truthfulness, branding, accessibility, security) cannot be weakened.
+**Amendment**: Core principles (truthfulness, identity, accessibility, security) cannot be weakened.
 
 ---
 

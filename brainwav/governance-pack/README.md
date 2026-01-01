@@ -5,7 +5,7 @@ This pack supports a **core + packs + adapters** model so it can be reused acros
 ## Layout
 
 - `core/` — org-neutral templates with `${var}` placeholders.
-- `packs/` — capability packs (security-appsec, supply-chain, a11y, ai-risk, compliance-overlays).
+- `packs/` — capability packs (security-appsec, supply-chain, a11y, ai-risk, compliance-overlays, ts-base, react-vite, react-next, tailwind, storybook, cloudflare-workers, mcp-server-ts, swift-appkit, openai-apps-sdk-ui, python-uv, rust-cli, nx).
 - `overlays/<org>/` — organization defaults (Cortex provided).
 - `overlays/<project>/` — optional tighter project layer.
 - `core/docs.index.yaml` — ordered doc pointers (path/sha/url, optional `full_text` placeholder).

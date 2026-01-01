@@ -1,6 +1,8 @@
 ---
 summary: "Doc quality and JSDoc enforcement rules."
 read_when: "Writing or updating docs"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # Documentation Governance

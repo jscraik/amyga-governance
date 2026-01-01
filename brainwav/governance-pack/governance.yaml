@@ -162,7 +162,7 @@ workflow:
         - New acceptance/unit tests **fail first**, then **pass** on the next
           commit
         - "`TIME_FRESHNESS:OK tz=<IANA> today=<YYYY-MM-DD>` token present"
-        - Oversight log (`brAInwav-vibe-check`) stored in `logs/vibe-check/`
+        - Oversight log (`aegis-vibe-check`) stored in `logs/vibe-check/`
         - Threat model + data classification updated against OWASP ASVS 5.0.0 L2
           (L3 where required by profile), OWASP LLM Top 10 (2025 v1.1), and NIST SSDF controls
     - from: G
@@ -195,6 +195,8 @@ evidence:
     - Step Budget ≤ 7
     - Ask-First ≤ 3
     - Evidence Triplet
+    - service:
+    - traceparent
 qualityGates:
   coverage:
     global: 90

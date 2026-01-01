@@ -1,6 +1,8 @@
 ---
 summary: "Frequently asked questions."
 read_when: "Quick answers"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # FAQ

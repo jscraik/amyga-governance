@@ -1,0 +1,8 @@
+pack:
+  id: react-next
+  version: 1.0.0
+  default: false
+  summary: "React 19 + Next.js 16 (RSC/App Router) rules."
+  standards:
+    - "WCAG 2.2 AA"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

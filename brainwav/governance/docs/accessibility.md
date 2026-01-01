@@ -1,6 +1,8 @@
 ---
 summary: "WCAG 2.2 AA requirements and checks."
 read_when: "UI/CLI accessibility work"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # Accessibility Guidelines

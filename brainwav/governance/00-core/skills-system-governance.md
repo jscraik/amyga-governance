@@ -30,14 +30,14 @@ Skills governance is enforced across all skill lifecycle stages and CI gates.
 ## 0. Operative Guardrails (binding)
 
 - **Structured Outputs (BLOCKER):** Any machine‑consumed output from a skill **must** conform to JSON‑Schema or tool/function calling. Free‑text is not a contract.
-- **Trace Context (BLOCKER):** Skill application events include W3C `traceparent` and structured logs with `brand:"brAInwav"`, `trace_id` (32 lower‑hex).
+- **Trace Context (BLOCKER):** Skill application events include W3C `traceparent` and structured logs with `service:"<service_name>"`, `trace_id` (32 lower‑hex); `brand` optional unless required by overlays.
 - **Academic Research & Licensing (BLOCKER):** New/major‑updated skills must cite research and pass license validation; only SAFE/REVIEW content allowed.
 - **Security by Default (BLOCKER):** No secrets in examples, no unsafe patterns; scanners must be clean (Semgrep ERROR=block, gitleaks ANY=block, OSV clean).
 - **A11y Baseline:** Content examples meet WCAG 2.2 AA (ISO/IEC 40500:2025).
 - **Identity & Supply Chain:** CI uses OIDC/WIF; skills tooling/artifacts use CycloneDX 1.7 SBOM + SLSA v1.2 provenance; Cosign v3 bundle verify logs attached.
 
 **Evidence Tokens (CI‑scanned across PR/logs):**  
-`STRUCTURED_OUTPUTS:OK` · `TRACE_CONTEXT:OK` · `SUPPLY_CHAIN:OK sbom=cyclonedx@1.7 slsa=1.2 cosign=bundle` · `A11Y_REPORT:OK` · `brAInwav-vibe-check` · `AGENTS_MD_SHA:*`
+`STRUCTURED_OUTPUTS:OK` · `TRACE_CONTEXT:OK` · `SUPPLY_CHAIN:OK sbom=cyclonedx@1.7 slsa=1.2 cosign=bundle` · `A11Y_REPORT:OK` · `aegis-vibe-check` · `AGENTS_MD_SHA:*` · `service:*`
 
 ---
 
@@ -61,7 +61,7 @@ The Skills System provides structured reference knowledge that:
 4. **Measurable** (defined success criteria + telemetry)
 5. **Ethical** (transparent, beneficial)
 6. **Maintainable** (versioned, reviewed, retired when stale)
-7. **Constitution‑Compliant** (brand logs, no mock prod claims)
+7. **Constitution‑Compliant** (identity logs, no mock prod claims)
 
 ---
 
@@ -114,7 +114,7 @@ structuredOutputs:
 
 - “When to Use”, “How to Apply” (stepwise), “Success Criteria”
 - “Common Pitfalls” and “Examples” (runnable or verifiable)
-- brAInwav branding included in outputs where appropriate
+- Service identity/branding included in outputs where appropriate
 - Inclusive language; no dark patterns
 
 **Security Validation (Automated):**
@@ -168,7 +168,7 @@ skill_apply(args: { id: string; context: object }) -> returns { planSteps: strin
 // schemas/skill-application-record.schema.json (excerpt)
 {
   "type":"object",
-  "required":["skillId","skillVersion","outcome","effectivenessScore","traceId","timestamp","brand"],
+  "required":["skillId","skillVersion","outcome","effectivenessScore","traceId","timestamp","service"],
   "properties":{
     "skillId":{"type":"string"},
     "skillVersion":{"type":"string"},
@@ -176,7 +176,8 @@ skill_apply(args: { id: string; context: object }) -> returns { planSteps: strin
     "effectivenessScore":{"type":"number","minimum":0,"maximum":1},
     "traceId":{"type":"string","pattern":"^[0-9a-f]{32}$"},
     "timestamp":{"type":"string","format":"date-time"},
-    "brand":{"const":"brAInwav"}
+    "service":{"type":"string"},
+    "brand":{"type":"string"}
   }
 }
 ```
@@ -194,7 +195,8 @@ memoryStore({
     outcome: "success",
     effectivenessScore: 0.9,
     traceparent: "<w3c-traceparent>",
-    branding: "brAInwav"
+    service: "<service_name>",
+    brand: "<org>"
   }
 })
 ```
@@ -266,7 +268,7 @@ Process: mark deprecated → notify → archive (`skills/archived/`) → remove 
 
 ### 5.3 Code Style
 
-- Follow `CODESTYLE.md`: named exports, ≤ 40 lines per function, async/await with cancellation, strict types, brAInwav branding.
+- Follow `CODESTYLE.md`: named exports, ≤ 40 lines per function, async/await with cancellation, strict types, service identity/branding where applicable.
 
 ---
 
@@ -309,7 +311,7 @@ pnpm skills:security-scan --changed
 - [ ] Frontmatter complete and valid
 - [ ] Content quality reviewed (When/How/Success/Pitfalls/Examples)
 - [ ] Ethical framing and citations present
-- [ ] brAInwav branding present in relevant examples
+- [ ] Service identity/branding present in relevant examples (as configured)
 - [ ] Success criteria defined and testable
 - [ ] Effectiveness evidence present (for new skills)
 - [ ] Correct category/tags; version bumped; changelog entry

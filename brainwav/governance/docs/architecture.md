@@ -1,6 +1,8 @@
 ---
 summary: "Governance structure and document hierarchy."
 read_when: "Design or integration questions"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # Architecture

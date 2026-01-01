@@ -1,0 +1,50 @@
+{
+  "version": "2025.12",
+  "updated": "2025-12-31",
+  "notes": "Change-class evidence bundles add requirements to the core gates; they never reduce baseline controls.",
+  "classes": {
+    "docs": {
+      "summary": "Documentation-only changes (policies, runbooks, guides).",
+      "required_evidence": [
+        "verification/docs-lint.log",
+        "verification/links-check.log"
+      ]
+    },
+    "ui": {
+      "summary": "User-facing UI changes (web/app components, layouts, UX flows).",
+      "required_evidence": [
+        "verification/wcag/axe.json",
+        "verification/ui-test.log"
+      ]
+    },
+    "worker": {
+      "summary": "Edge/runtime worker changes (Cloudflare Workers, cron/queues).",
+      "required_evidence": [
+        "verification/worker-tests.log",
+        "verification/egress-allowlist.json"
+      ]
+    },
+    "mcp": {
+      "summary": "MCP servers, tools, and schema surface changes.",
+      "required_evidence": [
+        "verification/mcp-contract-snapshot.json",
+        "verification/mcp-egress-allowlist.json"
+      ]
+    },
+    "security-sensitive": {
+      "summary": "Security-critical changes (auth, crypto, access control, secrets).",
+      "required_evidence": [
+        "verification/threat-model.md",
+        "logs/security/security-scan.log"
+      ]
+    },
+    "release": {
+      "summary": "Release packaging, supply-chain, or deployment hardening.",
+      "required_evidence": [
+        "sbom/sbom.json",
+        "attestations/provenance.bundle",
+        "verification/release-notes.md"
+      ]
+    }
+  }
+}

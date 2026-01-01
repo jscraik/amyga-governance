@@ -40,7 +40,7 @@ This directory contains templates for the enhanced task management workflow comb
 - Priority-based story ordering
 - Independent testability requirements
 - Given-When-Then acceptance criteria
-- brAInwav branding requirements
+- Service identity requirements (brand optional via overlays)
 - WCAG 2.2 AA accessibility checklist
 
 ---
@@ -64,7 +64,7 @@ This directory contains templates for the enhanced task management workflow comb
 
 **Features**:
 
-- brAInwav-specific context documentation
+- Project-specific context documentation
 - Multi-option comparison tables
 - License compatibility tracking
 - Proof-of-concept findings
@@ -128,7 +128,7 @@ This directory contains templates for the enhanced task management workflow comb
 - Security testing (injection prevention, secrets handling)
 - Performance & reliability SLOs
 - Complete deployment workflow
-- brAInwav Constitution compliance tracking
+- Constitution compliance tracking
 
 **References**:
 
@@ -185,15 +185,15 @@ Templates use these placeholder patterns:
 
 ---
 
-## brAInwav Standards Enforcement
+## Governance Standards Enforcement
 
-All templates enforce brAInwav governance framework standards:
+All templates enforce the governance framework standards:
 
 ✅ **Production Standards**: No mock/placeholder claims  
 ✅ **Test-Driven Development**: Red-Green-Refactor mandatory  
 ✅ **Accessibility First**: WCAG 2.2 AA compliance required  
 ✅ **Code Quality**: Named exports, ≤40 lines per function, async/await  
-✅ **Branding**: brAInwav included in all outputs and errors  
+✅ **Service Identity**: service identifier included in outputs and errors (brand optional via overlays)  
 ✅ **Security**: Quality gates, no secrets in code  
 
 ---
@@ -279,7 +279,7 @@ For questions or issues with templates:
 
 1. Check `governance/docs/task-management-guide.md` for workflow guidance
 2. Review `scripts/governance-task.mjs` for CLI implementation details
-3. Consult brAInwav Constitution for standards clarification
+3. Consult the Constitution for standards clarification
 4. Ask in team channels or create GitHub issue
 
 ---

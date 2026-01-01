@@ -1,6 +1,8 @@
 ---
 summary: "Oversight gate installation and usage."
 read_when: "Before or during oversight runs"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 +# Cortex Aegis MCP Server (Neutral Governance)
@@ -130,7 +132,8 @@ Primary oversight gate that validates agent plans before execution.
   "reasons": ["string"],
   "suggestions": ["string"],
   "trace_id": "string",
-  "brand": "brAInwav"
+  "service": "<service_name>",
+  "brand": "<org>"
 }
 ```
 
@@ -256,7 +259,7 @@ POST to `${VIBE_CHECK_HTTP_URL:-http://127.0.0.1:2091}/mcp` with standard JSON h
 ### Connector Outage Protocol
 
 - Check `/health` endpoints for each academic MCP (Wikidata 3029, arXiv 3041, etc.).
-- If unavailable, document a waiver in `tasks/<slug>/logs/academic-research/<timestamp>-waiver.json` with `[brAInwav]` branding and link in `run-manifest.json`.
+- If unavailable, document a waiver in `tasks/<slug>/logs/academic-research/<timestamp>-waiver.json` with service identity (`[<service>]`) and link in `run-manifest.json`.
 - Re-run research + oversight within 72 hours or once services recover.
 
 ## Integration with ArcTDD Gates
@@ -375,9 +378,10 @@ Per governance policy, Cortex Aegis **MUST** be invoked for:
 
 All Aegis responses include:
 
-- `brand: "brAInwav"` – Brand identifier
+- `service: "<service_name>"` – Service identifier
+- optional `brand: "<org>"` – Brand identifier
 - `trace_id` – Correlation ID for distributed tracing
-- `[brAInwav]` – Log prefix for filtering
+- `[<service>]` – Log prefix for filtering
 
 Integrate with OpenTelemetry by propagating `traceparent` headers.
 

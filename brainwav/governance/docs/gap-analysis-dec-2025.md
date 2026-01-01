@@ -1,6 +1,8 @@
 ---
 summary: "Dec 2025 governance gap analysis."
 read_when: "Assessing framework maturity"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # Agentic Governance Framework - Gap Analysis & Recommendations
@@ -14,6 +16,8 @@ read_when: "Assessing framework maturity"
 ## Executive Summary
 
 This document identifies gaps in the brAInwav Agentic Governance Framework compared to industry best practices and emerging standards as of December 2025. The framework is comprehensive but has opportunities for enhancement in several key areas.
+
+**Note:** This is a historical snapshot. The current baseline is **Jan 2026** as defined in `brainwav/governance/90-infra/standards.versions.json`.
 
 ---
 
@@ -142,7 +146,7 @@ Required sections:
 ### 2.5 Observability & Monitoring (Medium Priority)
 
 #### Agent Behavior Monitoring
-**Gap**: Limited behavioral monitoring beyond brand logging.
+**Gap**: Limited behavioral monitoring beyond service-identity logging.
 
 **Recommendation**: Add `10-flow/behavioral-monitoring.md` with:
 - Anomaly detection requirements

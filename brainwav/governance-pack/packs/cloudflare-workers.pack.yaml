@@ -1,0 +1,8 @@
+pack:
+  id: cloudflare-workers
+  version: 1.0.0
+  default: false
+  summary: "Cloudflare Workers runtime constraints and testing."
+  standards:
+    - "Cloudflare Workers"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

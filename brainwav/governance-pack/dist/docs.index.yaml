@@ -64,7 +64,7 @@ docs:
 
       **brAInwav Branding**: All system outputs, error messages, health checks,
       and status logs **must** include brAInwav branding (`"[brAInwav]"` and
-      `brand:"brAInwav"` in structured logs).
+      `service:"<service_name>"` in structured logs).
 
 
       **Evidence-Based Status**: Status claims must be verified against passing
@@ -190,14 +190,14 @@ docs:
       Agents must load the nearest `AGENTS.md` and record its SHA
       (`AGENTS_MD_SHA:<sha>`) in run state and logs. Agents must call **Vibe
       Check MCP** `vibe_check` after planning and **before** file writes/network
-      calls/long runs; logs must include `"brAInwav-vibe-check"`.
+      calls/long runs; logs must include `"aegis-vibe-check"`.
 
 
       ### 10. Observability & Trace Context (NORMATIVE)
 
 
       All charter-governed logs are structured JSON and include: ISO‑8601
-      timestamp, `[brAInwav]` prefix, `brand:"brAInwav"`, **W3C Trace Context**
+      timestamp, `[brAInwav]` prefix, `service:"<service_name>"`, **W3C Trace Context**
       correlation (`traceparent` header value) and `trace_id`/`span_id` fields
       for **OpenTelemetry** correlation.
 
@@ -609,7 +609,7 @@ docs:
 
       - [ ] Real integrations in place (no fake data)  
 
-      - [ ] Errors/logs branded `[brAInwav]` / `brand:"brAInwav"`  
+      - [ ] Errors/logs branded `[brAInwav]` / `service:"<service_name>"`  
 
       - [ ] Docs match code  
 
@@ -646,7 +646,7 @@ docs:
 
       - **async/await + AbortSignal** — no `.then()` chains
 
-      - **Structured logging** — `brand:"brAInwav"`, request/run IDs, OTel
+      - **Structured logging** — `service:"<service_name>"`, request/run IDs, OTel
       traces
 
 
@@ -1517,7 +1517,7 @@ docs:
       - Runtime and workflow logs MUST include both a **human-readable prefix** and a **structured JSON log** per line:
         - Text prefix: `[brAInwav]`
         - JSON fields:  
-          `brand:"brAInwav"`, ISO-8601 timestamp with timezone, `trace_id` (32 lowercase hex), and the **HTTP `traceparent`** value captured at ingress/egress.
+          `service:"<service_name>"`, ISO-8601 timestamp with timezone, `trace_id` (32 lowercase hex), and the **HTTP `traceparent`** value captured at ingress/egress.
       - OPA/Conftest policies enforce the following tokens in every charter-governed log line:
         - `MODELS:LIVE:OK` when model health passes
         - Latency markers (e.g., `LATENCY:123ms` or structured JSON `latency_ms` field)
@@ -1848,7 +1848,7 @@ docs:
 
       - [ ] Real integrations in place (no fake data)  
 
-      - [ ] Errors/logs branded `[brAInwav]` / `brand:"brAInwav"`  
+      - [ ] Errors/logs branded `[brAInwav]` / `service:"<service_name>"`  
 
       - [ ] Docs match code  
 
@@ -1913,7 +1913,7 @@ docs:
 
       - `PHASE_TRANSITION:<from>-><to>`  
 
-      - `brAInwav-vibe-check`  
+      - `aegis-vibe-check`  
 
       - `MODELS:LIVE:OK engine=<ollama|frontier>`
 
@@ -1925,7 +1925,7 @@ docs:
       `AGENTS_MD_SHA:<sha>`.
 
       - After planning and **before** file writes/network calls/long runs: call
-      **Vibe Check MCP** `vibe_check`; include `"brAInwav-vibe-check"` in logs.
+      **Vibe Check MCP** `vibe_check`; include `"aegis-vibe-check"` in logs.
 
 
       ---
@@ -2092,7 +2092,7 @@ docs:
 
       - **async/await + AbortSignal** — no `.then()` chains
 
-      - **Structured logging** — `brand:"brAInwav"`, request/run IDs, OTel
+      - **Structured logging** — `service:"<service_name>"`, request/run IDs, OTel
       traces
 
 
@@ -2255,7 +2255,7 @@ docs:
       **Structured logs** — include:
 
 
-      - `brand:"brAInwav"`
+      - `service:"<service_name>"`
 
       - `component:"<package-name>"`
 
@@ -2306,7 +2306,7 @@ docs:
       **PR requirements**:
 
 
-      - Evidence tokens in logs (`AGENTS_MD_SHA`, `brAInwav-vibe-check`,
+      - Evidence tokens in logs (`AGENTS_MD_SHA`, `aegis-vibe-check`,
       `MODELS:LIVE:OK`)
 
       - TDD plan + coverage reports attached
@@ -2687,7 +2687,7 @@ docs:
       - **Patch-first** – Always edit via diffs (git apply / apply_patch). No wholesale rewrites.  
       - **Test-first mindset** – Define/extend tests during G2–G4; enforce failing → passing evidence before refactor.  
       - **Deterministic outputs** – Structured JSON responses for tools, no hidden scratchpads.  
-      - **Structured logs** – Include `[brAInwav]`, `brand:"brAInwav"`, `component`, and `trace_id` per log line; propagate W3C `traceparent`.  
+      - **Structured logs** – Include `[brAInwav]`, `service:"<service_name>"`, `component`, and `trace_id` per log line; propagate W3C `traceparent`.  
       - **OpenFeature only** – All feature flags must use OpenFeature APIs/providers.  
       - **Cancellation mandatory** – Every HTTP/MCP/tool call must respect `AbortSignal` or equivalent.  
       - **No stubs in prod** – No fake ML outputs, placeholder adapters, `Math.random()` data, TODO/FIXME/HACK tags, or console stubs.  
@@ -3293,7 +3293,7 @@ docs:
       `edit-envelope.json`) so CI can enforce the declared patch budget.
 
       6. Ensure all oversight-related logs contain `[brAInwav]` and
-      `brand:"brAInwav"` for audit search.
+      `service:"<service_name>"` for audit search.
 
 
       Failure to meet any item keeps the PR in a blocked state (`agents-guard`
@@ -3623,7 +3623,7 @@ docs:
       - [ ] Hot path changes reviewed for allocations + complexity; long-running
       operations cancellable.
 
-      - [ ] Observability: logs/metrics/traces include `brand:"brAInwav"`,
+      - [ ] Observability: logs/metrics/traces include `service:"<service_name>"`,
       `trace_id`, `traceparent`.
 
       - [ ] Rollback plan realistic; feature flags guard risky features.
@@ -5264,7 +5264,7 @@ docs:
       | `no-dotenv-in-prod` | `semgrep/brAInwav.yml` | Blocks `dotenv.config()` in prod paths; require shared loader. | Guardrail #9 (preflight secrets) + G4 env discipline |
       | `no-console-in-prod` | `semgrep/brAInwav.yml` + ESLint `no-console` override | Forces `traceLogger.log()` with branded payload + `trace_id`. | Guardrail #6 (brand logs) + trace context |
       | `no-math-random-in-prod` | `semgrep/brAInwav.yml` | Prevents fabricated data/entropy. | Guardrail #6 & Proof integrity |
-      | `require-brainwav-brand-in-logs` | `semgrep/brAInwav.yml` | Ensures `{ brand:"brAInwav" }` attached to logs. | Guardrail #6 |
+      | `require-brainwav-brand-in-logs` | `semgrep/brAInwav.yml` | Ensures `{ service:"<service_name>" }` attached to logs. | Guardrail #6 |
       | `async-must-accept-abortsignal` | `semgrep/brAInwav.yml` | Exported async APIs require `AbortSignal`. | Guardrail #7 (Arc Protocol resilience) |
       | `strict-boundaries-no-any` | `semgrep/brAInwav.yml` + ESLint `@typescript-eslint/no-explicit-any` | No `any` at public boundaries. | Guardrail #4 (Proof) |
       | `max-lines-per-function` | ESLint `max-lines-per-function` | Functions ≤ 40 LOC; split arcs early. | Guardrail #7 |
@@ -6073,7 +6073,7 @@ docs:
       - Invokes MCP Tools/Resources/Prompts, A2A messages, Memory, RAG jobs.
 
       - Emits structured telemetry (traces/metrics/logs) with
-      `brand:"brAInwav"`, run IDs, and phase transitions.
+      `service:"<service_name>"`, run IDs, and phase transitions.
 
 
       ### 3.2 MCP (Single Hub)
@@ -6170,7 +6170,7 @@ docs:
 
       **Done means:** `/health`, `/mcp`, `/sse`, `/metrics` green; API-key on;
       Cloudflare Tunnel tested; integration tests pass; **evidence tokens
-      present** (`AGENTS_MD_SHA`, `brAInwav-vibe-check`).
+      present** (`AGENTS_MD_SHA`, `aegis-vibe-check`).
 
 
       ### 4.2 `packages/mcp-core`
@@ -6253,7 +6253,7 @@ docs:
       discovery (`/.well-known/oauth-protected-resource`) wired; OAuth scopes
       published (`search.read docs.write memory.read memory.write
       memory.delete`); app manifest validated in ChatGPT; Cloudflare tunnel
-      tested; structured logs include `brand:"brAInwav"`.
+      tested; structured logs include `service:"<service_name>"`.
 
 
       ### 4.11 `apps/cortex-os` (ASBR host)
@@ -6297,7 +6297,7 @@ docs:
       screen-reader labels pass axe/jest-axe.  
 
       - **Governance Evidence:** PRs contain:
-        - `AGENTS_MD_SHA:<sha>`, `brAInwav-vibe-check`, `PHASE_TRANSITION:*`  
+        - `AGENTS_MD_SHA:<sha>`, `aegis-vibe-check`, `PHASE_TRANSITION:*`  
         - `MODELS:LIVE:OK engine=<ollama|frontier>` with model IDs and dims/norms  
         - Top-level Code Review Checklist link to `/.cortex/rules/code-review-checklist.md`
 
@@ -6332,7 +6332,7 @@ docs:
       - **AGENTS Acknowledgement:** `AGENTS_MD_SHA:<sha>` persisted in
       `.cortex/run.yaml` and first vibe-check log.
 
-      - **Vibe Check:** `"brAInwav-vibe-check"` log required before act phases.
+      - **Vibe Check:** `"aegis-vibe-check"` log required before act phases.
 
       - **Live-Only Models:** `pnpm models:health && pnpm models:smoke` output
       includes engine, model IDs, vector dims/norms, latency, and
@@ -6881,14 +6881,14 @@ docs:
       ## 0. Operative Guardrails (binding)
 
       - **Structured Outputs (BLOCKER):** Any machine‑consumed output from a skill **must** conform to JSON‑Schema or tool/function calling. Free‑text is not a contract.
-      - **Trace Context (BLOCKER):** Skill application events include W3C `traceparent` and structured logs with `brand:"brAInwav"`, `trace_id` (32 lower‑hex).
+      - **Trace Context (BLOCKER):** Skill application events include W3C `traceparent` and structured logs with `service:"<service_name>"`, `trace_id` (32 lower‑hex).
       - **Academic Research & Licensing (BLOCKER):** New/major‑updated skills must cite research and pass license validation; only SAFE/REVIEW content allowed.
       - **Security by Default (BLOCKER):** No secrets in examples, no unsafe patterns; scanners must be clean (Semgrep ERROR=block, gitleaks ANY=block, OSV clean).
       - **A11y Baseline:** Content examples meet WCAG 2.2 AA (ISO/IEC 40500:2025).
       - **Identity & Supply Chain:** CI uses OIDC/WIF; skills tooling/artifacts use CycloneDX 1.7 SBOM + SLSA v1.1 provenance; Cosign v3 bundle verify logs attached.
 
       **Evidence Tokens (CI‑scanned across PR/logs):**  
-      `STRUCTURED_OUTPUTS:OK` · `TRACE_CONTEXT:OK` · `SUPPLY_CHAIN:OK sbom=cyclonedx@1.7 slsa=1.1 cosign=bundle` · `A11Y_REPORT:OK` · `brAInwav-vibe-check` · `AGENTS_MD_SHA:*`
+      `STRUCTURED_OUTPUTS:OK` · `TRACE_CONTEXT:OK` · `SUPPLY_CHAIN:OK sbom=cyclonedx@1.7 slsa=1.1 cosign=bundle` · `A11Y_REPORT:OK` · `aegis-vibe-check` · `AGENTS_MD_SHA:*`
 
       ---
 

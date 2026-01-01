@@ -1,7 +1,7 @@
 {
     "description": "Governance document index with precedence order and SHA verification",
     "version": "2025.12.2",
-    "updated": "2025-12-31",
+    "updated": "2026-01-01",
     "precedence": [
         "00-core/constitution.md",
         "00-core/AGENT_CHARTER.md",
@@ -21,6 +21,7 @@
         "00-core/skills-system-governance.md",
         "90-infra/egress-governance.md",
         "90-infra/standards.versions.json",
+        "90-infra/change-classes.json",
         "90-infra/control-registry.core.yaml",
         "90-infra/control-registry.schema.json",
         "90-infra/agentic-config.schema.json",
@@ -31,7 +32,7 @@
     "docs": {
         "constitution.md": {
             "path": "00-core/constitution.md",
-            "sha256": "60e1296fdf4de9c792a4b635b0ef21e37f933afe49d9324a22face5a2f1045ad",
+            "sha256": "630ea0d21dbc821652828e86e2aa683718234dbedbd2170ae02ece8306aedc13",
             "required_tokens": [
                 "Constitution",
                 "Core Principles"
@@ -39,9 +40,9 @@
         },
         "AGENT_CHARTER.md": {
             "path": "00-core/AGENT_CHARTER.md",
-            "sha256": "2c735acd44d1076e6355518ff446b14f466eb27ce4f3435996bb12652d647a9f",
+            "sha256": "267d7038f8fcb711a3a9293f1a2447233e8fdcfee4f68bca7defc298cfa4d3c9",
             "required_tokens": [
-                "[brAInwav]",
+                "Service Identity Logs",
                 "MODELS:LIVE:OK",
                 "NORTH_STAR:RED_FIRST"
             ]
@@ -70,7 +71,7 @@
         },
         "vision.md": {
             "path": "00-core/vision.md",
-            "sha256": "f946e4e09612fad45cb90f20843c4846e2c83091ba3a683420904ec0b301afbb",
+            "sha256": "0c70ed2cffe1d6afbbcd1a4db014feb91959e9f08fcdce5d01b5d837682780d6",
             "required_tokens": [
                 "Vision",
                 "North Star"
@@ -87,7 +88,7 @@
         },
         "skills-system-governance.md": {
             "path": "00-core/skills-system-governance.md",
-            "sha256": "d8f98b68f1d4a489c30e9df961ccae7738eeb4aab3ba29384d9f0e8cfdac2a17",
+            "sha256": "00d3b5ce00f0f99b4356afe98681e4aec40d4a9715034fee6fe754f5479dcca7",
             "required_tokens": [
                 "Skills governance",
                 "Structured outputs"
@@ -103,7 +104,7 @@
         },
         "agentic-coding-workflow.md": {
             "path": "10-flow/agentic-coding-workflow.md",
-            "sha256": "071e7d4da7e3119ae9dbfcb0b455750e0c0a104861ac3c8dbd846a257e33a2c1",
+            "sha256": "069efc9c86046280caa3df0e351c716a10b3347a875197095ecb3a207e09b1a1",
             "required_tokens": [
                 "G0 Initialize",
                 "Evidence Triplet",
@@ -121,7 +122,7 @@
         },
         "assurance-system.md": {
             "path": "10-flow/assurance-system.md",
-            "sha256": "0cb958b0543ee7b43589d2f46de05d2d06367d68458f7d85e8878be31dca16a8",
+            "sha256": "7c192d91de9ed774f2cc7fc38a1f2724d22890811259642c2f3a98db80a1e5f9",
             "required_tokens": [
                 "Assurance System",
                 "Time Freshness"
@@ -129,7 +130,7 @@
         },
         "checklists.md": {
             "path": "20-checklists/checklists.md",
-            "sha256": "365670b14830e9be62e4ab6b105bb608df504a7e7bd961ea6d30378cd1c6f53c",
+            "sha256": "9a7fe5fefa2d955411c938cf64928d160e7f5b1691ac8dcee0864d7fbb87e739",
             "required_tokens": [
                 "checklist",
                 "quality gates"
@@ -145,7 +146,7 @@
         },
         "governance-index.json": {
             "path": "90-infra/governance-index.json",
-            "sha256": "5b55447ede25abdf4cf81eb21e6e3626dfe36367173ea63712a7b411128d1ac6",
+            "sha256": "6b770bc05a0877d796031c9a7399166876307c1e236a433c195cceebe2b7013c",
             "hash_mode": "exclude_self",
             "required_tokens": [
                 "precedence",
@@ -162,7 +163,7 @@
         },
         "agentic-config.schema.json": {
             "path": "90-infra/agentic-config.schema.json",
-            "sha256": "662be3b06b7fcf14e5ea34fd172f6134c582828dcb5ae590649f2415d1ae0fa4",
+            "sha256": "5b4c61a36e4d9800584dc6f0d59efb73788c26c3f39e850f743bbab1361bc36a",
             "required_tokens": [
                 "Governance Config",
                 "profile",
@@ -171,7 +172,7 @@
         },
         "governance-pack.map.yaml": {
             "path": "90-infra/governance-pack.map.yaml",
-            "sha256": "6437dd13c49ab48b3d18fc3db4e035e797dad5654cc65fcfd3c4edfb2729e681",
+            "sha256": "03c070b3c8a8289859d31261a2363d51d822d0da46cbc91ff2fdcda736ad75a6",
             "required_tokens": [
                 "pack",
                 "overlay"
@@ -179,7 +180,7 @@
         },
         "SECURITY.md": {
             "path": "SECURITY.md",
-            "sha256": "b4e3bda2b29d2df1b10666e974838739beea29036f3f99ea26aeacaa74b51545",
+            "sha256": "8372aa7db3bcfafd5573c92461f0ef6f8e765199bd208c7dcf476024aee64503",
             "required_tokens": [
                 "Security Policy",
                 "Standards & References",
@@ -188,16 +189,24 @@
         },
         "standards.versions.json": {
             "path": "90-infra/standards.versions.json",
-            "sha256": "12fd10ac6daee6e0561322807a88ba6633c0e995a40c9bec4c0fc6529b37080d",
+            "sha256": "2aa44e92371f2505b8a3ed70bed702a9b83eb4f8eebbc128f3f8d5a0ab1a6158",
             "required_tokens": [
                 "standards",
                 "owasp_top10",
                 "cyclonedx"
             ]
         },
+        "change-classes.json": {
+            "path": "90-infra/change-classes.json",
+            "sha256": "006ca241de6077b41d80f43580ae80cfe36403b8f8f0edf3d7fd475669029cf4",
+            "required_tokens": [
+                "classes",
+                "required_evidence"
+            ]
+        },
         "README.md": {
             "path": "README.md",
-            "sha256": "b39bb2b9321f513f1b3b37eccc528b72bf2c2efef7149cd7574de1a31292560f",
+            "sha256": "1a6193d7d6a346df34d25d68848fc34668b530ef94ab5ad10b66460159e9cfa4",
             "required_tokens": [
                 "governance",
                 "structure"
@@ -214,7 +223,7 @@
         },
         "session-continuity.md": {
             "path": "10-flow/session-continuity.md",
-            "sha256": "3d753bcf926dad0c1073492afc4fc6b7c084fd96ff3775a7ff3ef20352521f8e",
+            "sha256": "84f5f6d0d7e5da020b51d44f114a99ed587f88e1ac6f6de0200d18df064e0f8f",
             "required_tokens": [
                 "session",
                 "checkpoint",
@@ -275,7 +284,7 @@
         },
         "documentation-governance.md": {
             "path": "docs/documentation-governance.md",
-            "sha256": "6568eca7417222dd963fcd08791b98344d755238fa47c357050b393d1eb1138a",
+            "sha256": "4f0c816c386124fbc2f0a37743b07b992a5857cf96d1a038522a19a590bd9009",
             "required_tokens": [
                 "documentation governance",
                 "JSDoc",
@@ -284,7 +293,7 @@
         },
         "arxiv-agentic-governance-summary.md": {
             "path": "docs/research/arxiv-agentic-governance-summary.md",
-            "sha256": "eeab40a4310ced6d8df589129541e9dd2d66498969754b447e39543ab1000b77",
+            "sha256": "70496bac848cb893de3582546941637e6cac8d4920e489b37de9dcdb2198f772",
             "required_tokens": [
                 "arXiv",
                 "mapping",

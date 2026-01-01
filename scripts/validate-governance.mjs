@@ -15,7 +15,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const { govRoot, indexPath, pointerPath, packageRoot, configPath } = resolveGovernancePaths(repoRoot);
 const CONFIG_SCHEMA_RELATIVE_PATH = path.join('brainwav', 'governance', '90-infra', 'agentic-config.schema.json');
-const ALLOWED_PROFILES = new Set(['creative', 'core', 'full']);
+const ALLOWED_PROFILES = new Set(['creative', 'delivery', 'release', 'core', 'full']);
+const LEGACY_PROFILES = new Set(['core', 'full']);
 
 function read(file) {
 	return fs.readFileSync(file, 'utf8');
@@ -88,6 +89,11 @@ function checkConfig() {
 	}
 	if (config.profile && !ALLOWED_PROFILES.has(config.profile)) {
 		failures.push(`config profile must be one of ${Array.from(ALLOWED_PROFILES).join(', ')}`);
+	}
+	if (config.profile && LEGACY_PROFILES.has(config.profile)) {
+		console.warn(
+			`[brAInwav] config profile "${config.profile}" is legacy; use "delivery" or "release" going forward.`
+		);
 	}
 	if ('overlays' in config && !Array.isArray(config.overlays)) {
 		failures.push('config overlays must be an array when provided');

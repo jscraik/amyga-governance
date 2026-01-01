@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
+const changeClassPath = path.join(repoRoot, 'brainwav', 'governance', '90-infra', 'change-classes.json');
 
 function existsNonEmpty(p) {
 	return fs.existsSync(p) && fs.statSync(p).size > 0;
@@ -32,6 +33,26 @@ function validateTask(taskRoot, slug) {
 	if (!existsNonEmpty(milestone)) failures.push(`${slug}: milestone test log missing/empty (${milestone})`);
 	if (!existsNonEmpty(contract)) failures.push(`${slug}: contract snapshot missing/empty (${contract})`);
 	if (!existsNonEmpty(reviewer)) failures.push(`${slug}: reviewer pointer missing/empty (${reviewer})`);
+
+	const changeClasses = Array.isArray(manifest.change_classes)
+		? manifest.change_classes
+		: manifest.change_class
+			? [manifest.change_class]
+			: [];
+	if (changeClasses.length > 0 && fs.existsSync(changeClassPath)) {
+		const registry = JSON.parse(fs.readFileSync(changeClassPath, 'utf8'));
+		const required = new Set();
+		changeClasses.forEach((value) => {
+			const entry = registry.classes?.[value];
+			(entry?.required_evidence || []).forEach((item) => required.add(item));
+		});
+		Array.from(required).forEach((relPath) => {
+			const target = path.join(taskRoot, relPath);
+			if (!existsNonEmpty(target)) {
+				failures.push(`${slug}: missing change-class evidence (${relPath})`);
+			}
+		});
+	}
 
 	const memoryIds = path.join(taskRoot, 'json', 'memory-ids.json');
 	if (!existsNonEmpty(memoryIds)) failures.push(`${slug}: memory-ids.json missing/empty`);

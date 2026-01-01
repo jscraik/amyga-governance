@@ -1,6 +1,8 @@
 ---
 summary: "Version history and notable changes."
 read_when: "Checking what changed"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # Changelog

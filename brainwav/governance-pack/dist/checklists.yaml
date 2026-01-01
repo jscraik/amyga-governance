@@ -314,8 +314,8 @@ checklists:
       appliesTo:
         phases:
           - REVIEW
-    - id: observability-logs-metrics-traces-include-brand-brainwav-trace-id-traceparent
-      description: 'Observability: logs/metrics/traces include `brand:"brAInwav"`,
+    - id: observability-logs-metrics-traces-include-service-trace-id-traceparent
+      description: 'Observability: logs/metrics/traces include `service:"<service_name>"`,
         `trace_id`, `traceparent`.'
       severity: MAJOR
       appliesTo:

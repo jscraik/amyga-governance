@@ -14,16 +14,16 @@ This governance framework enables a self-contained, local-first **Agentic Develo
 2) persists knowledge via a **Memory System** with MCP/REST **parity**,  
 3) exposes **only** controlled surfaces — **MCP**, **A2A**, **REST**, and **frontier adapters** — guarded by policy, and  
 4) ships an **A11y-first Ops Dashboard** for health, logs, metrics, traces, and manual controls, and  
-5) applies uniformly across **every brAInwav project** so agents and developers share one contract regardless of repository.
+5) applies uniformly across **every adopting project** so agents and developers share one contract regardless of repository.
 
-> **Governance is code.** The runtime acknowledges the nearest `AGENTS.md`, emits evidence tokens, runs a Vibe Check before acting, treats **time freshness** as a first-class constraint, and assumes every brAInwav codebase follows the same playbook.
+> **Governance is code.** The runtime acknowledges the nearest `AGENTS.md`, emits evidence tokens, runs a Vibe Check before acting, treats **time freshness** as a first-class constraint, and assumes every adopting codebase follows the same playbook.
 
 ---
 
 ## 1) Core Principles
 
 - **Local-first, vendor-neutral.** Ollama preferred; frontier APIs optional behind policy.
-- **Project-neutral governance.** Every brAInwav codebase inherits the same baseline contract; package `AGENTS.md` files may tighten rules but never fork process intent.
+- **Project-neutral governance.** Every adopting codebase inherits the same baseline contract; package `AGENTS.md` files may tighten rules but never fork process intent.
 - **Deterministic & evidence-backed.** Reproducible runs; artifacted logs, traces, SBOM/provenance.
 - **Single integration hub.** Exactly one MCP server; Tools/Resources/Prompts are **registered** (not embedded).
 - **Tight domain boundaries.** No cross-domain imports; communicate via A2A topics or declared contracts/schemas.
@@ -56,7 +56,7 @@ This governance framework enables a self-contained, local-first **Agentic Develo
 ### 3.1 ASBR Orchestrator (LangGraph)
 - Owns graphs, policies, **phase machine (R→G→F→REVIEW)**, and run lifecycle.
 - Invokes MCP Tools/Resources/Prompts, A2A messages, Memory, RAG jobs.
-- Emits structured telemetry (traces/metrics/logs) with `brand:"brAInwav"`, run IDs, and phase transitions.
+- Emits structured telemetry (traces/metrics/logs) with `service:"<service_name>"`, run IDs, and phase transitions. Optional `brand` may be required by overlays.
 
 ### 3.2 MCP (Single Hub)
 - **FastMCP v3** server exposing `/mcp`, `/sse`, `/health`, `/metrics`.
@@ -103,7 +103,7 @@ This governance framework enables a self-contained, local-first **Agentic Develo
 
 ### 4.1 `packages/mcp-server`
 **Vision:** Minimal FastMCP v3 HTTP/SSE hub; loads registries; zero business logic.  
-**Done means:** `/health`, `/mcp`, `/sse`, `/metrics` green; API-key on; Cloudflare Tunnel tested; integration tests pass; **evidence tokens present** (`AGENTS_MD_SHA`, `brAInwav-vibe-check`).
+**Done means:** `/health`, `/mcp`, `/sse`, `/metrics` green; API-key on; Cloudflare Tunnel tested; integration tests pass; **evidence tokens present** (`AGENTS_MD_SHA`, `aegis-vibe-check`, `service:`).
 
 ### 4.2 `packages/mcp-core`
 **Vision:** Protocol utilities, schemas, adapters, error taxonomy.  
@@ -157,7 +157,7 @@ This vision doc is governance-focused. Runtime host/app specifics (e.g., dashboa
 - **Security:** All external calls authenticated; happy-path free of 403s; no secrets logged.  
 - **A11y/UX:** Full keyboard coverage; no color-only indicators; screen-reader labels pass axe/jest-axe.  
 - **Governance Evidence:** PRs contain:
-  - `AGENTS_MD_SHA:<sha>`, `brAInwav-vibe-check`, `PHASE_TRANSITION:*`  
+  - `AGENTS_MD_SHA:<sha>`, `aegis-vibe-check`, `PHASE_TRANSITION:*`, `service:*`  
   - `MODELS:LIVE:OK engine=<ollama|frontier>` with model IDs and dims/norms  
   - Top-level Code Review Checklist link to `governance/rules/code-review-checklist.md`
 
@@ -177,7 +177,7 @@ This vision doc is governance-focused. Runtime host/app specifics (e.g., dashboa
 ## 8) Evidence Protocol (Emitted & Verified)
 
 - **AGENTS Acknowledgement:** `AGENTS_MD_SHA:<sha>` persisted in `governance/run.yaml` and first vibe-check log.
-- **Vibe Check:** `"brAInwav-vibe-check"` log required before act phases.
+- **Vibe Check:** `"aegis-vibe-check"` log required before act phases.
 - **Live-Only Models:** `pnpm models:health && pnpm models:smoke` output includes engine, model IDs, vector dims/norms, latency, and `MODELS:LIVE:OK`.
 - **Time Freshness:** All surfaced dates are ISO-8601; relative terms normalized.
 
@@ -185,7 +185,7 @@ This vision doc is governance-focused. Runtime host/app specifics (e.g., dashboa
 
 ## 9) Project-Neutral Procedure & Steps
 
-> **Applies to every brAInwav repository.** Follow these numbered steps end-to-end; reference documents provide deeper detail but the order is fixed.
+> **Applies to every adopting repository.** Follow these numbered steps end-to-end; reference documents provide deeper detail but the order is fixed.
 
 1. **Bootstrap governance context** – Run `pnpm cortex:governance-bootstrap`, record hashes from `brainwav/governance/90-infra/governance-index.json`, and confirm the nearest `AGENTS.md` + package overrides. (Docs: `governance-quickstart.md`, `AGENT_CHARTER.md`).
 2. **Classify the work item** – Select task type (Feature/Research/Fix/Refactor/Review) and tier per `agentic-coding-workflow.md` §2. Capture metadata in `tasks/<slug>/meta/task.json` before touching code.
@@ -196,7 +196,7 @@ This vision doc is governance-focused. Runtime host/app specifics (e.g., dashboa
 7. **Review & document** – Execute AI + HITL reviews (G6/G7), complete the Code Review Checklist, refresh READMEs/runbooks, and ensure `implementation-plan.md#reuse-ledger` + `SUMMARY.md` are current.
 8. **Ship, monitor, archive** – Roll out per `ops/rollout-plan.md`, watch telemetry, finalize `archive.json`, sync Local Memory parity, and close the task with Evidence Triplet pointers recorded in the run manifest.
 
-Every step emits the mandated tokens in §8 and inherits the phase machine rules in §7, ensuring teams in any brAInwav project progress identically.
+Every step emits the mandated tokens in §8 and inherits the phase machine rules in §7, ensuring teams in any adopting project progress identically.
 
 ---
 

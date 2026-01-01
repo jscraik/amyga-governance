@@ -1,4 +1,13 @@
-# Agentic AI Governance Research Summary — December 2025
+---
+summary: "Research summary mapping governance papers to repo targets."
+read_when: "Evaluating academic references or evidence."
+applies_to: "research"
+owner: "Governance Team"
+---
+
+# Agentic AI Governance Research Summary — December 2025 (Historical)
+
+**Note:** This research summary reflects Dec 2025 sources; the current governance baseline is Jan 2026.
 
 This research summary includes a mapping to repository targets for implementation.
 

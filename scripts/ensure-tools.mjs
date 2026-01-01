@@ -7,7 +7,7 @@
  * Exit non-zero when any required CLI or engine version is missing or too low.
  * This script checks:
  * - Node.js >= 24.11.0
- * - pnpm >= 10.19.0
+ * - pnpm >= 10.26.0
  * - Required CLIs: rg, fd, jq, semgrep, gitleaks, trivy, cosign, osv-scanner, markdownlint-cli2
  *
  * @example
@@ -93,9 +93,9 @@ function main() {
 		ok = false;
 	}
 
-	const pnpmCheck = checkVersion('pnpm', '10.19.0', 'pnpm');
+	const pnpmCheck = checkVersion('pnpm', '10.26.0', 'pnpm');
 	if (!pnpmCheck.ok) {
-		console.error(`[brAInwav] pnpm missing or too low: ${pnpmCheck.version} (need >=10.19.0) -> npm i -g pnpm@10.19.0`);
+		console.error(`[brAInwav] pnpm missing or too low: ${pnpmCheck.version} (need >=10.26.0) -> npm i -g pnpm@10.26.0`);
 		ok = false;
 	}
 

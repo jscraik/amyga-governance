@@ -1,0 +1,8 @@
+pack:
+  id: rust-cli
+  version: 1.0.0
+  default: false
+  summary: "Rust CLI/TUI standards and toolchain policy."
+  standards:
+    - "Rust 2024"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

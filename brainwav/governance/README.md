@@ -1,7 +1,7 @@
 # Agentic Governance Framework
 
 **Status**: Canonical governance structure  
-**Last Updated**: 2025-12-31  
+**Last Updated**: 2026-01-01  
 **Maintainers**: brAInwav Development Team
 
 ---
@@ -93,7 +93,7 @@ Complete specification for AI agent behavior:
 - ArcTDD guardrails (Step Budget, Ask-First, Proof Required, etc.)
 - AI Behavioral Rules (consolidated from RULES_OF_AI.md)
 - Evidence Triplet requirements
-- Brand logging standards
+- Service identity logging standards
 
 ### RULES_OF_AI.md → AGENT_CHARTER.md
 

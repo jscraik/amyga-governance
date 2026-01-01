@@ -1,6 +1,8 @@
 ---
 summary: "Entry point and doc map."
 read_when: "Finding the right doc"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # Agentic Governance Framework Documentation
@@ -11,7 +13,7 @@ Central entry point for the brAInwav Agentic Governance Framework documentation.
 
 > For a CLI list with summaries, run: `node brainwav/governance/commands/docs-list.mjs`
 
-**Adopters should start with:** Introduction → Getting Started → Configuration.
+**Adopters should start with:** START_HERE → Introduction → Getting Started → Configuration.
 
 ## What This Framework Provides
 
@@ -21,7 +23,7 @@ Central entry point for the brAInwav Agentic Governance Framework documentation.
 | Evidence Triplet | Mandatory milestone test, contract snapshot, reviewer disposition |
 | Cortex Aegis Oversight | MCP server for vibe checks, license validation, connector health |
 | Governance Commands | Executable commands for memory, recall, daily summaries |
-| Security Standards | OWASP Top 10:2025, ASVS 5.0.0, LLM Top 10 (2025 v1.1) alignment |
+| Security Standards | Jan 2026 baseline: OWASP Top 10:2025, ASVS 5.0.0, LLM Top 10 (2025 v1.1) |
 | Compliance Mapping | EU AI Act, ISO/IEC 42001 advisory alignment |
 
 ## Documentation
@@ -44,7 +46,7 @@ Central entry point for the brAInwav Agentic Governance Framework documentation.
 - [Documentation Governance](./documentation-governance.md) – Enforces OpenAI Cookbook doc quality and mandatory JSDoc coverage
 - [Security](./security.md) – Security standards and CI gate requirements
 - [Accessibility](./accessibility.md) – WCAG 2.2 AA guidelines
-- [Gap Analysis (Dec 2025)](./gap-analysis-dec-2025.md) – Framework assessment
+- [Gap Analysis (Dec 2025, historical)](./gap-analysis-dec-2025.md) – Framework assessment snapshot
 
 ### Operations
 
@@ -66,3 +68,4 @@ Central entry point for the brAInwav Agentic Governance Framework documentation.
 - [AGENTS.md](../../../AGENTS.md) – Operational policy
 - [SECURITY.md](../../../SECURITY.md) – Security policy
 - [CODESTYLE.md](../../../CODESTYLE.md) – Code standards
+- [Start Here](./START_HERE.md) – Two‑page onboarding and quick commands

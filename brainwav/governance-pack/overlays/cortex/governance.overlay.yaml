@@ -163,7 +163,7 @@ workflow:
         - New acceptance/unit tests **fail first**, then **pass** on the next
           commit
         - "`TIME_FRESHNESS:OK tz=<IANA> today=<YYYY-MM-DD>` token present"
-        - Oversight log (`brAInwav-vibe-check`) stored in `logs/vibe-check/`
+        - Oversight log (`aegis-vibe-check`) stored in `logs/vibe-check/`
     - from: G
       to: F
       requirements:
@@ -192,6 +192,8 @@ evidence:
     - Step Budget ≤ 7
     - Ask-First ≤ 3
     - Evidence Triplet
+    - service:
+    - traceparent
 qualityGates:
   coverage:
     global: 90

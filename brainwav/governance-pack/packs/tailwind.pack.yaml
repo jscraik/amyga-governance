@@ -1,0 +1,8 @@
+pack:
+  id: tailwind
+  version: 1.0.0
+  default: false
+  summary: "Tailwind v4 class sorting and composition policy."
+  standards:
+    - "Tailwind CSS v4"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

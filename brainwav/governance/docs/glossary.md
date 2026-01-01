@@ -1,6 +1,8 @@
 ---
 summary: "Definitions of core governance terms."
 read_when: "Terminology lookup"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # Glossary & Terminology

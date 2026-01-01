@@ -11,7 +11,7 @@
 
 [1-2 sentences describing what you're researching and why]
 
-Example: "Research modern authentication patterns for MCP REST endpoints to ensure OAuth 2.1 PKCE compliance while maintaining brAInwav local-first principles."
+Example: "Research modern authentication patterns for MCP REST endpoints to ensure OAuth 2.1 PKCE compliance while maintaining local-first principles."
 
 ---
 
@@ -26,7 +26,7 @@ Example: "Research modern authentication patterns for MCP REST endpoints to ensu
 - **Component 1**: [Path and brief description]
 - **Component 2**: [Path and brief description]
 
-### brAInwav-Specific Context
+### Project-Specific Context
 - **MCP Integration**: [How this relates to existing MCP tools/contracts]
 - **A2A Events**: [Relevant event flows or communication patterns]
 - **Local Memory**: [How local memory is involved, if applicable]
@@ -48,7 +48,7 @@ Example: "Research modern authentication patterns for MCP REST endpoints to ensu
 ### Best Practices (2025)
 - **[Practice Area]**: [Current recommended approach with references]
   - Source: [Link to authoritative source]
-  - Application: [How this applies to brAInwav governance framework]
+  - Application: [How this applies to this governance framework]
 
 ### Relevant Libraries/Frameworks
 | Library | Version | Purpose | License | Recommendation |
@@ -72,8 +72,8 @@ Example: "Research modern authentication patterns for MCP REST endpoints to ensu
 - ❌ [Disadvantage 1]
 - ❌ [Disadvantage 2]
 
-**brAInwav Compatibility**:
-- [How well this aligns with brAInwav Constitution]
+**Constitution Compatibility**:
+- [How well this aligns with the Constitution]
 - [Impact on MCP/A2A architecture]
 - [Security and privacy considerations]
 
@@ -93,7 +93,7 @@ Example: "Research modern authentication patterns for MCP REST endpoints to ensu
 - ❌ [Disadvantage 1]
 - ❌ [Disadvantage 2]
 
-**brAInwav Compatibility**:
+**Constitution Compatibility**:
 - [Alignment assessment]
 
 **Implementation Effort**: [Low / Medium / High]
@@ -113,7 +113,7 @@ Example: "Research modern authentication patterns for MCP REST endpoints to ensu
 | **Performance** | [Rating/notes] | [Rating/notes] | [Rating/notes] |
 | **Security** | [Rating/notes] | [Rating/notes] | [Rating/notes] |
 | **Maintainability** | [Rating/notes] | [Rating/notes] | [Rating/notes] |
-| **brAInwav Fit** | [Rating/notes] | [Rating/notes] | [Rating/notes] |
+| **Constitution Fit** | [Rating/notes] | [Rating/notes] | [Rating/notes] |
 | **Community Support** | [Rating/notes] | [Rating/notes] | [Rating/notes] |
 | **License Compatibility** | [Rating/notes] | [Rating/notes] | [Rating/notes] |
 
@@ -125,7 +125,7 @@ Example: "Research modern authentication patterns for MCP REST endpoints to ensu
 
 **Rationale**:
 [2-3 paragraphs explaining why this option is recommended, addressing:
-- How it meets brAInwav Constitution requirements
+- How it meets Constitution requirements
 - Technical advantages over alternatives
 - Risk mitigation
 - Alignment with existing architecture]
@@ -138,12 +138,12 @@ Example: "Research modern authentication patterns for MCP REST endpoints to ensu
 
 ## Constraints & Considerations
 
-### brAInwav-Specific Constraints
+### Project-Specific Constraints
 - ✅ **Local-First**: [How this maintains local-only operation]
 - ✅ **Zero Exfiltration**: [Data privacy guarantees]
 - ✅ **Named Exports**: [Code structure compliance]
 - ✅ **Function Size**: [≤40 lines per function adherence]
-- ✅ **Branding**: [Where brAInwav branding appears]
+- ✅ **Identity/Branding**: [Where service identity/branding appears]
 
 ### Technical Constraints
 - [Nx monorepo compatibility]
@@ -306,7 +306,7 @@ export const createFeature = async (
   config: FeatureConfig
 ): Promise<Feature> => {
   // Implementation would go here
-  // Each function ≤40 lines per brAInwav standards
+  // Each function ≤40 lines per governance standards
 };
 ```
 
@@ -333,4 +333,4 @@ export const createFeature = async (
 
 **Stored in Local Memory**: [Yes/No - Document key findings in local-memory for agent context]
 
-Co-authored-by: brAInwav Development Team
+Co-authored-by: <Org> Development Team

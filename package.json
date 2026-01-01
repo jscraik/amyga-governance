@@ -6,7 +6,7 @@
   "description": "Governance automation scripts and MCP helpers",
   "engines": {
     "node": ">=24.11.0",
-    "pnpm": ">=10.19.0"
+    "pnpm": ">=10.26.0"
   },
   "license": "Apache-2.0",
   "repository": {
@@ -43,6 +43,7 @@
     "task:scaffold": "node scripts/task-scaffold.mjs",
     "task:validate": "node scripts/task-validate.mjs",
     "governance:validate": "node scripts/validate-governance.mjs",
+    "governance:validate-standards": "node scripts/validate-standards.mjs",
     "governance:check-nx": "node scripts/check-nx.mjs",
     "governance:validate-evidence": "node scripts/validate-task-evidence.mjs",
     "governance:bootstrap-consumer": "node scripts/bootstrap-consumer.mjs",

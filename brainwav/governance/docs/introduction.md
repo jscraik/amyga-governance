@@ -1,6 +1,8 @@
 ---
 summary: "Framework purpose and philosophy."
 read_when: "First orientation to governance"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # Introduction

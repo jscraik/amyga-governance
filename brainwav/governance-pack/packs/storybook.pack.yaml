@@ -1,0 +1,8 @@
+pack:
+  id: storybook
+  version: 1.0.0
+  default: false
+  summary: "Storybook setup and a11y/interaction policy."
+  standards:
+    - "WCAG 2.2 AA"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

@@ -1,0 +1,8 @@
+pack:
+  id: mcp-server-ts
+  version: 1.0.0
+  default: false
+  summary: "MCP server schema, auth, and audit logging rules."
+  standards:
+    - "Model Context Protocol"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

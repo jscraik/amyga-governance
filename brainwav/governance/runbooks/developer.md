@@ -56,7 +56,7 @@ bun run -T nx run-many -t test --parallel
 
 - Use short TTLs locally: `MEMORY_SHORT_TERM_TTL_MS=15000` keeps promotion loops fast for tests.
 - Drop the auto-promotion bar with `MEMORY_SHORT_TERM_PROMOTION_IMPORTANCE=6` only while reproducing promotion issues; reset to `8` before merging.
-- Tail logs for `brAInwav short-term memory cleanup removed` to confirm expiry cadence and `brAInwav memory_layer backfill completed` after tweaks.
+- Tail logs for `service short-term memory cleanup removed` to confirm expiry cadence and `service memory_layer backfill completed` after tweaks.
 
 ## Closing Waivers After Outages
 

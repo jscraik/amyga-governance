@@ -4,23 +4,21 @@
 
 This document defines **mandatory coding standards** for the agentic governance framework.  
 All contributors and automation agents must follow these rules. CI enforces them via Nx targets and checks (Biome, ESLint **v9 flat config**, Ruff, Pyright, Clippy, pytest, mutation testing, Semgrep, supply-chain scanners).  
-**Baselines**: Node **24 Active LTS** (see [ADR 004](./docs/architecture/decisions/004-node-24-active-lts.md)), React **19**, Next.js **16**, TypeScript **≥ 5.9**, Rust **2024 edition** (rustc ≥ **1.85**).
+**Baselines**: Node **24 Active LTS** (see [ADR 004](./docs/architecture/decisions/004-node-24-active-lts.md)); TypeScript **≥ 5.9** when using TS; Rust **2024 edition** (rustc ≥ **1.85**) when using Rust. Framework-specific baselines are defined in packs.
 
-> **Security advisories override baselines.** When a CVE or security advisory is published for any baseline framework, all affected projects MUST upgrade to the patched version immediately, regardless of the stated baseline. Monitor [Next.js Blog](https://nextjs.org/blog), [React Security](https://react.dev/), and framework-specific channels.
+> **Security advisories override baselines.** When a CVE or security advisory is published for any baseline framework, all affected projects MUST upgrade to the patched version immediately, regardless of the stated baseline. Monitor framework security channels and vendor advisories for each pack you adopt.
 
 ---
 
 ## Table of Contents
 
 - [Purpose](#purpose)
-- [0. brAInwav Production Standards (Hard Prohibitions)](#0-brainwav-production-standards-hard-prohibitions)
+- [0. Gold Production Standards (Hard Prohibitions)](#0-gold-production-standards-hard-prohibitions)
 - [1. General Principles](#1-general-principles)
-- [2. Monorepo Task Orchestration (Nx "Smart" Mode)](#2-monorepo-task-orchestration-nx-smart-mode)
+- [2. Task Orchestration (Repo-Defined)](#2-task-orchestration-repo-defined)
 - [3. JavaScript / TypeScript](#3-javascript--typescript)
-- [3.1. TypeScript Project Configuration](#31-typescript-project-configuration-brainwav-standards)
-- [4. React / Next.js](#4-react--nextjs)
-- [5. Python (uv-managed)](#5-python-uv-managed)
-- [6. Rust (TUI/CLI only)](#6-rust-tuicli-only)
+- [3.1. TypeScript Project Configuration](#31-typescript-project-configuration-governance-standards)
+- [4. Stack-Specific Packs (Use When Applicable)](#4-stack-specific-packs-use-when-applicable)
 - [7. Naming Conventions](#7-naming-conventions)
 - [8. Commit, Releases, ADRs](#8-commit-releases-adrs)
 - [9. Toolchain & Lockfiles](#9-toolchain--lockfiles)
@@ -41,7 +39,7 @@ All contributors and automation agents must follow these rules. CI enforces them
 
 ---
 
-## 0. brAInwav Production Standards (Hard Prohibitions)
+## 0. Gold Production Standards (Hard Prohibitions)
 
 **ABSOLUTE PROHIBITION** — It is a policy violation to ship or describe anything as “production-ready”, “complete”, “operational”, or “fully implemented” if any of the following exist anywhere in a production code path:
 
@@ -52,10 +50,10 @@ All contributors and automation agents must follow these rules. CI enforces them
 - Disabled features signaling gaps (e.g., `console.warn("not implemented")`)
 - Fake metrics or synthetic telemetry presented as real
 
-**Branding & truthfulness**
+**Identity & truthfulness**
 
-- **Apps/binaries/infrastructure services** must include **brAInwav** branding in outputs, **error messages**, and **logs**.  
-- **Shared libraries** SHOULD avoid hard-coded branding; when emitting logs, prefer a structured field `{ brand: "brAInwav" }` passed/injected by the caller.
+- **Apps/binaries/infrastructure services** must include **service identity** in outputs, **error messages**, and **logs** (`service:"<service_name>"`, `[<service>]`).  
+- **Shared libraries** SHOULD avoid hard-coded identity; when emitting logs, prefer structured fields passed/injected by the caller (`service`, optional `brand`).
 - Status claims in UIs, logs, or docs must be **evidence-backed by code** and passing checks.
 - The file `brainwav/governance/00-core/RULES_OF_AI.md` is normative; this document complements it.
 
@@ -75,22 +73,14 @@ All contributors and automation agents must follow these rules. CI enforces them
   - **Exception**: Framework file conventions that require default exports (e.g., Next.js `page.tsx`, `layout.tsx`, `route.ts`, `loading.tsx`, `error.tsx`, `not-found.tsx`, and other App Router special files).
 - **ESM everywhere**: JS/TS packages use `"type": "module"`. Avoid CJS.
 - **Determinism**: No ambient randomness/time in core logic; inject seeds/clocks.
-- **DRY**: Shared logic lives in:
-  - `src/lib/` (TypeScript)
-  - `apps/python-app/lib/` (Python)
-  - `crates/common/` (Rust)
+- **DRY**: Shared logic lives in language-appropriate shared libs (e.g., `src/lib/` for TypeScript). See language packs for other conventions.
 
 ---
 
-## 2. Monorepo Task Orchestration (Nx “Smart” Mode)
+## 2. Task Orchestration (Repo-Defined)
 
-- Use **smart wrappers** instead of blanket `nx run-many`:
-  - `pnpm build:smart`, `pnpm test:smart`, `pnpm lint:smart`, `pnpm typecheck:smart`
-  - Dry-run: `--dry-run` prints affected summary and exits.
-- **Non-interactive by default**: `NX_INTERACTIVE=false` (and `CI=true` if unset). Do not forward `--no-interactive` to child tools.
-- Affected detection via `NX_BASE`/`NX_HEAD` or previous commit fallback. If diff cannot be resolved, wrappers explicitly warn and fall back to full run.
-- Emit consistent diagnostics lines:  
-  `[nx-smart] target=<t> base=<sha> head=<sha> changed=<n> strategy=affected|all`.
+- Use the repo’s task runner and “smart” wrappers when provided.
+- If the repo uses Nx, apply the **pack-nx** ruleset (see packs section) for affected-only execution and diagnostics.
 
 ---
 
@@ -181,7 +171,7 @@ Built-ins like `JSON.parse()` and `Response.json()` return `any`. Mitigate via:
 
 ---
 
-## 3.1. TypeScript Project Configuration (brAInwav Standards)
+## 3.1. TypeScript Project Configuration (Governance Standards)
 
 **Purpose**: Standardized TypeScript configuration across all packages to ensure build consistency, enable incremental compilation, and support project references.
 
@@ -307,45 +297,24 @@ See `docs/troubleshooting/typescript-config.md` for:
 
 ---
 
-## 4. React / Next.js
+## 4. Stack-Specific Packs (Use When Applicable)
 
-- **Baselines**: **React 19** and **Next.js 16** (upgrade immediately for any security advisories).
-- **Component roles**
-  - Containers: fetch, state, mutations.
-  - Presentational children: pure and stateless.
-  - List containers separate from stateless items; use keys and virtualize when needed.
-- **React Server Components (RSC)**
-  - Default to **Server Components**. Mark client code with `"use client"`.
-  - Use `use server` for server actions. Keep client components thin.
-- **Async UI states**
-  - Use **Suspense** and **Error Boundaries**. Every async surface must render: Loading, Error (with retry), Empty, Success.
-- **Accessibility**
-  - WCAG **2.2 AA** baseline.
-  - Proper roles/labels for all interactive elements.
-  - Full keyboard navigation and visible focus. Never rely on color alone.
+Stack-specific guidance lives in packs to keep core standards portable. Apply the relevant pack(s) for your repo:
 
----
+- `pack-ts-base` – TypeScript strictness, schema validation, lint/testing norms.
+- `pack-react-vite` – React 19 + Vite conventions (framework-agnostic).
+- `pack-react-next` – React 19 + Next.js 16 (RSC, App Router).
+- `pack-tailwind` – Tailwind v4 class sorting and linting policy.
+- `pack-storybook` – Storybook setup, a11y/interaction testing.
+- `pack-cloudflare-workers` – Workers runtime constraints and tests.
+- `pack-mcp-server-ts` – MCP tool schemas, auth, audit logs, egress allowlists.
+- `pack-swift-appkit` – AppKit/Swift concurrency, linting, release checklist.
+- `pack-openai-apps-sdk-ui` – OpenAI Apps SDK UI integration and safety.
+- `pack-python-uv` – Python (uv) lint/format/testing conventions.
+- `pack-rust-cli` – Rust 2024 CLI/TUI conventions.
+- `pack-nx` – Nx affected-only orchestration and diagnostics.
 
-## 5. Python (uv-managed)
-
-- **Identifiers**: `snake_case` (funcs/vars), `PascalCase` (classes).
-- **Types**: Required on all public functions. Enforce with **Pyright** (`strict`).
-- **Lint/format**: **Ruff** (`ruff check --fix` + `ruff format`) is mandatory.
-- **Packaging**: Each app has `pyproject.toml` and `uv.lock`. Use `uv` for sync/run.
-- **Imports**: Absolute imports only.
-- **Testing**: `pytest` suite participates in repo quality gates (see §10). Aim for high branch coverage per package; release-readiness gates may require ≥95%.
-
----
-
-## 6. Rust (TUI/CLI only)
-
-- **Edition**: Pin to **Rust 2024**.
-- **Minimum toolchain**: `rustc 1.85.0` (pin via `rust-toolchain.toml`).
-- **Style & lints**: `rustfmt` + `cargo clippy -- -D warnings` (CI fails on warnings).
-- **Errors**: CLI binaries use `anyhow::Result`; libraries expose structured enums (e.g., `thiserror`).
-- **UI**: `ratatui`/`crossterm`. Provide ASCII fallback; never color-only indicators.
-- **Modules**: < 500 LOC; extract shared logic into crates.
-- **Testing**: Unit tests alongside modules; integration tests under `tests/`.
+Pack docs live in `brainwav/governance/docs/packs/`; pack metadata lives in `brainwav/governance-pack/packs/`.
 
 ---
 
@@ -478,9 +447,9 @@ See `docs/troubleshooting/typescript-config.md` for:
 | Rule ID | Source | Summary | Charter linkage |
 | --- | --- | --- | --- |
 | `no-dotenv-in-prod` | `semgrep/brAInwav.yml` | Blocks `dotenv.config()` in prod paths; require shared loader. | Guardrail #9 (preflight secrets) + G4 env discipline |
-| `no-console-in-prod` | `semgrep/brAInwav.yml` + ESLint `no-console` override | Forces `traceLogger.log()` with branded payload + `trace_id`. | Guardrail #6 (brand logs) + trace context |
+| `no-console-in-prod` | `semgrep/brAInwav.yml` + ESLint `no-console` override | Forces `traceLogger.log()` with structured identity payload + `trace_id`. | Guardrail #6 (identity logs) + trace context |
 | `no-math-random-in-prod` | `semgrep/brAInwav.yml` | Prevents fabricated data/entropy. | Guardrail #6 & Proof integrity |
-| `require-brainwav-brand-in-logs` | `semgrep/brAInwav.yml` | Ensures `{ brand:"brAInwav" }` attached to logs. | Guardrail #6 |
+| `require-service-identity-in-logs` | `semgrep/brAInwav.yml` | Ensures `{ service:"<service_name>" }` attached to logs. | Guardrail #6 |
 | `async-must-accept-abortsignal` | `semgrep/brAInwav.yml` | Exported async APIs require `AbortSignal`. | Guardrail #7 (Arc Protocol resilience) |
 | `no-explicit-any` | ESLint `@typescript-eslint/no-explicit-any` | No `any` anywhere (not just boundaries). | Guardrail #4 (Proof) |
 | `no-unsafe-*` | ESLint `@typescript-eslint/no-unsafe-{assignment,member-access,argument,return}` | Blocks viral `any` spread from JSON.parse, etc. | Guardrail #4 (Proof) |
@@ -512,8 +481,8 @@ See `docs/troubleshooting/typescript-config.md` for:
 - **OpenTelemetry**: Instrument services/CLIs to emit OTLP **traces, metrics, and logs**. Correlate request IDs end-to-end.
   - **Logs Data Model**: Spec status is "Stable" per [OpenTelemetry spec](https://opentelemetry.io/docs/specs/otel/logs/data-model/).
   - **JS/TS implementation caveat**: The JavaScript SDK logs implementation is listed as "Development" maturity. For Node services, prefer collector-side log ingestion or accept development-status APIs with appropriate testing. Monitor [OTel JS status](https://opentelemetry.io/docs/languages/js/) for GA promotion.
-- **brAInwav logging**
-  - Structured logs SHOULD include `brand: "brAInwav"` at app/service boundaries; libraries inherit caller context.
+- **Service identity logging**
+  - Structured logs SHOULD include `service: "<service_name>"` at app/service boundaries; libraries inherit caller context. `brand` is optional unless required by overlays.
   - Log levels: `error`, `warn`, `info`, `debug`, `trace` only.
 - **Performance budgets**: Define bundle/time/memory budgets per app. Fail CI if exceeded.
 - **Streaming modes (CLI)**
@@ -539,7 +508,7 @@ See `docs/troubleshooting/typescript-config.md` for:
 ## 17. Repository Scripts & Reports
 
 - **Codemap snapshots**
-  - `pnpm codemap` runs `scripts/codemap.py` and emits `out/codemap.json` + `out/codemap.md` with **brAInwav-branded** output.
+  - `pnpm codemap` runs `scripts/codemap.py` and emits `out/codemap.json` + `out/codemap.md` with **service-identified** output.
   - Optional tools (`lizard`, `madge`, `depcheck`) annotate results under `analysis` without failing if missing.
   - Scopes: `repo`, `package:<name>`, `app:<name>`, `path:<relative>`.
 - **Badges & metrics**
@@ -567,7 +536,7 @@ See `docs/troubleshooting/typescript-config.md` for:
 - **Mise**: `.mise.toml` pins tool versions (Node 24 Active LTS, Python, uv, Rust; per [ADR-004](./docs/architecture/decisions/004-node-24-active-lts.md))
 - **CI**: `.github/workflows/*.yml` enforce gates (quality, security, supply chain, badges)
 - **ADRs**: `docs/adr/` (MADR template)
-- **brAInwav Rules**: `brainwav/governance/00-core/RULES_OF_AI.md` (primary production standards)
+- **Rules of AI**: `brainwav/governance/00-core/RULES_OF_AI.md` (primary production standards)
 
 ---
 

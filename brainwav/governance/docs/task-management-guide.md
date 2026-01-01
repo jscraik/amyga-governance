@@ -1,6 +1,8 @@
 ---
 summary: "End-to-end task workflow and evidence requirements."
 read_when: "Planning or running a task"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # brAInwav governance framework Task Management Guide
@@ -13,7 +15,7 @@ read_when: "Planning or running a task"
 
 ## Overview
 
-This guide documents the enhanced task management workflow for brAInwav governance framework, combining our existing agentic development process with spec-kit-inspired best practices for prioritization and independent testability.
+This guide documents the enhanced task management workflow for the brAInwav governance framework, combining our existing agentic development process with spec-kit-inspired best practices for prioritization and independent testability.
 
 ---
 
@@ -24,7 +26,7 @@ The brAInwav task workflow emphasizes:
 1. **Priority-Driven Development**: All user stories are prioritized (P0-P3) to focus on highest-value work first
 2. **Independent Testability**: Each user story should be independently implementable and testable
 3. **Test-Driven Development**: Write tests first, then implement to make them pass (Red-Green-Refactor)
-4. **brAInwav Standards**: All outputs include brAInwav branding, meet 90%+ coverage, and pass quality gates
+4. **Gold Standards**: All outputs include service identity/branding (per overlays), meet 90%+ coverage, and pass quality gates
 5. **Documentation as Code**: Research, specifications, and plans are living documents stored in version control
 
 ---
@@ -64,7 +66,7 @@ pnpm governance-task init "Feature Name" --priority P1
 2. Document current state observations
 3. Research external standards and best practices
 4. Evaluate technology options (compare pros/cons)
-5. Assess brAInwav compatibility and constraints
+5. Assess governance compatibility and constraints
 6. Run proof-of-concept tests if needed
 7. Recommend approach with rationale
 
@@ -77,7 +79,7 @@ pnpm governance-task init "Feature Name" --priority P1
 - Constraints & Considerations
 - Open Questions
 
-**brAInwav-Specific Requirements**:
+**Project-Specific Requirements**:
 - Document existing MCP/A2A integration points
 - Identify reusable patterns in codebase
 - Note security and privacy considerations
@@ -162,11 +164,11 @@ pnpm governance-task plan [task-id]
 **Sub-Phase 4b: GREEN (Make Tests Pass)**
 1. Implement minimal code to pass each test
 2. Follow implementation checklist in TDD plan
-3. Adhere to brAInwav standards:
+3. Adhere to governance standards:
    - Named exports only (no `export default`)
    - Functions ≤40 lines
    - Async/await exclusively (no `.then()`)
-   - brAInwav branding in all outputs
+   - service identity/branding in all outputs (per overlays)
 4. Run tests frequently - work toward ALL GREEN
 5. Don't optimize yet - just make tests pass
 
@@ -212,7 +214,7 @@ pnpm test --grep "a11y"   # Run accessibility tests
 **Manual Verification**:
 - [ ] All tests GREEN (100% pass rate)
 - [ ] No mock/placeholder code in production paths
-- [ ] brAInwav branding consistently applied
+- [ ] service identity/branding consistently applied
 - [ ] Constitution compliance verified
 - [ ] Functions all ≤40 lines
 - [ ] Named exports only
@@ -242,7 +244,7 @@ pnpm test --grep "a11y"   # Run accessibility tests
 - Store comprehensive task summary
 - Document key decisions and lessons learned
 - Tag with relevant context for future agents
-- Include brAInwav-specific patterns discovered
+- Include project-specific patterns discovered
 
 **Completion Checklist**:
 - [ ] CHANGELOG.md updated
@@ -412,7 +414,7 @@ describe('OAuth PKCE Flow', () => {
     expect(challenge.method).toBe('S256');
   });
   
-  it('should reject invalid authorization code with brAInwav error', async () => {
+  it('should reject invalid authorization code with service-identified error', async () => {
     // Given: Invalid authorization code
     const authService = createAuthService();
     const invalidCode = 'invalid-code-123';
@@ -420,9 +422,9 @@ describe('OAuth PKCE Flow', () => {
     // When: Token exchange is attempted
     const result = authService.exchangeToken(invalidCode);
     
-    // Then: Appropriate brAInwav-branded error is thrown
+    // Then: Appropriate service-identified error is thrown
     await expect(result).rejects.toThrow(
-      'brAInwav governance framework: Invalid authorization code'
+      'governance service: Invalid authorization code'
     );
   });
 });
@@ -494,11 +496,11 @@ All development must comply with Constitution requirements.
 **Solution**:
 1. Run specific gate individually to see errors
 2. Fix violations based on error messages
-3. Ensure brAInwav standards met:
+3. Ensure governance standards met:
    - Named exports only
    - Functions ≤40 lines
    - Async/await (no `.then()`)
-   - brAInwav branding in outputs
+   - service identity/branding in outputs
 
 ---
 

@@ -1,6 +1,8 @@
 ---
 summary: "Environment, MCP, config and overlay setup."
 read_when: "Configuring governance for a repo"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # Configuration
@@ -9,13 +11,17 @@ The governance framework uses environment variables and configuration files for 
 
 ## Governance Config (Profiles + Overlays)
 
-Use `.agentic-governance/config.json` to select local profiles and declare policy overlays. This file is validated by `scripts/validate-governance.mjs` and MUST NOT weaken base governance.
+Use `.agentic-governance/config.json` to select local profiles, set identity hints, and declare policy overlays. This file is validated by `scripts/validate-governance.mjs` and MUST NOT weaken base governance.
 
 ```json
 {
   "$schema": "brainwav/governance/90-infra/agentic-config.schema.json",
   "version": "1.0",
-  "profile": "creative",
+  "profile": "release",
+  "identity": {
+    "serviceName": "example-service",
+    "brand": "ExampleOrg"
+  },
   "overlays": [
     {
       "name": "org-tightening",
@@ -92,3 +98,8 @@ sha256sum brainwav/governance/00-core/*.md
 ## Task Folder Configuration
 
 Task folders follow the structure defined in `brainwav/governance/10-flow/agentic-coding-workflow.md` §3. Customize the base path via `GOV_HOME` (defaults to `~/.agentic-governance`).
+**Profiles:**
+- `creative` – local-only defaults for exploration (no CI weakening).
+- `delivery` – full gates for daily work.
+- `release` – **gold standard**: delivery + supply-chain/release evidence (CI default).
+- Legacy synonyms accepted: `core` → `delivery`, `full` → `release`.

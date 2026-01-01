@@ -27,7 +27,7 @@
    - Record Evidence Triplet placeholders inside `~/Changelog/<slug>/arcs/<n>/`
 6. **Run red → green → refactor micro-loops**
    - Keep loops ≤20 minutes or ≤3 commits
-   - Append `[brAInwav]` recap entries after each cadence window
+   - Append `[<service>]` recap entries after each cadence window
 7. **Seal the Evidence Triplet and gates**
    - Capture Milestone Test diff, contract snapshot, reviewer JSON pointer
    - Verify artifacts via `pnpm evidence:triplet:verify --slug <slug>`

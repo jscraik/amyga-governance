@@ -1,0 +1,8 @@
+pack:
+  id: react-vite
+  version: 1.0.0
+  default: false
+  summary: "React 19 + Vite UI conventions."
+  standards:
+    - "WCAG 2.2 AA"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

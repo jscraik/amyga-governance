@@ -33,7 +33,7 @@ This constitution defines the **foundational principles** that govern all AI-ass
 
 ## I. Core Principles
 
-### 1. brAInwav Production Standards (NON-NEGOTIABLE)
+### 1. Gold Production Standards (NON-NEGOTIABLE)
 
 **No Mock Production Claims**: Never describe any implementation as "production-ready", "complete", "operational", or "fully implemented" if it contains any of the following in production paths:
 
@@ -42,7 +42,7 @@ This constitution defines the **foundational principles** that govern all AI-ass
 - `TODO`/`FIXME`/`HACK`, or `console.warn("not implemented")`
 - Fake metrics/telemetry
 
-**brAInwav Branding**: All system outputs, error messages, health checks, and status logs **must** include brAInwav branding (`"[brAInwav]"` and `brand:"brAInwav"` in structured logs).
+**Service Identity Logging**: All system outputs, error messages, health checks, and status logs **must** include a service identifier (`"[<service>]"` prefix and `service:"<service_name>"` in structured logs). A `brand:"<org>"` field is optional and may be required by overlays.
 
 **Evidence-Based Status**: Status claims must be verified against passing gates and attached evidence.
 
@@ -101,11 +101,11 @@ Embeddings, rerankers, generations must use **live** engines (Ollama or approved
 
 ### 9. Governance Hooks (AGENTS.md + Vibe-Check)
 
-Agents must load the nearest `AGENTS.md` and record its SHA (`AGENTS_MD_SHA:<sha>`) in run state and logs. Agents must call **Vibe Check MCP** `vibe_check` after planning and **before** file writes/network calls/long runs; logs must include `"brAInwav-vibe-check"`.
+Agents must load the nearest `AGENTS.md` and record its SHA (`AGENTS_MD_SHA:<sha>`) in run state and logs. Agents must call **Vibe Check MCP** `vibe_check` after planning and **before** file writes/network calls/long runs; logs must include `"aegis-vibe-check"`.
 
 ### 10. Observability & Trace Context (NORMATIVE)
 
-All charter-governed logs are structured JSON and include: ISO‑8601 timestamp, `[brAInwav]` prefix, `brand:"brAInwav"`, **W3C Trace Context** correlation (`traceparent` header value) and `trace_id`/`span_id` fields for **OpenTelemetry** correlation.
+All charter-governed logs are structured JSON and include: ISO‑8601 timestamp, `[<service>]` prefix, `service:"<service_name>"`, **W3C Trace Context** correlation (`traceparent` header value) and `trace_id`/`span_id` fields for **OpenTelemetry** correlation. A `brand` field is optional and may be required by overlays.
 
 ### 11. Identity & Secrets (Federated)
 
@@ -135,7 +135,7 @@ CI workflows and long‑lived services **must** use **OIDC/WIF** to cloud provid
 
 ### Code Quality
 
-ESLint/Biome/ast-grep; Python Ruff; Rust Clippy; no `console.log` in prod paths; deterministic outputs; structured logs with brand + request/run IDs; **OTel traces/logs/metrics with correlation**.
+ESLint/Biome/ast-grep; Python Ruff; Rust Clippy; no `console.log` in prod paths; deterministic outputs; structured logs with service identity + request/run IDs (brand optional); **OTel traces/logs/metrics with correlation**.
 
 ### Testing Requirements
 
@@ -143,7 +143,7 @@ Vitest (TS), pytest (Py), property-based for critical code, Stryker mutation whe
 
 ### Documentation
 
-Each package requires README with purpose, setup, API, examples, branding.  
+Each package requires README with purpose, setup, API, examples, service identity notes.  
 Per-task artifacts stored under `~/tasks/[feature]/`.  
 **Local Memory parity**: decisions/rationales appended to `.github/instructions/memories.instructions.md` **and** persisted via Local Memory MCP/REST.
 

@@ -139,7 +139,7 @@
 ### 4.1 Governance & Scope
 
 - [ ] Scope appropriate; no unrelated changes.
-- [ ] Constitution + AGENT_CHARTER requirements satisfied (branding, secrets, reality filter, no fake telemetry).
+- [ ] Constitution + AGENT_CHARTER requirements satisfied (identity/logging, secrets, reality filter, no fake telemetry).
 - [ ] Task folder + `run-manifest.json` present and current.
 - [ ] Reuse-first artefacts (analysis/reuse-evaluation.md + PLAN reuse ledger) reviewed; helper diffs cite evidence.
 
@@ -163,7 +163,7 @@
 ### 4.5 Performance & Reliability
 
 - [ ] Hot path changes reviewed for allocations + complexity; long-running operations cancellable.
-- [ ] Observability: logs/metrics/traces include `brand:"brAInwav"`, `trace_id`, `traceparent`.
+- [ ] Observability: logs/metrics/traces include `service:"<service_name>"`, `trace_id`, `traceparent` (brand optional unless required by overlays).
 - [ ] Rollback plan realistic; feature flags guard risky features.
 
 ### 4.6 AI / MCP Specific

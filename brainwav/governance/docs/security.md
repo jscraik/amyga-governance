@@ -1,13 +1,15 @@
 ---
 summary: "Security standards and CI gate requirements."
 read_when: "Security tooling or compliance alignment"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # Security
 
 The governance framework aligns with current security standards and requires specific tooling in CI/CD pipelines.
 
-## Standards & References (December 2025)
+## Standards & References (January 2026)
 
 Pinned versions live in `brainwav/governance/90-infra/standards.versions.json` and are treated as the source of truth for this table. Update the registry first, then run `pnpm governance:sync-hashes`.
 
@@ -35,7 +37,7 @@ Pinned versions live in `brainwav/governance/90-infra/standards.versions.json` a
 | CycloneDX 1.7 | SBOM generation | Required for releases |
 | SPDX 3.0.1 | SBOM interchange | Required for releases |
 | Sigstore Cosign | Attestation signing | Required for releases |
-| OpenSSF Scorecard | Supply-chain posture | Required on release branches |
+| OpenSSF Scorecard (v2.2.0) | Supply-chain posture | Required on release branches |
 
 ## Security Requirements
 

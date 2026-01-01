@@ -1,6 +1,8 @@
 ---
 summary: "Common issues and fixes."
 read_when: "When something fails or is unclear"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # Troubleshooting Guide

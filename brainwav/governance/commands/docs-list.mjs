@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 const docsRoot = path.join(repoRoot, 'brainwav', 'governance', 'docs');
+const REQUIRED_FIELDS = ['summary', 'read_when', 'applies_to', 'owner'];
 
 function readFile(filePath) {
 	return fs.readFileSync(filePath, 'utf8');
@@ -45,26 +46,52 @@ function extractSummary(content) {
 	return 'No summary available.';
 }
 
+function walkDocs(dir) {
+	const entries = fs.readdirSync(dir, { withFileTypes: true });
+	const files = [];
+	for (const entry of entries) {
+		const fullPath = path.join(dir, entry.name);
+		if (entry.isDirectory()) {
+			files.push(...walkDocs(fullPath));
+		} else if (entry.isFile() && entry.name.endsWith('.md')) {
+			files.push(fullPath);
+		}
+	}
+	return files;
+}
+
 function listDocs() {
 	if (!fs.existsSync(docsRoot)) {
 		console.error(`[brAInwav] docs folder not found: ${docsRoot}`);
 		process.exitCode = 1;
 		return;
 	}
-	const entries = fs.readdirSync(docsRoot, { withFileTypes: true })
-		.filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
-		.map((entry) => entry.name)
+	const entries = walkDocs(docsRoot)
+		.map((filePath) => path.relative(docsRoot, filePath))
 		.sort();
 
 	console.log('[brAInwav] Governance docs index:');
+	const missing = [];
 	entries.forEach((name) => {
 		const filePath = path.join(docsRoot, name);
 		const content = readFile(filePath);
-		const frontmatter = extractFrontmatter(content) || {};
-		const summary = frontmatter.summary || extractSummary(content);
-		const readWhen = frontmatter.read_when || frontmatter.readWhen || 'General reference';
+		const frontmatter = extractFrontmatter(content);
+		if (!frontmatter) {
+			missing.push(`${name}: missing frontmatter`);
+		} else {
+			REQUIRED_FIELDS.forEach((field) => {
+				if (!frontmatter[field]) missing.push(`${name}: missing ${field}`);
+			});
+		}
+		const summary = frontmatter?.summary || extractSummary(content);
+		const readWhen = frontmatter?.read_when || frontmatter?.readWhen || 'General reference';
 		console.log(`- ${name} | ${summary} | read when: ${readWhen}`);
 	});
+	if (missing.length) {
+		console.error('[brAInwav] docs metadata validation failed:');
+		missing.forEach((entry) => console.error(` - ${entry}`));
+		process.exitCode = 1;
+	}
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

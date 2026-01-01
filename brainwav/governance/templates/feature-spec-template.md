@@ -14,7 +14,7 @@
 
 ## Executive Summary
 
-[2-3 sentence overview of what this feature accomplishes and why it matters for brAInwav governance framework]
+[2-3 sentence overview of what this feature accomplishes and why it matters for this governance framework]
 
 ---
 
@@ -56,8 +56,8 @@ Priority Definitions:
    **When** [alternative user action]  
    **Then** [expected alternative outcome]
 
-**brAInwav Branding Requirements**:
-- [List any UI messages, logs, or outputs that must include brAInwav branding]
+**Service Identity/Branding Requirements**:
+- [List any UI messages, logs, or outputs that must include service identity/branding (per overlays)]
 
 ---
 
@@ -113,7 +113,7 @@ Each edge case should have its own Given-When-Then scenario.
 **Given** [boundary condition or unusual state]  
 **When** [action that triggers edge case]  
 **Then** [expected graceful handling]  
-**And** [error message includes brAInwav branding]
+**And** [error message includes service identity/branding]
 
 #### Edge Case 2: [Description]
 **Given** [error condition]  
@@ -135,7 +135,7 @@ Each edge case should have its own Given-When-Then scenario.
    - **Rationale**: [Why this is needed]
    - **Validation**: [How to verify this is met]
 
-3. **[FR-003]** brAInwav branding included in:
+3. **[FR-003]** Service identity/branding included in:
    - System outputs and status messages
    - Error messages and warnings
    - Health check responses
@@ -167,7 +167,7 @@ Each edge case should have its own Given-When-Then scenario.
 
 #### Observability
 - **[NFR-O-001]** OpenTelemetry spans for key operations
-- **[NFR-O-002]** Structured logging with brAInwav context
+- **[NFR-O-002]** Structured logging with service identity context
 - **[NFR-O-003]** Prometheus metrics for resource usage
 - **[NFR-O-004]** Error tracking with full context
 
@@ -180,7 +180,7 @@ Each edge case should have its own Given-When-Then scenario.
 - Async/await exclusively (no `.then()` chains)
 - Functions ≤ 40 lines (split if longer)
 - Zod schemas for input validation
-- brAInwav branding in all outputs
+- Service identity/branding in all outputs (per overlays)
 
 ### Must Avoid
 - `Math.random()` for production data
@@ -291,7 +291,7 @@ export const featureToolSchema = z.object({
 ### Qualitative
 - [ ] Code review approval from maintainers
 - [ ] Constitution compliance verified
-- [ ] brAInwav branding consistently applied
+- [ ] Service identity/branding consistently applied
 - [ ] Accessibility audit passed
 - [ ] Documentation complete and accurate
 
@@ -320,11 +320,11 @@ export const featureToolSchema = z.object({
 
 ## Compliance Checklist
 
-- [ ] Follows brAInwav Constitution principles
+- [ ] Follows Constitution principles
 - [ ] Adheres to CODESTYLE.md standards
 - [ ] RULES_OF_AI.md ethical guidelines respected
 - [ ] No mock production claims
-- [ ] brAInwav branding included throughout
+- [ ] Service identity/branding included throughout
 - [ ] WCAG 2.2 AA accessibility requirements met
 - [ ] Security requirements satisfied
 - [ ] Test-driven development approach documented

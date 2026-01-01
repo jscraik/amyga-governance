@@ -1,0 +1,8 @@
+pack:
+  id: ts-base
+  version: 1.0.0
+  default: false
+  summary: "TypeScript base standards and strictness."
+  standards:
+    - "TypeScript 5.9+"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

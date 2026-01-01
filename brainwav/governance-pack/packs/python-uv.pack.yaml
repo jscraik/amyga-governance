@@ -1,0 +1,8 @@
+pack:
+  id: python-uv
+  version: 1.0.0
+  default: false
+  summary: "Python (uv) linting, typing, and packaging."
+  standards:
+    - "Python"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

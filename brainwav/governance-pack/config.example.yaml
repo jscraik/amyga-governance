@@ -73,6 +73,8 @@ evidenceTokens:
   - Step Budget ≤ ${stepBudget}
   - Ask-First ≤ ${askFirst}
   - Evidence Triplet
+  - service:
+  - traceparent
 securityScanners:
   - semgrep
   - gitleaks

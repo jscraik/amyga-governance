@@ -184,18 +184,18 @@ Generates `.agentic-governance/agent-context.json` containing:
   - Re-run bootstrap whenever `.agentic-governance/mcp.runtime.json` changes.
 - Optional `--health-check --task <slug>` will probe each MCP transport and write results to `tasks/<slug>/logs/connector-health/connector-health-*.json` for Cortex Aegis inputs.
 
-> [brAInwav] **Health Check Operational Note:**  
+> **Health Check Operational Note:**  
 > - Health checks are **informational only** and do **not** block the bootstrap process.  
 > - If health check results show errors, agents **should investigate** but may proceed with operation unless otherwise instructed by governance or security policy.  
 > - If no MCP servers are configured, health checks are **skipped** and a "not applicable" status is logged.  
-> - Health check logs are retained in `tasks/<slug>/logs/connector-health/` and are subject to standard log rotation and retention policies (see [brAInwav Log Lifecycle Guide](docs/log-lifecycle.md)).  
+> - Health check logs are retained in `tasks/<slug>/logs/connector-health/` and are subject to standard log rotation and retention policies (see [Log Lifecycle Guide](docs/log-lifecycle.md)).  
 > - For interpreting health check results, refer to the [Cortex Aegis documentation](brainwav/governance/docs/cortex-aegis.md).  
 **Key Rules:**
 
 1. MUST run before deriving a system prompt or selecting a workflow.
 2. MUST NOT create `tasks/<slug>/` or modify existing manifests.
 3. SHOULD re‑run if `AGENTS.md` or any governance doc hash changes.
-4. MUST log branded line `[brAInwav] cortex-governance-bootstrap …` for audit.
+4. MUST log a service-identity line (e.g., `[<service>] cortex-governance-bootstrap …`) for audit.
 5. NOTE: Governance index hashes refresh when `brainwav/governance/10-flow/agentic-coding-workflow.md` changes—rerun the bootstrap to cache the new digest.
 
 **Preamble Injection Example:**
@@ -341,7 +341,7 @@ pnpm oversight:vibe-check \
   rights; include only SAFE/REVIEW content. Store findings + validation JSON under
   `tasks/<slug>/logs/academic-research/`.
 - **Connector Health:** Probe research MCPs; attach `research/connectors-health.log`.
-- **Responses:** MUST include `brand:"brAInwav"`, `[brAInwav]`, `trace_id`.
+- **Responses:** MUST include `service:"<service_name>"`, `[<service>]`, `trace_id`, `traceparent` (brand optional unless required by overlays).
 
 ---
 
@@ -453,7 +453,7 @@ NEVER use grep for project-wide searches (slow, ignores .gitignore). ALWAYS use 
 ## 20) Anti‑Patterns (CI fails) 〔AGENTS‑STY‑007〕
 
 Default exports; >40‑line functions; promise chains without `await`; `any` in prod;
-ambient randomness/time; `eval`; missing brand logs/errors; placeholder adapters;
+ambient randomness/time; `eval`; missing service-identity logs/errors; placeholder adapters;
 fake telemetry; cross‑domain imports; memory parity skipped; unpinned bumps;
 speculative parallelism without mitigations; “will be wired later” in prod paths.
 
@@ -461,9 +461,8 @@ speculative parallelism without mitigations; “will be wired later” in prod p
 
 ## 21) Frontend Scope
 
-Root defines repo‑wide expectations (Next.js App Router, Suspense, Error
-Boundaries, WCAG 2.2 AA). Framework specifics belong in package `AGENTS.md` or
-`/docs/frontend/<framework>.md`.
+Root defines repo‑wide expectations (WCAG 2.2 AA, error boundaries, async UI
+states). Framework specifics belong in packs or package `AGENTS.md`.
 
 ---
 
@@ -515,7 +514,7 @@ tasks/<slug>/
 └─ attestations/*.bundle
 ```
 
-Run manifest MUST track tier, arcs (≤7 steps), session resets, and evidence pointers. Include `governance.rules_index` (see §2).
+Run manifest MUST track tier, arcs (≤7 steps), session resets, **change_class**, and evidence pointers. Include `governance.rules_index` (see §2). Change classes are defined in `brainwav/governance/90-infra/change-classes.json` and add evidence requirements; they never relax baseline gates.
 
 ---
 
@@ -529,7 +528,7 @@ unavailable, mark **blocked**; seek waiver.
 
 ```bash
 pnpm models:health && pnpm models:smoke
-# attach model IDs, vector shapes/norms, latency samples, brand + engine
+# attach model IDs, vector shapes/norms, latency samples, service identity + engine
 ```
 
 ---
@@ -555,7 +554,7 @@ CI mirrors the filled checklist to `brainwav/governance/audit/reviews/<PR_NUMBER
 | Rule ID         | Description                                | CI Job               | Script/Check                               |
 | --------------- | ------------------------------------------ | -------------------- | ------------------------------------------ |
 | AGENTS‑CHK‑001  | Checklist token present                    | `agents-guard`       | grep for `CODE-REVIEW-CHECKLIST:`          |
-| AGENTS‑PRV‑002  | Oversight logs attached                    | `agents-guard`       | search `brAInwav-vibe-check` in artefacts  |
+| AGENTS‑PRV‑002  | Oversight logs attached                    | `agents-guard`       | search `aegis-vibe-check` in artefacts     |
 | AGENTS‑HMS‑003  | Live model evidence present                | `models-smoke`       | verify model IDs/vector norms in logs      |
 | AGENTS‑ACL‑004  | Package `AGENTS.md` not weakening root     | `structure-validate` | compare rule sets                          |
 | AGENTS‑ACL‑011  | Academic license validation evidence       | `agents-guard`       | check `license-validation.json`            |
@@ -721,6 +720,6 @@ CI mirrors the filled checklist to `brainwav/governance/audit/reviews/<PR_NUMBER
 - Add `brainwav/governance/90-infra/governance-index.json` with paths + SHA‑256 for all governance docs; wire its path into each `tasks/<slug>/json/run-manifest.json`.
 - Ensure the agent bootstrap loads & verifies the index before acting; refuse to run on hash mismatch.
 - Extend CI/Danger to (a) verify the index and (b) require the Oversight + academic license evidence bundle.
-- Keep your existing brand tokens, phase machine, and Evidence Triplet flow—this update only strengthens linkage and enforcement.
+- Keep your existing service identity tokens, phase machine, and Evidence Triplet flow—this update only strengthens linkage and enforcement.
 ::contentReference[oaicite:0]{index=0}
 ```text

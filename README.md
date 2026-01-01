@@ -16,7 +16,7 @@ The brAInwav framework packages policies, workflows, templates, and automation f
 - [Architecture: Core + Packs + Adapters](#architecture-core--packs--adapters)
 - [Creative vs Delivery Modes](#creative-vs-delivery-modes)
 - [Profiles & Overlays (local-only defaults)](#profiles--overlays-local-only-defaults)
-- [Adoption Paths (Dec 2025 best practice)](#adoption-paths-dec-2025-best-practice)
+- [Adoption Paths (Jan 2026 best practice)](#adoption-paths-jan-2026-best-practice)
 - [Governance Commands](#governance-commands)
 
 ---
@@ -26,7 +26,7 @@ The brAInwav framework packages policies, workflows, templates, and automation f
 - **ArcTDD + Phase Machine** – Standardized G0–G10 workflow (R→G→F→REVIEW) with ≤7-step plans, failing-first tests, and evidence capture at every gate.
 - **Evidence Triplet & Run Manifests** – Mandatory pointers to (1) milestone test red→green proof, (2) contract snapshot, (3) reviewer disposition JSON.
 - **Cortex-Aegis Oversight** – Live MCP/CLI gate that enforces academic research, license validation, and vibe checks before any side-effecting work.
-- **Security & Compliance** – Standards are pinned in `brainwav/governance/90-infra/standards.versions.json` (Dec 2025 baseline) and include OWASP Top 10:2025, ASVS 5.0.0, OWASP LLM Top 10 (2025 v1.1), NIST SSDF 1.1, NIST AI RMF + GenAI Profile, WCAG 2.2, SLSA v1.2, CycloneDX 1.7, SPDX 3.0.1, Sigstore Cosign, and OpenSSF Scorecard (see `SECURITY.md`).
+- **Security & Compliance** – Standards are pinned in `brainwav/governance/90-infra/standards.versions.json` (Jan 2026 baseline) and include OWASP Top 10:2025, ASVS 5.0.0, OWASP LLM Top 10 (2025 v1.1), NIST SSDF 1.1, NIST AI RMF + GenAI Profile, WCAG 2.2, SLSA v1.2, CycloneDX 1.7, SPDX 3.0.1, Sigstore Cosign, and OpenSSF Scorecard (see `SECURITY.md`).
 - **Governance Integrity** – `brainwav/governance/90-infra/governance-index.json` pins SHA-256 hashes for every normative doc; CI blocks mismatches.
 - **MCP-First Tooling** – RepoPrompt, Context7, Local Memory, and Cortex-Aegis MCP servers with run-manifest logging, plus Local Memory parity rules.
 - **Modular Control Framework** – Core + capability packs + GitHub Actions adapters, with controls-as-data for auditability and external defensibility.
@@ -37,7 +37,7 @@ The brAInwav framework packages policies, workflows, templates, and automation f
 
 ### Prerequisites (must match CI)
 
-- Node.js 24.11.x + pnpm 10.19.x (pinned in `.mise.toml`).
+- Node.js 24.11.x + pnpm 10.26.x (pinned via `package.json` engines and CI workflow).
 - Security toolchain installed locally and in CI: `semgrep`, `gitleaks`, `trivy`, `cosign`, `cyclonedx`, plus OSV/pnpm audit support (`pnpm audit`, `osv-scanner`).
 - MCP clients (VS Code, Claude Desktop, RepoPrompt CLI) with access to Context7, Local Memory, and Cortex-Aegis servers.
 
@@ -65,15 +65,16 @@ pnpm readiness:check
 
 > Use this when you want to drop governance into an existing repo.
 
-1. From this repo: `pnpm install` (Node 24.11.x, pnpm 10.19.x).  
+1. From this repo: `pnpm install` (Node 24.11.x, pnpm 10.26.x).  
 2. Install governance into the target repo:  
-   `pnpm governance:install --dest /path/to/consumer-repo [--mode full|pointer] [--profile creative|core|full]`  
+   `pnpm governance:install --dest /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release]`  
+   - Default profile is `release` (gold standard).
    - `full` copies AGENTS, CODESTYLE, SECURITY, `brainwav/governance/**`, issue/PR templates, and the GitHub Actions workflow.  
    - `pointer` writes pointer stubs + `.agentic-governance/pointer.json` and expects a lockfile-pinned `brainwav-agentic-governance` dependency (invoke scripts from `node_modules/brainwav-agentic-governance/scripts` or via `pnpm dlx`).
 3. In the consumer repo, run:  
    `pnpm governance:validate` (checks required tokens + Step Budget ≤7 + overlay rules)  
    `pnpm governance:sync-hashes:check` (ensures hashes match the index)
-4. Commit the added files and ensure the consumer CI uses Node 24.11.x + pnpm 10.19.x. The included `governance.yml` workflow will enforce readiness, hash drift, oversight, security scans, dependency boundaries, and task scaffolds on every PR.
+4. Commit the added files and ensure the consumer CI uses Node 24.11.x + pnpm 10.26.x. The included `governance.yml` workflow will enforce readiness, hash drift, oversight, security scans, dependency boundaries, and task scaffolds on every PR.
 
 ### Verify (quick sanity checks)
 
@@ -89,6 +90,7 @@ pnpm readiness:check
 - `pnpm readiness:check` — confirms core governance files exist and required tools are present.
 - `pnpm governance:install --dest <path>` — copy governance pack + CI workflow into another repo.
 - `pnpm governance:validate` — verify required tokens and Step Budget ≤7 across tasks.
+- `pnpm governance:validate-standards` — check standards link freshness and `as_of` age in `standards.versions.json`.
 - `pnpm governance:sync-hashes:check` — fail on governance hash drift (non-writing).
 - `pnpm task:scaffold --slug <id>` / `pnpm task:validate --slug <id>` — create and check task folders for Evidence Triplet placeholders.
 - `pnpm governance:check-nx` — run Nx graph when nx.json exists (skips if absent); included in CI template.
@@ -99,7 +101,7 @@ pnpm readiness:check
 Customize `AGENTS.md`, `brainwav/governance/00-core/constitution.md`, and templates under `brainwav/governance/templates/` with your maintainers, escalation paths, and brand wording. Use `.agentic-governance/config.json` for profile selection and overlays (local tightenings only). Update `.agentic-governance/mcp.runtime.json` in consumer repos if you add or relocate MCP transports.
 
 ### Documentation quality checklist (OpenAI Cookbook aligned)
-- State prerequisites up front (here: Node 24.11.x, pnpm 10.19.x, security toolchain).
+- State prerequisites up front (here: Node 24.11.x, pnpm 10.26.x, security toolchain).
 - Provide a minimal happy path (see “Install & Verify in a consumer project”).
 - Include verification commands (`governance:validate`, `governance:sync-hashes:check`) so readers can confirm success.
 - Keep steps copy/pasteable and ordered; mark optional steps clearly.
@@ -124,7 +126,7 @@ brainwav/governance/
 
 AGENTS.md                     # Root operational policy (ArcTDD charter, Oversight rules)
 CODESTYLE.md                  # Code + architecture standards (named exports, ≤40-line funcs)
-SECURITY.md                   # Standards & References (Dec 2025) + CI gate expectations
+SECURITY.md                   # Standards & References (Jan 2026) + CI gate expectations
 tasks/<slug>/                 # Per-task folders with run manifests + evidence triplets
 ```
 
@@ -132,7 +134,7 @@ tasks/<slug>/                 # Per-task folders with run manifests + evidence t
 
 ## Architecture: Core + Packs + Adapters
 
-**Core (mandatory):** AGENTS.md, step budget, evidence triplet, hash-pinned governance index, creative/delivery modes, and AI risk controls by default.  
+**Core (mandatory):** AGENTS.md, step budget, evidence triplet, hash-pinned governance index, profile system (creative/delivery/release), and AI risk controls by default.  
 **Capability packs (opt-in):** security-appsec, supply-chain, a11y, ai-risk, compliance-overlays.  
 **Adapters:** GitHub Actions templates and stack-specific command mappings (policy text stays identical).
 
@@ -143,19 +145,20 @@ Controls are stored as data in the control catalog `brainwav/governance/90-infra
 ## Creative vs Delivery Modes
 
 **Creative mode (default for ideation/spikes):** No side-effecting actions, no deploys, no secrets; output is a short artifact + next steps.  
-**Delivery mode (required for merge/release):** All ArcTDD gates, evidence triplets, oversight, and security/a11y/supply-chain checks apply. CI enforces Delivery regardless of local mode.
+**Delivery mode (full gates):** ArcTDD gates, evidence triplets, oversight, and security/a11y checks apply for daily work.  
+**Release mode (gold standard):** Delivery + supply-chain and publication evidence. CI enforces **Release** regardless of local mode.
 
-Local profile selection (creative/core/full) lives in `.agentic-governance/config.json` and only affects local workflow defaults. CI always enforces core or stricter gates.
+Local profile selection (creative/delivery/release) lives in `.agentic-governance/config.json` and only affects local workflow defaults. CI enforces **release** gates by default for gold-standard delivery. `core`/`full` are accepted as legacy synonyms.
 
 ## Profiles & Overlays (local-only defaults)
 
-- **Profiles** (`creative`, `core`, `full`) only affect local defaults. CI enforces `core` or stricter gates.
+- **Profiles** (`creative`, `delivery`, `release`) only affect local defaults. CI enforces **release** gates by default.
 - **Overlays** let consumer repos tighten rules without editing base governance files.
 - **Base governance is immutable**: files under `brainwav/governance/**` are hash-pinned; modify only via upstream changes and hash updates.
 
 ---
 
-## Adoption Paths (Dec 2025 best practice)
+## Adoption Paths (Jan 2026 best practice)
 
 1) **Fast path (no Docker):** minimal local checks, full CI gates.  
 2) **Containerized tooling:** single tools image for scanners and SBOM/provenance.  
@@ -257,7 +260,7 @@ tasks/<slug>/
 
 - [AGENTS.md](AGENTS.md) – Operational policy, Oversight gate, Reuse-first rules.
 - [CODESTYLE.md](CODESTYLE.md) – Architectural conventions, dependency boundaries.
-- [SECURITY.md](SECURITY.md) – Standards & References (Dec 2025), CI gate requirements.
+- [SECURITY.md](SECURITY.md) – Standards & References (Jan 2026), CI gate requirements.
 - [brainwav/governance/10-flow/agentic-coding-workflow.md](brainwav/governance/10-flow/agentic-coding-workflow.md) – Detailed G0–G10 guidance.
 - [brainwav/governance/docs/cortex-aegis.md](brainwav/governance/docs/cortex-aegis.md) – Oversight MCP installation and evidence expectations.
 - [brainwav/governance/templates/](brainwav/governance/templates/) – Feature, research, and TDD plan templates.

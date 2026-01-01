@@ -383,7 +383,7 @@ tasks/dashboard-metrics-widget/
 | **Cortex-Aegis** | `@brainwav/cortex-aegis-mcp` | Governance validation, risk assessment, time freshness | `evidence/aegis-report.json`, `logs/vibe-check/*.json` |
 | **Context7** | `@upstash/context7-mcp` | Up-to-date library docs, version-specific examples | `context/research.md`, `plan/PLAN.md` (cited sources) |
 
-> **Security Tooling (MANDATORY)** – Before running any gated flow, install and keep updated the security toolchain defined in `SECURITY.md` §“Standards & References (Dec 2025)” and §“Continuous Security”. At minimum every workstation/CI runner MUST have: Semgrep (SAST), Gitleaks (secret scan), OSV/pnpm audit tooling, Trivy (container/IaC scan), CycloneDX CLI for SBOM generation, and Sigstore Cosign v3 for attestation. Use package manager of choice (e.g., `brew install semgrep gitleaks aquasecurity/trivy/trivy cosign cyclonedx-cli`) and ensure `pnpm audit`/OSV client versions match the repo’s `.mise.toml`. Evidence of these tools running must appear at G5 per §4.3.
+> **Security Tooling (MANDATORY)** – Before running any gated flow, install and keep updated the security toolchain defined in `SECURITY.md` §“Standards & References (Jan 2026)” and §“Continuous Security”. At minimum every workstation/CI runner MUST have: Semgrep (SAST), Gitleaks (secret scan), OSV/pnpm audit tooling, Trivy (container/IaC scan), CycloneDX CLI for SBOM generation, and Sigstore Cosign v3 for attestation. Use package manager of choice (e.g., `brew install semgrep gitleaks aquasecurity/trivy/trivy cosign cyclonedx-cli`) and ensure `pnpm audit`/OSV client versions match the repo’s `package.json` engines and CI workflow pins. Evidence of these tools running must appear at G5 per §4.3.
 
 #### Gate-by-Gate Tool Usage
 
@@ -747,7 +747,7 @@ The phase machine maps onto ArcTDD gates as follows:
 
 - New acceptance/unit tests **fail first**, then **pass** on the next commit
 - `TIME_FRESHNESS:OK tz=<IANA> today=<YYYY-MM-DD>` token present
-- Oversight log (`brAInwav-vibe-check`) stored in `logs/vibe-check/`
+- Oversight log (`aegis-vibe-check`) stored in `logs/vibe-check/`
 
 #### G (Green) — implement to pass
 
@@ -860,7 +860,7 @@ The phase machine maps onto ArcTDD gates as follows:
 - **Patch-first** – Always edit via diffs (git apply / apply_patch). No wholesale rewrites.  
 - **Test-first mindset** – Define/extend tests during G2–G4; enforce failing → passing evidence before refactor.  
 - **Deterministic outputs** – Structured JSON responses for tools, no hidden scratchpads.  
-- **Structured logs** – Include `[brAInwav]`, `brand:"brAInwav"`, `component`, and `trace_id` per log line; propagate W3C `traceparent`.  
+- **Structured logs** – Include `[<service>]`, `service:"<service_name>"`, `component`, and `trace_id` per log line; propagate W3C `traceparent`. Optional `brand:"<org>"` may be required by overlays.  
 - **OpenFeature only** – All feature flags must use OpenFeature APIs/providers.  
 - **Cancellation mandatory** – Every HTTP/MCP/tool call must respect `AbortSignal` or equivalent.  
 - **No stubs in prod** – No fake ML outputs, placeholder adapters, `Math.random()` data, TODO/FIXME/HACK tags, or console stubs.  
@@ -876,7 +876,7 @@ The phase machine maps onto ArcTDD gates as follows:
 1. **Ask-First ≤3 (G0/G1 only).** Each question must enumerate options + consequences. All Ask-First events are logged as `human_input:ask_first`.
 2. **No HITL before REVIEW.** Any other `human_input` pre-REVIEW is a violation unless a time-boxed waiver exists.
 3. **Structured outputs required.** Any model output that drives tools/files/network **must** be function/tool-calling or conform to a JSON-Schema, with validation on receipt.
-4. **Observability.** All charter-governed logs carry `[brAInwav]`, `brand:"brAInwav"`, ISO-8601 timestamp, `trace_id` (32 lower-hex), and **HTTP `traceparent`** for correlation. Missing fields fail gates.
+4. **Observability.** All charter-governed logs carry `[<service>]`, `service:"<service_name>"`, ISO-8601 timestamp, `trace_id` (32 lower-hex), and **HTTP `traceparent`** for correlation. `brand:"<org>"` is optional and may be required by overlays. Missing fields fail gates.
 5. **Supply-chain.** Generate **CycloneDX 1.7** SBOM; produce **SLSA v1.2** provenance; sign/verify with **Cosign v3 bundle**.
 6. **Identity & secrets.** CI authenticates to cloud via **OIDC/WIF** only. Secrets are fetched at runtime using the **1Password CLI** (`op`); never persisted.
 7. **Hybrid models — live only.** No stubs/recordings/dry-runs for embeddings/rerankers/generation. Frontier/Ollama health logs required.
@@ -950,7 +950,7 @@ Use RepoPrompt's `manage_selection` with mode transitions:
 |-------|---------|
 | `AGENTS_MD_SHA:<sha>` | Verifies governance doc integrity |
 | `PHASE_TRANSITION:<from>-><to>` | Logs phase machine progression |
-| `brAInwav-vibe-check` | Confirms Oversight/Aegis was invoked |
+| `aegis-vibe-check` | Confirms Oversight/Aegis was invoked |
 | `TIME_FRESHNESS:OK tz=<tz> today=<yyyy-mm-dd>` | Anchors temporal context |
 | `MODELS:LIVE:OK engine=<ollama\|frontier> model=<id> dims=<n> norm≈<v> latency_ms=<n>` | Proves live model usage |
 | `A11Y_REPORT:OK` | Accessibility audit attached |

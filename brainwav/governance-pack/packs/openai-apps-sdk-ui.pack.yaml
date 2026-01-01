@@ -1,0 +1,9 @@
+pack:
+  id: openai-apps-sdk-ui
+  version: 1.0.0
+  default: false
+  summary: "OpenAI Apps SDK UI integration rules."
+  standards:
+    - "OpenAI Apps SDK"
+    - "WCAG 2.2 AA"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

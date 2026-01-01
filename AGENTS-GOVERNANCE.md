@@ -37,7 +37,7 @@ Every rule in the governance framework has corresponding CI automation. This mat
 | Rule ID | Description | Enforcement | CI Job | Script/Check | Bypass |
 |---------|-------------|-------------|--------|--------------|--------|
 | **AGENTS-CHK-001** | Code review checklist token present | 🔴 BLOCKER | `agents-guard` | `grep "CODE-REVIEW-CHECKLIST:"` | Waiver only |
-| **AGENTS-PRV-002** | Oversight logs attached | 🔴 BLOCKER | `agents-guard` | Search `brAInwav-vibe-check` in artifacts | Waiver only |
+| **AGENTS-PRV-002** | Oversight logs attached | 🔴 BLOCKER | `agents-guard` | Search `aegis-vibe-check` in artifacts | Waiver only |
 | **AGENTS-HMS-003** | Live model evidence present | 🔴 BLOCKER | `models-smoke` | Verify `MODELS:LIVE:OK` in logs | Waiver only |
 | **AGENTS-ACL-004** | Package AGENTS.md not weakening root | 🔴 BLOCKER | `structure-validate` | Compare rule sets programmatically | N/A |
 | **AGENTS-DOC-005** | Docs validation (no ERROR) | 🔴 BLOCKER | `docs-validate` | `scripts/gates/validate-docs.ts` | Waiver only |
@@ -340,7 +340,8 @@ Every task MUST produce an evidence package for audit purposes.
 - `tasks/<slug>/logs/vibe-check/final.json` (post-execution)
 
 **Required Fields:**
-- `brand: "brAInwav"`
+- `service: "<service_name>"`
+- `brand: "<org>"` (optional unless required by overlays)
 - `status: "pass"|"fail"`
 - `trace_id: "<W3C-traceparent>"`
 - `checks: { academic_research, license_validation, connector_health }`
@@ -380,7 +381,7 @@ Every task MUST produce an evidence package for audit purposes.
 ## Evidence Review
 
 - [ ] Run manifest exists and complete
-- [ ] Vibe check logs show `brAInwav-vibe-check` token
+- [ ] Vibe check logs show `aegis-vibe-check` token
 - [ ] Academic research includes license validation
 - [ ] Memory IDs present in manifest
 - [ ] SBOM generated (if dependencies changed)

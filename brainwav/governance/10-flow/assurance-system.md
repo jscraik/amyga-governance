@@ -220,7 +220,7 @@ fs.writeFileSync(
   - Wikidata MCP: `curl ${WIKIDATA_MCP_URL:-http://127.0.0.1:3029}/health`
   - arXiv MCP: `curl ${ARXIV_MCP_URL:-http://127.0.0.1:3041}/health`
   - Cortex Aegis MCP: `curl ${CORTEX_AEGIS_HTTP_URL:-http://127.0.0.1:2091}/health`
-- Document the outage in a waiver JSON at `logs/academic-research/<slug>-<timestamp>-waiver.json` with `[brAInwav]` branding
+- Document the outage in a waiver JSON at `logs/academic-research/<slug>-<timestamp>-waiver.json` with service identity (`[<service>]`) metadata
 - Record the waiver pointer in `run-manifest.json` and schedule a follow-up check within 72 hours
 - Plans submitted to Oversight must surface outstanding uncertainties (e.g., connector uptime, attestation tooling) so reviewers can challenge mitigations early
 
@@ -313,7 +313,7 @@ To satisfy CI and review:
 3. Reference the artifact in the PR description and attach the same path in review evidence (Code Review Checklist).
 4. Map each finding or mitigation to the applicable OWASP LLM Top 10 control ID(s) listed in `governance/rules/llm-threat-controls.md`; include the mapping in the PR evidence comment.
 5. Capture the proposed edit envelope: directories, allowed file globs, max files, and max total LOC. Store alongside the JSON response (e.g., `edit-envelope.json`) so CI can enforce the declared patch budget.
-6. Ensure all oversight-related logs contain `[brAInwav]` and `brand:"brAInwav"` for audit search.
+6. Ensure all oversight-related logs contain `[<service>]` and `service:"<service_name>"` for audit search; `brand` is optional unless required by overlays.
 
 Failure to meet any item keeps the PR in a blocked state (`agents-guard` job).
 

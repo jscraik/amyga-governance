@@ -15,7 +15,7 @@ This constitution defines the **foundational principles** that govern all develo
 
 ## I. Core Principles
 
-### 1. brAInwav Production Standards (NON-NEGOTIABLE)
+### 1. Gold Production Standards (NON-NEGOTIABLE)
 
 **No Mock Production Claims**: Never describe any implementation as "production-ready", "complete", "operational", or "fully implemented" if it contains:
 
@@ -26,7 +26,7 @@ This constitution defines the **foundational principles** that govern all develo
 - Disabled features with `console.warn("not implemented")`
 - Fake system metrics or thermal data
 
-**brAInwav Branding**: All system outputs, error messages, health checks, and status logs MUST include "brAInwav" branding.
+**Service Identity Logging**: All system outputs, error messages, health checks, and status logs MUST include service identity (`[<service>]`, `service:"<service_name>"`). Brand is optional unless required by overlays.
 
 **Evidence-Based Status**: All status claims must be verified against actual code implementation and passing quality gates.
 
@@ -53,7 +53,7 @@ All UI components MUST meet WCAG 2.2 AA compliance:
 - Keyboard navigation for all interactive elements
 - Minimum 44x44 CSS pixel target sizes
 - Screen reader compatibility with `jest-axe` test coverage
-- brAInwav branding in accessibility announcements
+- Service identity/branding in accessibility announcements (as configured)
 
 ### 4. Monorepo Integrity
 
@@ -117,7 +117,7 @@ All UI components MUST meet WCAG 2.2 AA compliance:
 - Utilize semantic search for existing patterns
 - Use web search for up-to-date information
 - Document findings in `tasks/[task-id].research.md`
-- Include brAInwav-specific architectural patterns
+- Include project-specific architectural patterns
 
 ### Phase 2: Planning
 
@@ -133,7 +133,7 @@ All UI components MUST meet WCAG 2.2 AA compliance:
 - Follow TDD plan systematically
 - Use named exports, async/await exclusively
 - Keep functions ≤ 40 lines
-- Include brAInwav branding in all outputs
+- Include service identity/branding in all outputs (as configured)
 - Update implementation checklist as work progresses
 
 ### Phase 4: Verification
@@ -150,7 +150,7 @@ All UI components MUST meet WCAG 2.2 AA compliance:
 - **MANDATORY**: Update CHANGELOG.md with entry
 - **MANDATORY**: Update README.md if features/changes are user-facing
 - Update website documentation for user-facing changes
-- Store comprehensive task summary with brAInwav context
+- Store comprehensive task summary with service identity context
 
 ### Phase 6: Reality Filter
 
@@ -184,7 +184,7 @@ All UI components MUST meet WCAG 2.2 AA compliance:
   - Installation/setup instructions
   - API documentation
   - Usage examples
-  - brAInwav branding
+  - Service identity/branding (as configured)
 - Keep documentation current with code changes
 
 ### Observability
@@ -192,7 +192,7 @@ All UI components MUST meet WCAG 2.2 AA compliance:
 - OpenTelemetry instrumentation for all services
 - Structured logging with Pino (TypeScript) or Python logging
 - Metrics emission to Prometheus-compatible endpoints
-- Include brAInwav context in all telemetry
+- Include service identity context in all telemetry
 
 ---
 
@@ -232,7 +232,7 @@ Use Given-When-Then format:
 
 ### Open Source Licensing
 
-- Apache 2.0 for all brAInwav governance framework code
+- Apache 2.0 for all governance framework code unless overridden by project policy
 - License scanning via `pnpm license:validate`
 - SBOM generation for compliance: `pnpm sbom:generate`
 
@@ -243,12 +243,12 @@ Use Given-When-Then format:
 - Privacy-preserving telemetry
 - Transparent data handling policies
 
-### brAInwav Branding Requirements
+### Identity/Branding Requirements
 
-- All system outputs include "brAInwav" reference
-- Error messages branded consistently
-- Documentation headers include brAInwav attribution
-- Co-authored commits: `Co-authored-by: brAInwav Development Team`
+- All system outputs include service identity (and brand if required by overlays)
+- Error messages include service identity/branding consistently
+- Documentation headers include project attribution
+- Co-authored commits: `Co-authored-by: <Org> Development Team` (if applicable)
 
 ---
 
@@ -297,6 +297,6 @@ Hierarchy of authority (highest to lowest):
 
 ---
 
-**This constitution is living documentation. It evolves as brAInwav governance framework matures, but foundational principles remain constant.**
+**This constitution is living documentation. It evolves as this governance framework matures, but foundational principles remain constant.**
 
-Co-authored-by: brAInwav Development Team
+Co-authored-by: <Org> Development Team

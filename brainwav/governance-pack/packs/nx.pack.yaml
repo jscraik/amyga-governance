@@ -1,0 +1,8 @@
+pack:
+  id: nx
+  version: 1.0.0
+  default: false
+  summary: "Nx orchestration and affected-only execution."
+  standards:
+    - "Nx"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

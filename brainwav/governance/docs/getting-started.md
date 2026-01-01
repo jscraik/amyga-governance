@@ -1,6 +1,8 @@
 ---
 summary: "Bootstrap steps for adopting the framework."
 read_when: "First-time setup"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # Getting Started
@@ -8,17 +10,17 @@ read_when: "First-time setup"
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
-- [Adoption paths (Dec 2025 best practice)](#adoption-paths-dec-2025-best-practice)
+- [Adoption paths (Jan 2026 best practice)](#adoption-paths-jan-2026-best-practice)
 - [Adopting the Framework](#adopting-the-framework)
 
 ## Prerequisites
 
 - Git for version control
-- Node.js 24.11.x + pnpm 10.19.x (aligned with CI defaults)
+- Node.js 24.11.x + pnpm 10.26.x (aligned with CI defaults)
 - MCP-compatible client (VS Code, Claude Desktop, RepoPrompt)
 - Optional: Security tools (Semgrep, Gitleaks, Trivy)
 
-## Adoption paths (Dec 2025 best practice)
+## Adoption paths (Jan 2026 best practice)
 
 1) **Fast path (no Docker):** minimal local checks, full CI gates.  
 2) **Containerized tooling:** single tools image for scanners/SBOM/provenance.  
@@ -26,12 +28,12 @@ read_when: "First-time setup"
 
 ## Adopting the Framework
 
-### Quick start (pointer mode, creative profile)
+### Quick start (pointer mode, release profile)
 
 1. Install governance into your repo:
 
 ```bash
-pnpm governance:install --dest /path/to/your-project --mode pointer --profile creative
+pnpm governance:install --dest /path/to/your-project --mode pointer --profile release
 ```
 
 2. In the consumer repo, verify:
@@ -41,7 +43,7 @@ pnpm governance:validate
 pnpm governance:sync-hashes:check
 ```
 
-3. Commit the added files and ensure CI uses Node 24.11.x + pnpm 10.19.x.
+3. Commit the added files and ensure CI uses Node 24.11.x + pnpm 10.26.x.
 
 ### Lightweight mode (low-risk work)
 
@@ -70,12 +72,12 @@ cp -R brainwav-agentic-governance/brainwav /path/to/your-project/
 ### 2b. Pointer-mode install (recommended for low-drift)
 
 ```bash
-pnpm governance:install --dest /path/to/your-project --mode pointer --profile creative
+pnpm governance:install --dest /path/to/your-project --mode pointer --profile release
 ```
 
 - Adds `.agentic-governance/pointer.json` and pointer stubs for AGENTS/CODESTYLE/SECURITY.  
 - Requires `brainwav-agentic-governance` as a dev dependency, pinned in the lockfile (run scripts from `node_modules/brainwav-agentic-governance/scripts` or via `pnpm dlx`).
-- Sets `.agentic-governance/config.json` with the selected profile (creative/core/full). CI still enforces core or stricter gates.
+- Sets `.agentic-governance/config.json` with the selected profile (creative/delivery/release). CI enforces **release** gates by default. `core/full` are accepted as legacy synonyms.
 
 ### Verify (expected outputs)
 
@@ -86,7 +88,7 @@ pnpm governance:install --dest /path/to/your-project --mode pointer --profile cr
 
 1. **Hash drift reported**: run `pnpm governance:sync-hashes:check` in the consumer repo after ensuring the governance files match the source pack.
 2. **Missing tooling**: run `pnpm ensure:tools` to confirm required CLIs on the machine/CI runner.
-3. **Profile or overlay errors**: open `.agentic-governance/config.json` and confirm `profile` is one of `creative|core|full` and overlay paths point to `*.local.md` or `.agentic-governance/overlays/*`.
+3. **Profile or overlay errors**: open `.agentic-governance/config.json` and confirm `profile` is one of `creative|delivery|release` (legacy: `core|full`) and overlay paths point to `*.local.md` or `.agentic-governance/overlays/*`.
 
 ### 3. Configure MCP clients
 

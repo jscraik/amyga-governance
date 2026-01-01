@@ -43,15 +43,30 @@ function main() {
 	const args = parseArgs();
 	if (!args) return;
 	const { slug, root } = args;
+	const defaultChangeClass = 'docs';
 	const taskRoot = path.join(repoRoot, root, slug);
 	const logDir = path.join(taskRoot, 'logs');
+	const testsLogDir = path.join(logDir, 'tests');
+	const securityLogDir = path.join(logDir, 'security');
 	const jsonDir = path.join(taskRoot, 'json');
 	const researchDir = path.join(taskRoot, 'research');
 	const verificationDir = path.join(taskRoot, 'verification');
+	const wcagDir = path.join(verificationDir, 'wcag');
 	const sbomDir = path.join(taskRoot, 'sbom');
 	const attestDir = path.join(taskRoot, 'attestations');
 
-	[taskRoot, logDir, jsonDir, researchDir, verificationDir, sbomDir, attestDir].forEach(ensureDir);
+	[
+		taskRoot,
+		logDir,
+		testsLogDir,
+		securityLogDir,
+		jsonDir,
+		researchDir,
+		verificationDir,
+		wcagDir,
+		sbomDir,
+		attestDir
+	].forEach(ensureDir);
 
 	writeIfMissing(
 		path.join(taskRoot, 'implementation-plan.md'),
@@ -69,6 +84,7 @@ function main() {
 		JSON.stringify(
 			{
 				tier: 'feature',
+				change_class: defaultChangeClass,
 				arcs: [],
 				evidence_triplet: {
 					milestone_test: 'logs/tests/milestone.log',

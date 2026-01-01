@@ -4,7 +4,7 @@
  * @license Apache-2.0
  *
  * Usage:
- *   pnpm governance:install --dest /path/to/consumer [--mode full|pointer] [--profile core|creative|full]
+ *   pnpm governance:install --dest /path/to/consumer [--mode full|pointer] [--profile creative|delivery|release]
  *
  * Copies:
  * - AGENTS.md, CODESTYLE.md, SECURITY.md
@@ -33,7 +33,7 @@ function parseArgs() {
 	const args = process.argv.slice(2);
 	let dest;
 	let mode = 'full';
-	let profile = 'creative';
+	let profile = 'release';
 	for (let i = 0; i < args.length; i++) {
 		if (args[i] === '--dest' && args[i + 1]) dest = args[i + 1];
 		if (args[i] === '--mode' && args[i + 1]) mode = args[i + 1];
@@ -45,10 +45,16 @@ function parseArgs() {
 	if (!['full', 'pointer'].includes(mode)) {
 		throw new Error('Invalid --mode. Use "full" or "pointer".');
 	}
-	if (!['core', 'creative', 'full'].includes(profile)) {
-		throw new Error('Invalid --profile. Use "core", "creative", or "full".');
+	const normalizedProfile = profile === 'core' ? 'delivery' : profile === 'full' ? 'release' : profile;
+	if (!['creative', 'delivery', 'release'].includes(normalizedProfile)) {
+		throw new Error('Invalid --profile. Use "creative", "delivery", or "release".');
 	}
-	return { dest: path.resolve(dest), mode, profile };
+	if (profile !== normalizedProfile) {
+		console.warn(
+			`[brAInwav] profile "${profile}" is legacy; use "${normalizedProfile}" going forward.`
+		);
+	}
+	return { dest: path.resolve(dest), mode, profile: normalizedProfile };
 }
 
 function copyRecursive(src, dest) {
@@ -162,7 +168,7 @@ function main() {
 
 		console.log('[brAInwav] governance install complete.');
 		console.log(
-			'[brAInwav] Next: ensure Node 24.11.x + pnpm 10.19.x in the consumer CI environment.'
+			'[brAInwav] Next: ensure Node 24.11.x + pnpm 10.26.x in the consumer CI environment.'
 		);
 		if (mode === 'pointer') {
 			console.log(

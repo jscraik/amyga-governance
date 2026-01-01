@@ -1,6 +1,8 @@
 ---
 summary: "Policy configuration and enforcement details."
 read_when: "Interpreting or adjusting gates"
+applies_to: "core"
+owner: "Governance Team"
 ---
 
 # Policy Configuration

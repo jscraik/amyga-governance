@@ -9,7 +9,7 @@ For operational governance rules, see [AGENTS.md](AGENTS.md). For LLM-specific t
 ## Table of Contents
 
 - [Supported Versions](#supported-versions)
-- [Standards & References (Dec 2025)](#standards--references-dec-2025)
+- [Standards & References (Jan 2026)](#standards--references-jan-2026)
 - [Threat Model](#threat-model)
 - [Authentication & Authorization](#authentication--authorization)
 - [Reporting a Vulnerability](#reporting-a-vulnerability)
@@ -30,7 +30,7 @@ Only the latest release on the `main` branch receives security fixes. Governance
 
 ---
 
-## Standards & References (Dec 2025)
+## Standards & References (Jan 2026)
 
 Pinned versions live in `brainwav/governance/90-infra/standards.versions.json` and are treated as the source of truth for this section.
 
@@ -67,14 +67,16 @@ Reference: https://genai.owasp.org/llm-top-10/
 ### NIST SSDF (Secure Software Development Framework)
 - Primary reference: **NIST SP 800-218 (SSDF) v1.1**.
 
-Reference: https://csrc.nist.gov/pubs/sp/800/218/final
+References:
+- https://doi.org/10.6028/NIST.SP.800-218
+- https://csrc.nist.gov/pubs/sp/800/218/final
 
 ### NIST AI RMF + GenAI Profile
 - Primary reference: **NIST AI RMF 1.0** and the **Generative AI Profile**.
 
 References:
 - https://www.nist.gov/itl/ai-risk-management-framework
-- https://www.nist.gov/itl/ai-risk-management-framework/generative-ai-profile
+- https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence
 
 ### Accessibility + AI Governance
 - **WCAG 2.2 / ISO/IEC 40500:2025** for accessibility conformance.
@@ -88,7 +90,7 @@ References:
 - **SLSA Provenance v1.2**
 - **CycloneDX 1.7**
 - **SPDX 3.0.1**
-- **OpenSSF Scorecard**
+- **OpenSSF Scorecard Action v2.2.0**
 - **Sigstore Cosign**
 
 References:
