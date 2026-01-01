@@ -103,7 +103,9 @@ jobs:
           draft: true
           files: dist/*
           generate_release_notes: true
-      - name: Publish to npm
+      - name: Publish to npm (no provenance for private packages)
+        env:
+          NPM_CONFIG_PROVENANCE: "false"
         run: npm publish ./dist/*.tgz --access ${NPM_ACCESS} --registry https://registry.npmjs.org/
       - name: Canary validation
         env:
