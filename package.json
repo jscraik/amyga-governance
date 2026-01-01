@@ -24,6 +24,8 @@
     "CODESTYLE.md",
     "SECURITY.md",
     "README.md",
+    ".github/ISSUE_TEMPLATE",
+    ".github/pull_request_template.md",
     "brainwav/",
     "scripts/",
     ".agentic-governance/"
