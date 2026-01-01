@@ -26,6 +26,23 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+      - name: Install toolchain for doctor
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ripgrep fd-find jq python3-pip curl unzip
+          sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd
+          python3 -m pip install --user semgrep
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          go install github.com/zricethezav/gitleaks/v8@latest
+          go install github.com/google/osv-scanner/cmd/osv-scanner@latest
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
+          npm install -g markdownlint-cli2
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
       - run: pnpm install --frozen-lockfile=false
       - name: Lint
         run: pnpm lint:ci
@@ -52,8 +69,6 @@ jobs:
           subject-path: |
             dist/*.tgz
             dist/sbom.cdx.json
-      - name: Install cosign
-        uses: sigstore/cosign-installer@v3
       - name: Sign artifacts (cosign)
         env:
           COSIGN_EXPERIMENTAL: "1"
@@ -66,10 +81,6 @@ jobs:
                 "$artifact"
             fi
           done
-      - name: Publish to npm
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public --provenance --registry https://registry.npmjs.org/
       - name: Canary validation
         env:
           RELEASE_VERSION: ${{ github.ref_name }}
@@ -80,6 +91,10 @@ jobs:
           pnpm add -D "brainwav-agentic-governance@${version}"
           pnpm exec brainwav-governance install --root . --mode pointer --profile core --yes
           pnpm exec brainwav-governance validate --root . --strict
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance --registry https://registry.npmjs.org/
       - name: GitHub Release
         uses: softprops/action-gh-release@v2
         with:
