@@ -42,15 +42,10 @@ jobs:
           mkdir -p dist
           npm pack --pack-destination dist
       - name: SBOM (CycloneDX)
-        uses: CycloneDX/gh-action@v3
-        with:
-          run-id: npm
-          output-format: json
-          path: .
-          version: latest
-      - name: Normalize SBOM output
         run: |
-          if [ -f bom.json ]; then mv bom.json dist/sbom.cdx.json; fi
+          npx @cyclonedx/cyclonedx-npm \
+            --output-format JSON \
+            --output-file dist/sbom.cdx.json
       - name: Build provenance
         uses: actions/attest-build-provenance@v1
         with:
