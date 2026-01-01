@@ -39,14 +39,18 @@ function createTempDir(name) {
  * @param {number[]} allowedStatuses - Allowed exit codes.
  * @returns {void} No return value.
  */
-function runCli(args, cwd, allowedStatuses = [0]) {
+function runCli(args, cwd, allowedStatuses = [0], reportPath = null) {
 	const result = spawnSync(process.execPath, [cliPath, ...args], {
 		cwd,
 		encoding: 'utf8'
 	});
 	if (!allowedStatuses.includes(result.status ?? 0)) {
+		let reportPayload = '';
+		if (reportPath && fs.existsSync(reportPath)) {
+			reportPayload = `\n${fs.readFileSync(reportPath, 'utf8')}`;
+		}
 		throw new Error(
-			`CLI failed (${args.join(' ')}): ${result.status}\n${result.stdout}\n${result.stderr}`
+			`CLI failed (${args.join(' ')}): ${result.status}\n${result.stdout}\n${result.stderr}${reportPayload}`
 		);
 	}
 }
@@ -196,15 +200,38 @@ function runFixtureLifecycle(fixture) {
 			repoRoot
 		);
 
+		const validateReport = path.join(tempRoot, 'validate.report.json');
 		runCli(
-			['validate', '--root', tempRoot, '--config', '.agentic-governance/config.json', '--plain'],
+			[
+				'validate',
+				'--root',
+				tempRoot,
+				'--config',
+				'.agentic-governance/config.json',
+				'--report',
+				validateReport,
+				'--plain'
+			],
 			repoRoot,
-			[0, 4]
+			[0, 4],
+			validateReport
 		);
 
+		const doctorReport = path.join(tempRoot, 'doctor.report.json');
 		runCli(
-			['doctor', '--root', tempRoot, '--config', '.agentic-governance/config.json', '--plain'],
-			repoRoot
+			[
+				'doctor',
+				'--root',
+				tempRoot,
+				'--config',
+				'.agentic-governance/config.json',
+				'--report',
+				doctorReport,
+				'--plain'
+			],
+			repoRoot,
+			[0],
+			doctorReport
 		);
 	} finally {
 		fs.rmSync(tempRoot, { recursive: true, force: true });
