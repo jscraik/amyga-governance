@@ -143,11 +143,14 @@ This directory contains templates for the enhanced task management workflow comb
 
 ### Automated Template Usage
 
-The `brainwav-governance` CLI scaffolds task artifacts and references templates when instructed:
+The `brainwav-governance` CLI scaffolds task artifacts and SDD specs when instructed:
 
 ```bash
 # Initialize task (creates spec + research from templates)
 pnpm exec brainwav-governance task init --slug "feature-name" --tier feature
+
+# Initialize spec-driven artifacts (specs/<slug>/spec.md, plan.md, tasks.md)
+pnpm exec brainwav-governance spec init --slug "feature-name" --spec-root specs
 
 # Create TDD plan (creates plan from template)
 pnpm exec brainwav-governance task init --slug "task-id" --tier feature

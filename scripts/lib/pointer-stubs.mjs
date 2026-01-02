@@ -150,6 +150,8 @@ export function buildCliInstructions(pointer) {
 		`  pnpm exec brainwav-governance doctor --root . --report .agentic-governance/reports\n` +
 		`- Scaffold a task folder:\n` +
 		`  pnpm exec brainwav-governance task init --slug <slug> --tier <feature|fix|refactor|research|update>\n` +
+		`- Spec init (SDD pack):\n` +
+		`  pnpm exec brainwav-governance spec init --slug <slug> --spec-root specs\n` +
 		`- List packs:\n` +
 		`  pnpm exec brainwav-governance packs list --json\n` +
 		`- Cleanup plan (pointer mode):\n` +

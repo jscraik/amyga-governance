@@ -23,9 +23,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
 
-const COMMANDS = new Set(['init', 'install', 'upgrade', 'validate', 'doctor', 'packs', 'task', 'cleanup-plan']);
+const COMMANDS = new Set(['init', 'install', 'upgrade', 'validate', 'doctor', 'packs', 'task', 'cleanup-plan', 'spec']);
 const COMMON_FLAGS = new Set(['--mode', '--profile', '--packs', '--dry-run', '--yes', '--force', '--no-install']);
 const TASK_FLAGS = new Set(['--slug', '--tier', '--task-root', '--tasks-root']);
+const SPEC_FLAGS = new Set(['--slug', '--spec-root']);
 const GLOBAL_FLAGS = new Set([
 	'-h',
 	'--help',
@@ -105,9 +106,10 @@ function usage() {
 Initialize, install, upgrade, validate, diagnose, or scaffold Brainwav governance in a repo.
 
 Usage:
-  brainwav-governance [global flags] <init|install|upgrade|validate|doctor|cleanup-plan> [flags]
+  brainwav-governance [global flags] <init|install|upgrade|validate|doctor|cleanup-plan|spec> [flags]
   brainwav-governance packs list [--json]
   brainwav-governance task init --slug <id> [--tier <feature|fix|refactor|research|update>] [--task-root <dir>]
+  brainwav-governance spec init --slug <id> [--spec-root <dir>]
   brainwav-governance cleanup-plan --root . [--report <path>] [--apply] [--force]
 `);
 }
@@ -149,6 +151,9 @@ function parseArgs(argv) {
 		taskSlug: null,
 		taskTier: 'feature',
 		taskRoot: 'tasks'
+	};
+	const specFlags = {
+		specRoot: 'specs'
 	};
 	const unknown = [];
 	let positionalOutput = null;
@@ -316,6 +321,27 @@ function parseArgs(argv) {
 			}
 			continue;
 		}
+		if (command === 'spec' && SPEC_FLAGS.has(arg)) {
+			switch (arg) {
+				case '--slug': {
+					const value = takeValue(i);
+					if (!value) return { error: 'Missing value for --slug' };
+					flags.taskSlug = value;
+					i++;
+					break;
+				}
+				case '--spec-root': {
+					const value = takeValue(i);
+					if (!value) return { error: 'Missing value for --spec-root' };
+					specFlags.specRoot = value;
+					i++;
+					break;
+				}
+				default:
+					break;
+			}
+			continue;
+		}
 
 		if (!arg.startsWith('-') && !positionalOutput) {
 			positionalOutput = arg;
@@ -324,7 +350,7 @@ function parseArgs(argv) {
 		unknown.push(arg);
 	}
 
-	return { command, global, flags, unknown, positionalOutput };
+	return { command, global, flags, specFlags, unknown, positionalOutput };
 }
 
 /**
@@ -1617,6 +1643,43 @@ function writeFile(filePath, content, actions, force) {
 }
 
 /**
+ * Load a spec template from governance templates.
+ * @param {string} govRoot - Governance root path.
+ * @param {string} name - Template base name (spec|plan|tasks).
+ * @returns {string} Template content.
+ */
+function loadSpecTemplate(govRoot, name) {
+	const templatePath = path.join(govRoot, 'templates', 'sdd', `${name}.md`);
+	if (!fs.existsSync(templatePath)) {
+		throw new Error(`missing SDD template at ${templatePath}`);
+	}
+	return readTextFile(templatePath) ?? '';
+}
+
+/**
+ * Initialize spec-driven development artifacts.
+ * @param {{rootPath: string, govRoot: string, specRoot: string, slug: string, force: boolean}} args - Inputs.
+ * @returns {Array<object>} Actions performed.
+ */
+function initSpec({ rootPath, govRoot, specRoot, slug, force }) {
+	const actions = [];
+	const baseRoot = path.join(rootPath, specRoot, slug);
+	ensureDir(baseRoot, actions);
+	const replaceSlug = (content) =>
+		content.replace(/<feature-slug>/g, slug).replace(/<slug>/g, slug);
+
+	const specContent = replaceSlug(loadSpecTemplate(govRoot, 'spec'));
+	const planContent = replaceSlug(loadSpecTemplate(govRoot, 'plan'));
+	const tasksContent = replaceSlug(loadSpecTemplate(govRoot, 'tasks'));
+
+	writeFile(path.join(baseRoot, 'spec.md'), `${specContent.trimEnd()}\n`, actions, force);
+	writeFile(path.join(baseRoot, 'plan.md'), `${planContent.trimEnd()}\n`, actions, force);
+	writeFile(path.join(baseRoot, 'tasks.md'), `${tasksContent.trimEnd()}\n`, actions, force);
+
+	return actions;
+}
+
+/**
  * Initialize a task scaffold.
  * @param {{rootPath: string, taskRoot: string, slug: string, tier: string, force: boolean}} args - Inputs.
  * @returns {Array<object>} Actions performed.
@@ -1850,6 +1913,67 @@ async function main() {
 			report.status = 'error';
 			report.errors.push(String(error.message ?? error));
 			report.summary = 'task init failed';
+			outputReport(report, global);
+			writeReport(reportPath, report);
+			writeReport(outputPath, report);
+			exitWithCode(1);
+		}
+		return;
+	}
+
+	if (command === 'spec') {
+		const subcommand = positionalOutput ?? 'init';
+		if (subcommand !== 'init') {
+			console.error(`[brAInwav] Unknown spec subcommand "${subcommand}".`);
+			exitWithCode(2);
+			return;
+		}
+		if (!flags.taskSlug) {
+			console.error('[brAInwav] Missing required --slug for spec init.');
+			exitWithCode(2);
+			return;
+		}
+		if (!isSafeSlug(flags.taskSlug)) {
+			console.error(`[brAInwav] Invalid spec slug: ${flags.taskSlug}`);
+			exitWithCode(2);
+			return;
+		}
+		const { govRoot } = resolveGovernancePaths(rootPath);
+		const report = {
+			schema: 'brainwav.governance.spec-init.v1',
+			meta: buildMeta({
+				root: rootPath,
+				spec_root: specFlags.specRoot,
+				slug: flags.taskSlug
+			}),
+			summary: '',
+			status: 'success',
+			data: {
+				repo_root: rootPath,
+				spec_root: specFlags.specRoot,
+				slug: flags.taskSlug,
+				actions: []
+			},
+			errors: []
+		};
+		try {
+			const actions = initSpec({
+				rootPath,
+				govRoot,
+				specRoot: specFlags.specRoot,
+				slug: flags.taskSlug,
+				force: flags.force
+			});
+			report.data.actions = actions;
+			report.summary = `spec init completed (${actions.length} actions)`;
+			outputReport(report, global);
+			writeReport(reportPath, report);
+			writeReport(outputPath, report);
+			exitWithCode(0);
+		} catch (error) {
+			report.status = 'error';
+			report.errors.push(String(error.message ?? error));
+			report.summary = 'spec init failed';
 			outputReport(report, global);
 			writeReport(reportPath, report);
 			writeReport(outputPath, report);
