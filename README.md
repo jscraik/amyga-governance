@@ -144,6 +144,9 @@ For automated upgrades, see `.github/workflows/governance-upgrade.yml`.
 - `brainwav-governance spec init --slug <id> --spec-root specs` — scaffold `specs/<slug>/{spec.md,plan.md,tasks.md}` when the `sdd` pack is enabled.
 - `brainwav-governance spec init --slug <id> --compat speckit` — scaffold a spec-kit compatible `.specify/specs/<slug>/` layout.
 - `brainwav-governance spec validate --spec-root specs --report .agentic-governance/reports/spec-validate.json` — validate spec-kit compatible layout and spec lifecycle.
+- `brainwav-governance spec clarify --spec-root specs` — flag missing requirements in spec artifacts.
+- `brainwav-governance spec analyze --spec-root specs` — cross-check spec/plan/tasks consistency.
+- `brainwav-governance spec checklist --spec-root specs` — run "tests for English" checklist.
 - `brainwav-governance cleanup-plan --root . --report .agentic-governance/reports/cleanup-plan.json` — plan pointer-mode cleanup.
 - `brainwav-governance cleanup-plan --root . --apply --force` — apply cleanup plan (writes `cleanup.applied.json`).
 - `brainwav-governance packs list [--json]` — list available packs/presets for discovery.
@@ -158,7 +161,7 @@ For automated upgrades, see `.github/workflows/governance-upgrade.yml`.
 - `brainwav-governance upgrade --root <path>` — refresh installs + update dependency in a consumer repo.
 - `brainwav-governance doctor --root <path>` — readiness + tooling checks.
 - `brainwav-governance <command>` — CLI wrapper for install/upgrade/validate/doctor (alias: `brainwav-agentic-governance`).
-- **SDD pack** (spec-driven development) stores work artifacts under `specs/<slug>/` when enabled.
+- **SDD pack** (spec-driven development) stores work artifacts under `specs/<slug>/` and is included in default presets for delivery/release.
 - `pnpm commands:docs-list` — list governance docs with summaries for fast discovery.
 - `pnpm governance:generate-control-docs` — generate control catalog docs into `brainwav/governance/generated/`.
 

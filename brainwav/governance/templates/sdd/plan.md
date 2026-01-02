@@ -1,6 +1,7 @@
 # Plan: <feature-slug>
 
 **Spec**: specs/<feature-slug>/spec.md  
+**Tasks**: specs/<feature-slug>/tasks.md  
 **Owner**: <name>  
 **Last Updated**: <YYYY-MM-DD>
 
@@ -19,11 +20,16 @@
 - **Edge cases**: <list>
 - **Security/A11y/Perf**: <tests>
 
-## 4) Rollout & Safety
+## 4) Verify & Learn (PAI)
+- **Verification commands**: <commands or scripts>
+- **Evidence artifacts**: <paths/logs>
+- **Learnings to capture**: <what we will record in tasks/<slug>/lessons-learned.md>
+
+## 5) Rollout & Safety
 - **Feature flags**: <yes/no, names>
 - **Rollback plan**: <summary>
 
-## 5) Evidence Hooks (Brainwav)
+## 6) Evidence Hooks (Brainwav)
 - **Evidence Triplet**: plan anchor, failing->passing test, reviewer proof.
 - **Risk register**: tasks/<slug>/plan/risk-register.md updated.
 - **Oversight**: Cortex-Aegis at G2/G5 when risk >= medium.

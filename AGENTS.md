@@ -46,6 +46,14 @@ pnpm exec brainwav-governance spec validate --spec-root specs --report .agentic-
 
 Validates spec-kit compatible layout and lifecycle ordering.
 
+```bash
+pnpm exec brainwav-governance spec clarify --spec-root specs
+pnpm exec brainwav-governance spec analyze --spec-root specs
+pnpm exec brainwav-governance spec checklist --spec-root specs
+```
+
+Clarify/analyze/checklist catch missing requirements and cross-artifact drift.
+
 ## Validate (required before shipping)
 
 ```bash

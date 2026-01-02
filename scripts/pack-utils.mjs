@@ -13,10 +13,10 @@ const repoRoot = path.resolve(__dirname, '..');
 const packsRoot = path.join(repoRoot, 'brainwav', 'governance-pack', 'packs');
 
 export const PRESETS = {
-	'web': ['ts-base', 'react-vite', 'tailwind', 'storybook'],
-	'edge': ['ts-base', 'cloudflare-workers'],
-	'mcp': ['ts-base', 'mcp-server-ts'],
-	'apple': ['swift-core', 'swift-xcode', 'swift-appkit', 'apple-release']
+	'web': ['sdd', 'ts-base', 'react-vite', 'tailwind', 'storybook'],
+	'edge': ['sdd', 'ts-base', 'cloudflare-workers'],
+	'mcp': ['sdd', 'ts-base', 'mcp-server-ts'],
+	'apple': ['sdd', 'swift-core', 'swift-xcode', 'swift-appkit', 'apple-release']
 };
 
 /**

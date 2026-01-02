@@ -73,6 +73,18 @@ function main() {
 			if (arcs.length > 7) {
 				missing.push('Step Budget exceeded: arcs > 7');
 			}
+			if (!manifest.spec || typeof manifest.spec !== 'object') {
+				missing.push('run-manifest.json missing spec current/desired state');
+			}
+			if (!manifest.verification || typeof manifest.verification !== 'object') {
+				missing.push('run-manifest.json missing verification fields');
+			}
+			if (!manifest.learn || typeof manifest.learn !== 'object') {
+				missing.push('run-manifest.json missing learn fields');
+			}
+			if (!manifest.decision_hierarchy || typeof manifest.decision_hierarchy !== 'object') {
+				missing.push('run-manifest.json missing decision_hierarchy fields');
+			}
 			const declaredClasses = Array.isArray(manifest.change_classes)
 				? manifest.change_classes
 				: manifest.change_class

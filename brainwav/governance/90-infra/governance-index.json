@@ -144,7 +144,7 @@
     },
     "agentic-coding-workflow.md": {
       "path": "10-flow/agentic-coding-workflow.md",
-      "sha256": "66f85c019eb9a55f0e2858885ec62066c47f078687b589bae370af347e5b01c3",
+      "sha256": "f0f1f9f137aefddcb7c0651704cd9a316d7b57b73e3762794acacd7315888f9e",
       "required_tokens": [
         "G0 Initialize",
         "Evidence Triplet",
@@ -198,7 +198,7 @@
     },
     "governance-index.json": {
       "path": "90-infra/governance-index.json",
-      "sha256": "0ba0c10696787c119375a9300dd2a974739abb4c4ebc52d0950e75c9e43d2002",
+      "sha256": "2ad9b4bc41421de6108ab4a6fdb53f3f5ecd4591acbcfc16470023ada405d3aa",
       "hash_mode": "exclude_self",
       "required_tokens": [
         "precedence",
@@ -279,7 +279,7 @@
     },
     "README.md": {
       "path": "README.md",
-      "sha256": "8ab85347ee2d99b2d08591a364356d09ed37cc5607d11f1a19aba6432f293bd9",
+      "sha256": "dd0ba1a18301d7ff5bf88e9d18305e21154d599b7840710e3d70d8158c9a9282",
       "required_tokens": [
         "governance",
         "structure"

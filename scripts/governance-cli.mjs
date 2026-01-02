@@ -93,6 +93,15 @@ const CHECK_REGISTRY = new Set([
 	'spec.specs.naming',
 	'spec.lifecycle',
 	'spec.plan.artifacts'
+	,
+	'spec-chain.present',
+	'spec-chain.consistency',
+	'verification.criteria.present',
+	'learn.fields.present',
+	'decision.hierarchy.present',
+	'spec.clarify.missing',
+	'spec.analyze.consistency',
+	'spec.checklist.missing'
 ]);
 
 const HIGH_RISK_ENTITLEMENTS = new Set([
@@ -121,6 +130,9 @@ Usage:
   brainwav-governance task init --slug <id> [--tier <feature|fix|refactor|research|update>] [--task-root <dir>]
   brainwav-governance spec init --slug <id> [--spec-root <dir>] [--compat speckit]
   brainwav-governance spec validate [--spec-root <dir>] [--compat speckit]
+  brainwav-governance spec clarify [--spec-root <dir>] [--compat speckit]
+  brainwav-governance spec analyze [--spec-root <dir>] [--compat speckit]
+  brainwav-governance spec checklist [--spec-root <dir>] [--compat speckit]
   brainwav-governance cleanup-plan --root . [--report <path>] [--apply] [--force]
 `);
 }
@@ -1958,6 +1970,138 @@ function runSpecKitValidation(rootPath, specRootFlag, compat) {
 	return { checks, specRoot: specRootPath, layout };
 }
 
+function listSpecDirs(specRootPath) {
+	if (!specRootPath || !fs.existsSync(specRootPath)) return [];
+	return fs
+		.readdirSync(specRootPath, { withFileTypes: true })
+		.filter((entry) => entry.isDirectory())
+		.map((entry) => entry.name);
+}
+
+function readSpecFile(specRootPath, dir, filename) {
+	const filePath = path.join(specRootPath, dir, filename);
+	if (!fs.existsSync(filePath)) return null;
+	return readTextFile(filePath) ?? '';
+}
+
+function checkSpecChain(rootPath, specRoot) {
+	const issues = [];
+	const missing = [];
+	const specRootPath = path.join(rootPath, specRoot);
+	const dirs = listSpecDirs(specRootPath);
+	if (!fs.existsSync(specRootPath) || dirs.length === 0) {
+		return { ok: false, issues: [], missing: [`missing ${specRoot}/ spec directories`] };
+	}
+	const requiredTokens = [
+		'Current state',
+		'Desired state',
+		'Success criteria',
+		'How we will verify'
+	];
+	dirs.forEach((dir) => {
+		const specContent = readSpecFile(specRootPath, dir, 'spec.md');
+		const planContent = readSpecFile(specRootPath, dir, 'plan.md');
+		const tasksContent = readSpecFile(specRootPath, dir, 'tasks.md');
+		if (!specContent) missing.push(`${dir}/spec.md missing`);
+		if (!planContent) missing.push(`${dir}/plan.md missing`);
+		if (!tasksContent) missing.push(`${dir}/tasks.md missing`);
+		if (specContent && !specContent.includes(`specs/${dir}/plan.md`)) {
+			issues.push(`${dir}/spec.md missing plan link`);
+		}
+		if (specContent && !specContent.includes(`specs/${dir}/tasks.md`)) {
+			issues.push(`${dir}/spec.md missing tasks link`);
+		}
+		if (planContent && !planContent.includes(`specs/${dir}/spec.md`)) {
+			issues.push(`${dir}/plan.md missing spec link`);
+		}
+		if (planContent && !planContent.includes(`specs/${dir}/tasks.md`)) {
+			issues.push(`${dir}/plan.md missing tasks link`);
+		}
+		if (tasksContent && !tasksContent.includes(`specs/${dir}/spec.md`)) {
+			issues.push(`${dir}/tasks.md missing spec link`);
+		}
+		if (tasksContent && !tasksContent.includes(`specs/${dir}/plan.md`)) {
+			issues.push(`${dir}/tasks.md missing plan link`);
+		}
+		if (tasksContent && !tasksContent.includes('tasks/')) {
+			issues.push(`${dir}/tasks.md missing tasks/ evidence references`);
+		}
+		if (specContent) {
+			requiredTokens.forEach((token) => {
+				if (!specContent.includes(token)) {
+					issues.push(`${dir}/spec.md missing "${token}"`);
+				}
+			});
+		}
+	});
+	return { ok: missing.length === 0 && issues.length === 0, issues, missing };
+}
+
+function checkRunManifestPAI(rootPath) {
+	const issues = [];
+	const tasksRoot = path.join(rootPath, 'tasks');
+	if (!fs.existsSync(tasksRoot)) {
+		return { ok: true, issues: [], skipped: true };
+	}
+	const slugs = fs
+		.readdirSync(tasksRoot, { withFileTypes: true })
+		.filter((entry) => entry.isDirectory())
+		.map((entry) => entry.name);
+	slugs.forEach((slug) => {
+		const manifestPath = path.join(tasksRoot, slug, 'json', 'run-manifest.json');
+		if (!fs.existsSync(manifestPath)) {
+			issues.push(`${slug}: missing json/run-manifest.json`);
+			return;
+		}
+		const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+		if (!manifest.spec || typeof manifest.spec !== 'object') {
+			issues.push(`${slug}: missing spec current/desired state`);
+		} else {
+			if (!String(manifest.spec.current_state || '').trim()) {
+				issues.push(`${slug}: spec.current_state missing`);
+			}
+			if (!String(manifest.spec.desired_state || '').trim()) {
+				issues.push(`${slug}: spec.desired_state missing`);
+			}
+		}
+		if (!manifest.verification || typeof manifest.verification !== 'object') {
+			issues.push(`${slug}: missing verification fields`);
+		} else {
+			const criteria = Array.isArray(manifest.verification.success_criteria)
+				? manifest.verification.success_criteria
+				: [];
+			const commands = Array.isArray(manifest.verification.commands)
+				? manifest.verification.commands
+				: [];
+			if (criteria.length === 0) {
+				issues.push(`${slug}: verification.success_criteria missing`);
+			}
+			if (commands.length === 0) {
+				issues.push(`${slug}: verification.commands missing`);
+			}
+		}
+		if (!manifest.learn || typeof manifest.learn !== 'object') {
+			issues.push(`${slug}: missing learn fields`);
+		} else {
+			const insights = Array.isArray(manifest.learn.insights) ? manifest.learn.insights : [];
+			const followups = Array.isArray(manifest.learn.followups) ? manifest.learn.followups : [];
+			if (insights.length === 0) issues.push(`${slug}: learn.insights missing`);
+			if (followups.length === 0) issues.push(`${slug}: learn.followups missing`);
+		}
+		if (!manifest.decision_hierarchy || typeof manifest.decision_hierarchy !== 'object') {
+			issues.push(`${slug}: missing decision_hierarchy fields`);
+		} else {
+			const tools = Array.isArray(manifest.decision_hierarchy.deterministic_tools)
+				? manifest.decision_hierarchy.deterministic_tools
+				: [];
+			if (tools.length === 0) {
+				issues.push(`${slug}: decision_hierarchy.deterministic_tools missing`);
+			}
+		}
+	});
+	return { ok: issues.length === 0, issues, skipped: false };
+}
+
 /**
  * Initialize spec-driven development artifacts.
  * @param {{rootPath: string, govRoot: string, specRoot: string, slug: string, force: boolean}} args - Inputs.
@@ -2106,6 +2250,24 @@ function initTask({ rootPath, taskRoot, slug, tier, force }) {
 		schema: 'brainwav.governance.run-manifest.v1',
 		tier,
 		arcs: [],
+		spec: {
+			current_state: '',
+			desired_state: ''
+		},
+		verification: {
+			success_criteria: [],
+			commands: []
+		},
+		learn: {
+			insights: [],
+			followups: []
+		},
+		decision_hierarchy: {
+			deterministic_tools: [],
+			cli_invocations: [],
+			prompts: [],
+			agents_used: []
+		},
 		evidence_triplet: {
 			milestone_test: 'logs/tests/milestone.log',
 			contract_snapshot: 'json/contracts-snapshot.json',
@@ -2302,7 +2464,7 @@ async function main() {
 
 	if (command === 'spec') {
 		const subcommand = positionalOutput ?? 'init';
-		if (!['init', 'validate'].includes(subcommand)) {
+		if (!['init', 'validate', 'clarify', 'analyze', 'checklist'].includes(subcommand)) {
 			console.error(`[brAInwav] Unknown spec subcommand "${subcommand}".`);
 			exitWithCode(2);
 			return;
@@ -2350,6 +2512,117 @@ async function main() {
 				report.status = 'error';
 				report.errors.push(String(error.message ?? error));
 				report.summary = 'spec validate failed';
+				outputReport(report, global);
+				writeReport(specReportPath, report);
+				writeReport(specOutputPath, report);
+				exitWithCode(1);
+			}
+			return;
+		}
+
+		if (subcommand === 'clarify' || subcommand === 'analyze' || subcommand === 'checklist') {
+			const report = {
+				schema: `brainwav.governance.spec-${subcommand}.v1`,
+				meta: buildMeta({
+					root: rootPath,
+					spec_root: specFlags.specRoot,
+					compat: specFlags.compat
+				}),
+				summary: '',
+				status: 'success',
+				data: {
+					repo_root: rootPath,
+					spec_root: specFlags.specRoot,
+					compat: specFlags.compat,
+					checks: []
+				},
+				errors: []
+			};
+			try {
+				const layout = runSpecKitValidation(rootPath, specFlags.specRoot, specFlags.compat);
+				const specRoot = layout.specRoot ?? path.join(rootPath, specFlags.specRoot);
+				const chain = checkSpecChain(rootPath, path.relative(rootPath, specRoot));
+				if (subcommand === 'clarify') {
+					const issues = [...chain.missing, ...chain.issues].filter((issue) =>
+						issue.includes('Current state') ||
+						issue.includes('Desired state') ||
+						issue.includes('Success criteria') ||
+						issue.includes('How we will verify')
+					);
+					report.data.checks = normalizeChecks([
+						buildCheck(
+							'spec.clarify.missing',
+							issues.length > 0 ? 'warn' : 'pass',
+							'medium',
+							'spec',
+							issues.length > 0 ? `missing requirements: ${issues.join(', ')}` : 'clarify ok'
+						)
+					]);
+				}
+				if (subcommand === 'analyze') {
+					const issues = [...chain.missing, ...chain.issues];
+					report.data.checks = normalizeChecks([
+						buildCheck(
+							'spec.analyze.consistency',
+							issues.length > 0 ? 'warn' : 'pass',
+							'medium',
+							'spec',
+							issues.length > 0 ? `consistency issues: ${issues.join(', ')}` : 'analysis ok'
+						)
+					]);
+				}
+				if (subcommand === 'checklist') {
+					const checklistMissing = [];
+					const specRootPath = specRoot;
+					const dirs = listSpecDirs(specRootPath);
+					dirs.forEach((dir) => {
+						const specContent = readSpecFile(specRootPath, dir, 'spec.md');
+						if (!specContent) {
+							checklistMissing.push(`${dir}/spec.md missing`);
+							return;
+						}
+						if (!specContent.includes('Non-goals')) {
+							checklistMissing.push(`${dir}/spec.md missing Non-goals`);
+						}
+						if (!specContent.includes('Risks')) {
+							checklistMissing.push(`${dir}/spec.md missing Risks`);
+						}
+						if (!specContent.includes('Assumptions')) {
+							checklistMissing.push(`${dir}/spec.md missing Assumptions`);
+						}
+						if (!specContent.includes('Requirements')) {
+							checklistMissing.push(`${dir}/spec.md missing Requirements`);
+						}
+					});
+					report.data.checks = normalizeChecks([
+						buildCheck(
+							'spec.checklist.missing',
+							checklistMissing.length > 0 ? 'warn' : 'pass',
+							'low',
+							'spec',
+							checklistMissing.length > 0
+								? `checklist gaps: ${checklistMissing.join(', ')}`
+								: 'checklist ok'
+						)
+					]);
+				}
+				const registryMisses = checkRegistry(report.data.checks);
+				if (registryMisses.length > 0) {
+					report.status = 'error';
+					report.errors.push(`unknown check ids: ${registryMisses.map((c) => c.id).join(', ')}`);
+				}
+				const failed = report.data.checks.filter((c) => c.status === 'fail').length;
+				const warned = report.data.checks.filter((c) => c.status === 'warn').length;
+				report.status = failed > 0 || report.errors.length > 0 ? 'error' : warned > 0 ? 'warn' : 'success';
+				report.summary = formatSummary(report.data.checks, report.status);
+				outputReport(report, global);
+				writeReport(specReportPath, report);
+				writeReport(specOutputPath, report);
+				enforceExitCode(report.status, warned, flags.strict, 3, 4);
+			} catch (error) {
+				report.status = 'error';
+				report.errors.push(String(error.message ?? error));
+				report.summary = `spec ${subcommand} failed`;
 				outputReport(report, global);
 				writeReport(specReportPath, report);
 				writeReport(specOutputPath, report);
@@ -2432,6 +2705,9 @@ async function main() {
 	if (command === 'install' || command === 'init') {
 		const selectedPacks = resolvePacksSafe(flags.packs);
 		if (!selectedPacks) return;
+		if (selectedPacks.length === 0 && (normalizedProfile === 'delivery' || normalizedProfile === 'release')) {
+			selectedPacks.push('sdd');
+		}
 		const packOptions = getPackOptions(configPath, {});
 		const { manifests, missing } = loadPackManifestsForRoot(rootPath, selectedPacks);
 		if (missing.length > 0) {
@@ -2830,6 +3106,152 @@ async function main() {
 				});
 			} else {
 				checks.push(buildCheck('evidence.vendor_governance', 'pass', 'info', 'evidence', 'vendor governance evidence ok'));
+			}
+		}
+
+		const specRoot = installedPacks.packOptions?.sdd?.specRoot ?? 'specs';
+		if (normalizedProfile === 'delivery' || normalizedProfile === 'release') {
+			if (!expectedPacks.includes('sdd')) {
+				const status = statusFromProfile(normalizedProfile);
+				checks.push(
+					buildCheck(
+						'spec-chain.present',
+						status,
+						'medium',
+						'spec',
+						'sdd pack required for delivery/release profiles'
+					)
+				);
+			}
+		}
+		if (expectedPacks.includes('sdd')) {
+			const chain = checkSpecChain(rootPath, specRoot);
+			if (chain.missing.length > 0) {
+				checks.push(
+					buildCheck(
+						'spec-chain.present',
+						statusFromProfile(normalizedProfile),
+						'medium',
+						'spec',
+						`spec chain missing: ${chain.missing.join(', ')}`
+					)
+				);
+			} else {
+				checks.push(buildCheck('spec-chain.present', 'pass', 'info', 'spec', 'spec chain present'));
+			}
+			if (chain.issues.length > 0) {
+				checks.push(
+					buildCheck(
+						'spec-chain.consistency',
+						statusFromRelease(normalizedProfile),
+						'medium',
+						'spec',
+						`spec chain inconsistencies: ${chain.issues.join(', ')}`
+					)
+				);
+			} else {
+				checks.push(
+					buildCheck('spec-chain.consistency', 'pass', 'info', 'spec', 'spec chain consistent')
+				);
+			}
+			const verifyIssues = chain.issues.filter((issue) =>
+				issue.includes('Success criteria') || issue.includes('How we will verify')
+			);
+			if (verifyIssues.length > 0) {
+				checks.push(
+					buildCheck(
+						'verification.criteria.present',
+						statusFromRelease(normalizedProfile),
+						'medium',
+						'spec',
+						`verification criteria missing: ${verifyIssues.join(', ')}`
+					)
+				);
+			} else {
+				checks.push(
+					buildCheck('verification.criteria.present', 'pass', 'info', 'spec', 'verification criteria present')
+				);
+			}
+		}
+
+		const runManifestPAI = checkRunManifestPAI(rootPath);
+		if (runManifestPAI.skipped) {
+			const status = normalizedProfile === 'release' ? 'warn' : 'info';
+			checks.push(
+				buildCheck(
+					'verification.criteria.present',
+					status,
+					'low',
+					'evidence',
+					'no tasks directory; verification criteria checks skipped'
+				)
+			);
+			checks.push(
+				buildCheck(
+					'learn.fields.present',
+					status,
+					'low',
+					'evidence',
+					'no tasks directory; learn fields checks skipped'
+				)
+			);
+			checks.push(
+				buildCheck(
+					'decision.hierarchy.present',
+					status,
+					'low',
+					'evidence',
+					'no tasks directory; decision hierarchy checks skipped'
+				)
+			);
+		} else {
+			const verificationIssues = runManifestPAI.issues.filter((issue) => issue.includes('verification.'));
+			const learnIssues = runManifestPAI.issues.filter((issue) => issue.includes('learn.'));
+			const decisionIssues = runManifestPAI.issues.filter((issue) => issue.includes('decision_hierarchy'));
+			if (verificationIssues.length > 0) {
+				checks.push(
+					buildCheck(
+						'verification.criteria.present',
+						statusFromRelease(normalizedProfile),
+						'medium',
+						'evidence',
+						verificationIssues.join('; ')
+					)
+				);
+			} else {
+				checks.push(
+					buildCheck('verification.criteria.present', 'pass', 'info', 'evidence', 'verification criteria ok')
+				);
+			}
+			if (learnIssues.length > 0) {
+				checks.push(
+					buildCheck(
+						'learn.fields.present',
+						statusFromRelease(normalizedProfile),
+						'medium',
+						'evidence',
+						learnIssues.join('; ')
+					)
+				);
+			} else {
+				checks.push(
+					buildCheck('learn.fields.present', 'pass', 'info', 'evidence', 'learn fields ok')
+				);
+			}
+			if (decisionIssues.length > 0) {
+				checks.push(
+					buildCheck(
+						'decision.hierarchy.present',
+						statusFromRelease(normalizedProfile),
+						'medium',
+						'evidence',
+						decisionIssues.join('; ')
+					)
+				);
+			} else {
+				checks.push(
+					buildCheck('decision.hierarchy.present', 'pass', 'info', 'evidence', 'decision hierarchy ok')
+				);
 			}
 		}
 

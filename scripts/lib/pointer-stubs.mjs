@@ -64,6 +64,7 @@ export function buildAgentsStub(pointer) {
 		`- Spec init (SDD pack): pnpm exec brainwav-governance spec init --slug <slug> --spec-root specs\n` +
 		`- Spec init (spec-kit compat): pnpm exec brainwav-governance spec init --slug <slug> --compat speckit\n` +
 		`- Spec validate (spec-kit compatible): pnpm exec brainwav-governance spec validate --spec-root specs --compat speckit --report .agentic-governance/reports/spec-validate.json\n\n` +
+		`- Spec clarify/analyze/checklist: pnpm exec brainwav-governance spec clarify|analyze|checklist --spec-root specs\n\n` +
 		`## Canonical references (versioned)\n` +
 		`- AGENTS: ${agentsDoc}\n` +
 		`- Charter: ${charterDoc}\n` +
@@ -159,6 +160,10 @@ export function buildCliInstructions(pointer) {
 		`  pnpm exec brainwav-governance spec init --slug <slug> --compat speckit\n` +
 		`- Spec validate (spec-kit compatible):\n` +
 		`  pnpm exec brainwav-governance spec validate --spec-root specs --compat speckit --report .agentic-governance/reports/spec-validate.json\n` +
+		`- Spec clarify/analyze/checklist:\n` +
+		`  pnpm exec brainwav-governance spec clarify --spec-root specs\n` +
+		`  pnpm exec brainwav-governance spec analyze --spec-root specs\n` +
+		`  pnpm exec brainwav-governance spec checklist --spec-root specs\n` +
 		`- List packs:\n` +
 		`  pnpm exec brainwav-governance packs list --json\n` +
 		`- Cleanup plan (pointer mode):\n` +

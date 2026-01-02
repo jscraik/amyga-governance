@@ -23,3 +23,8 @@
 ## Traceability
 - Every task folder must reference this spec and plan.
 - Task evidence must be linked in run-manifest.json.
+
+## Verify & Learn (PAI)
+- **Verification commands**: <commands or scripts>
+- **Success criteria**: <measurable outcomes>
+- **Learnings captured**: <link to lessons-learned.md>

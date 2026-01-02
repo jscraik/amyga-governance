@@ -106,6 +106,16 @@ When work changes **models, prompts, third-party services, or data boundaries**,
 - `plan.md` → technical contract
 - `tasks.md` → task decomposition and evidence hooks
 
+**ArcTDD ↔ Spec Kit ↔ PAI mapping** (single mental model):
+
+| Layer | Spec Kit | PAI loop | ArcTDD gates |
+|-------|----------|----------|--------------|
+| Intent | Specify | Current → Desired | G0–G2 (Plan) |
+| Design | Plan | THINK → PLAN | G1–G3 |
+| Work | Tasks | BUILD → EXECUTE | G3–G4 |
+| Prove | Implement/Verify | VERIFY → LEARN | G5–G7 (Verify/Review) |
+| Archive | Archive | LEARN (retrospective) | G8–G10 |
+
 ### 2.2 Flow Selection Matrix
 
 | Work item type         | Primary flow        | Typical ArcTDD gates            | Notes |

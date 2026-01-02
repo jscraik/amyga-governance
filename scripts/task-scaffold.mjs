@@ -105,6 +105,24 @@ function main() {
 				tier: 'feature',
 				change_class: defaultChangeClass,
 				arcs: [],
+				spec: {
+					current_state: '',
+					desired_state: ''
+				},
+				verification: {
+					success_criteria: [],
+					commands: []
+				},
+				learn: {
+					insights: [],
+					followups: []
+				},
+				decision_hierarchy: {
+					deterministic_tools: [],
+					cli_invocations: [],
+					prompts: [],
+					agents_used: []
+				},
 				evidence_triplet: {
 					milestone_test: 'logs/tests/milestone.log',
 					contract_snapshot: 'json/contracts-snapshot.json',
