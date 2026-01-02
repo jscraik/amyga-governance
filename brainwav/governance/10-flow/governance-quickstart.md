@@ -91,7 +91,7 @@ This governance quickstart is the entry point for **workflow selection**.
 
 **Steps**:
 
-1. If the `sdd` pack is enabled, run `brainwav-governance spec init <slug>` to create `specs/<slug>/{spec.md,plan.md,tasks.md}`
+1. If the `sdd` pack is enabled, run `brainwav-governance spec init --slug <slug>` to create `specs/<slug>/{spec.md,plan.md,tasks.md}`
 2. Create task folder and register North-Star acceptance criteria
 3. Run repo context sweep and write `research.md`
 4. Draft `PLAN.md` / `implementation-plan.md` (agent first, human review)

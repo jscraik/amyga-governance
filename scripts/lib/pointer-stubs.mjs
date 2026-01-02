@@ -60,7 +60,8 @@ export function buildAgentsStub(pointer) {
 		`- Install (pointer, pinned): pnpm add -D ${packageName} && pnpm exec brainwav-governance install --root . --mode pointer --profile delivery\n` +
 		`- Validate (strict): pnpm exec brainwav-governance validate --root . --strict --report .agentic-governance/reports\n` +
 		`- Doctor: pnpm exec brainwav-governance doctor --root . --report .agentic-governance/reports\n` +
-		`- Task scaffold: pnpm exec brainwav-governance task init --slug <slug> --tier <feature|fix|refactor|research|update>\n\n` +
+		`- Task scaffold: pnpm exec brainwav-governance task init --slug <slug> --tier <feature|fix|refactor|research|update>\n` +
+		`- Spec init (SDD pack): pnpm exec brainwav-governance spec init --slug <slug> --spec-root specs\n\n` +
 		`## Canonical references (versioned)\n` +
 		`- AGENTS: ${agentsDoc}\n` +
 		`- Charter: ${charterDoc}\n` +

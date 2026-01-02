@@ -35,7 +35,7 @@ This writes `.agentic-governance/agent-context.json` with governance index point
 ## Spec-driven start (when SDD pack enabled)
 
 ```bash
-pnpm exec brainwav-governance spec init <feature-slug>
+pnpm exec brainwav-governance spec init --slug <feature-slug>
 ```
 
 Creates `specs/<feature-slug>/{spec.md,plan.md,tasks.md}` and should precede task folder work.

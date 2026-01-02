@@ -1938,6 +1938,20 @@ async function main() {
 			exitWithCode(2);
 			return;
 		}
+		const installedPacks = readInstalledPacks(rootPath, configPath);
+		const hasSddPack = installedPacks?.packs?.includes('sdd');
+		if (!hasSddPack) {
+			const message =
+				'spec init called without the sdd pack enabled. Add "sdd" to .agentic-governance/config.json packs.';
+			if (flags.strict) {
+				console.error(`[brAInwav] ${message}`);
+				exitWithCode(1);
+				return;
+			}
+			if (!global.json && !global.quiet) {
+				console.warn(`[brAInwav] ${message}`);
+			}
+		}
 		const { govRoot } = resolveGovernancePaths(rootPath);
 		const report = {
 			schema: 'brainwav.governance.spec-init.v1',
