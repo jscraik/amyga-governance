@@ -65,7 +65,7 @@ function parseArgs() {
 	let dest;
 	let usedDestFlag = false;
 	let mode = 'full';
-	let profile = 'release';
+	let profile = 'delivery';
 	let profileWasProvided = false;
 	let preserveConfig = false;
 	let force = false;
@@ -595,9 +595,9 @@ export function runGovernanceInstall({
 	if (!fs.existsSync(destRoot)) {
 		throw new Error(`Destination does not exist: ${destRoot}`);
 	}
-	const normalizedProfile = profile === 'full' ? 'release' : profile;
-	if (!['creative', 'core', 'delivery', 'release'].includes(normalizedProfile)) {
-		throw new Error('Invalid profile. Use "creative", "core", "delivery", or "release".');
+	const normalizedProfile = profile === 'full' ? 'release' : profile === 'core' ? 'delivery' : profile;
+	if (!['creative', 'delivery', 'release'].includes(normalizedProfile)) {
+		throw new Error('Invalid profile. Use "creative", "delivery", or "release".');
 	}
 
 	const resolvedForceConfig = typeof forceConfig === 'boolean' ? forceConfig : force;

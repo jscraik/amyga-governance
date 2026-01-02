@@ -7,7 +7,7 @@ on:
 
 env:
   GOVERNANCE_MODE: delivery
-  GOVERNANCE_PROFILE: core
+  GOVERNANCE_PROFILE: delivery
 
 jobs:
   readiness:
@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: '24.11.0'
           cache: 'pnpm'
-      - name: Install minimal tooling (core profile)
+      - name: Install minimal tooling (creative profile)
         run: |
           sudo apt-get update
           sudo apt-get install -y ripgrep fd-find jq

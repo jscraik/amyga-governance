@@ -74,10 +74,10 @@ pnpm readiness:check
    `pnpm dlx @brainwav/brainwav-agentic-governance@<version> brainwav-governance install --root /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
    Or, if installed as a dependency:  
    `pnpm exec brainwav-governance install --root /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
-   - Default profile is `release` (gold standard).
+   - Default profile is `delivery`. CI should use `release` for gold-standard gating.
    - `full` copies AGENTS, CODESTYLE, SECURITY, `brainwav/governance/**`, issue/PR templates, and the GitHub Actions workflow.  
    - `pointer` writes pointer stubs + `.agentic-governance/pointer.json` and expects a lockfile-pinned `@brainwav/brainwav-agentic-governance` dependency.
-   - The CLI binary is available as both `brainwav-governance` and `brainwav-agentic-governance`.
+   - **Supported CLI:** `brainwav-governance` is the only stable public entrypoint. `brainwav-agentic-governance` is a legacy alias.
 4. In the consumer repo, run:  
    `pnpm exec brainwav-governance validate --root .` (checks required tokens + Step Budget ≤7 + overlay rules)  
    `pnpm exec brainwav-governance validate --root . --strict` (fail on warnings in CI)

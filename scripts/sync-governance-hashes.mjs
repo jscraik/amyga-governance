@@ -68,18 +68,24 @@ function fragmentSha256(filePath, startMarker, endMarker) {
  * @param {string} docPath - Relative path from the governance docs.
  * @param {string} govRoot - Governance root path.
  * @param {string} rootPath - Repository root.
+ * @param {string|null} packageRoot - Package root path (pointer mode).
+ * @param {string} mode - Install mode.
  * @returns {string|null} Absolute path if file exists, null otherwise.
  */
-function resolvePath(docPath, govRoot, rootPath) {
-	// docs at repo root (README.md, CODESTYLE.md, SECURITY.md) should win if present
+function resolvePath(docPath, govRoot, rootPath, packageRoot, mode) {
+	// docs at package root (pointer mode) should win
 	const rootDocPath = path.join(rootPath, docPath);
-	if (['README.md', 'CODESTYLE.md', 'SECURITY.md'].includes(docPath) && fs.existsSync(rootDocPath)) {
-		return rootDocPath;
+	if (['README.md', 'CODESTYLE.md', 'SECURITY.md'].includes(docPath)) {
+		if (mode === 'pointer' && packageRoot) {
+			const packageDocPath = path.join(packageRoot, docPath);
+			if (fs.existsSync(packageDocPath)) return packageDocPath;
+		}
+		if (fs.existsSync(rootDocPath)) return rootDocPath;
 	}
 	// docs under brainwav/governance/
 	const govPath = path.join(govRoot, docPath);
 	if (fs.existsSync(govPath)) return govPath;
-	if (fs.existsSync(rootDocPath)) return rootDocPath;
+	if (mode !== 'pointer' && fs.existsSync(rootDocPath)) return rootDocPath;
 	return null;
 }
 
@@ -114,7 +120,7 @@ export function runGovernanceHashSync(targetRoot = repoRoot, { checkOnly = false
 		if (key === indexKey) {
 			continue;
 		}
-		const filePath = resolvePath(entry.path, govRoot, targetRoot);
+		const filePath = resolvePath(entry.path, govRoot, targetRoot, packageRoot, mode);
 		if (!filePath) {
 			if (!silent) {
 				console.warn(`[brAInwav] SKIP ${key}: file not found at ${entry.path}`);

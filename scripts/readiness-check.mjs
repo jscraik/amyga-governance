@@ -46,7 +46,7 @@ function requireFileAbsolute(filePath, label) {
  * @param {string} profile - Profile name.
  * @returns {{ok: boolean, checks: Array<object>, failures: string[], hint: string}} Result summary.
  */
-export function runReadinessCheck(targetRoot = repoRoot, profile = 'release') {
+export function runReadinessCheck(targetRoot = repoRoot, profile = 'delivery') {
 	const checks = [];
 	const failures = [];
 	const { govRoot, indexPath, agentsPath, pointerPath, packageRoot } =
@@ -134,7 +134,7 @@ function main() {
 	try {
 		const profileArg = parseProfileArg();
 		const profileEnv = process.env.GOVERNANCE_PROFILE || process.env.BRAINWAV_PROFILE;
-		const profile = normalizeProfile(profileArg || profileEnv || 'release');
+		const profile = normalizeProfile(profileArg || profileEnv || 'delivery');
 		const result = runReadinessCheck(repoRoot, profile);
 		if (!result.ok) {
 			throw new Error(result.failures.join('; '));

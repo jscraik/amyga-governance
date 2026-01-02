@@ -122,7 +122,7 @@ function parseArgs(argv) {
 	const flags = {
 		mode: 'pointer',
 		modeProvided: false,
-		profile: 'release',
+		profile: 'delivery',
 		profileProvided: false,
 		packs: [],
 		dryRun: false,
@@ -1264,7 +1264,7 @@ async function main() {
 	const configProfile = flags.profileProvided ? null : readConfigProfile(configPath);
 	let requestedProfile = flags.profileProvided ? flags.profile : (configProfile ?? flags.profile);
 	if (command === 'doctor' && !flags.profileProvided && !configProfile) {
-		requestedProfile = 'core';
+		requestedProfile = 'delivery';
 	}
 	const normalized = normalizeProfile(requestedProfile);
 	if (normalized.warned) {
@@ -1544,7 +1544,7 @@ async function main() {
 		report.status = failed > 0 || report.errors.length > 0 ? 'error' : warned > 0 ? 'warn' : 'success';
 		report.summary = formatSummary(report.data.checks, report.status);
 		const profileSummaries = {};
-		['core', 'delivery', 'release'].forEach((profile) => {
+		['creative', 'delivery', 'release'].forEach((profile) => {
 			const summaryResult = runReadinessCheck(rootPath, profile);
 			if (summaryResult.ok) {
 				profileSummaries[profile] = 'pass';

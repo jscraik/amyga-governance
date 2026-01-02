@@ -157,13 +157,15 @@ function ensurePackOptionsConfig(repoRootPath, packs, packOptions) {
 
 /**
  * Run install/upgrade/validate/doctor for a fixture.
- * @param {{name: string, packs: string[], packOptions?: Record<string, unknown>}} fixture - Fixture definition.
+ * @param {{name: string, packs: string[], packOptions?: Record<string, unknown>, mode?: string, profile?: string}} fixture - Fixture definition.
  * @returns {void} No return value.
  */
 function runFixtureLifecycle(fixture) {
 	const tempRoot = copyFixture(fixture.name);
 	try {
 		const packsArg = fixture.packs.join(',');
+		const mode = fixture.mode ?? 'full';
+		const profile = fixture.profile ?? 'release';
 		if (fixture.packOptions) {
 			ensurePackOptionsConfig(tempRoot, fixture.packs, fixture.packOptions);
 		}
@@ -173,9 +175,9 @@ function runFixtureLifecycle(fixture) {
 				'--root',
 				tempRoot,
 				'--mode',
-				'full',
+				mode,
 				'--profile',
-				'release',
+				profile,
 				'--packs',
 				packsArg,
 				'--no-input',
@@ -191,7 +193,9 @@ function runFixtureLifecycle(fixture) {
 			writeOverlays(tempRoot, fixture.overlays);
 		}
 
-		syncRootDocs(tempRoot);
+		if (mode === 'full') {
+			syncRootDocs(tempRoot);
+		}
 
 		runCli(
 			[
@@ -199,9 +203,9 @@ function runFixtureLifecycle(fixture) {
 				'--root',
 				tempRoot,
 				'--mode',
-				'full',
+				mode,
 				'--profile',
-				'release',
+				profile,
 				'--packs',
 				packsArg,
 				'--no-input',
@@ -216,9 +220,9 @@ function runFixtureLifecycle(fixture) {
 				'--root',
 				tempRoot,
 				'--mode',
-				'full',
+				mode,
 				'--profile',
-				'release',
+				profile,
 				'--packs',
 				packsArg,
 				'--no-input',
@@ -271,6 +275,18 @@ function runFixtureLifecycle(fixture) {
  */
 function main() {
 	const fixtures = [
+		{
+			name: 'pointer-minimal',
+			packs: [],
+			mode: 'pointer',
+			profile: 'release'
+		},
+		{
+			name: 'full-minimal',
+			packs: [],
+			mode: 'full',
+			profile: 'release'
+		},
 		{
 			name: 'vite-react-tailwind',
 			packs: ['ts-base', 'react-vite', 'tailwind']

@@ -151,16 +151,57 @@ function checkIndexIntegrity(indexPath) {
 }
 
 /**
+ * Ensure docs mention the same toolchain versions as compat.json.
+ * @param {string} govRoot - Governance root.
+ * @param {string} rootPath - Repository root.
+ * @returns {string[]} Failure messages.
+ */
+function checkToolchainMentions(govRoot, rootPath) {
+	const failures = [];
+	const compatPath = path.join(govRoot, '90-infra', 'compat.json');
+	if (!fs.existsSync(compatPath)) return failures;
+	let compat;
+	try {
+		compat = JSON.parse(read(compatPath));
+	} catch {
+		return failures;
+	}
+	const nodeVersion = compat?.gold_standard?.tool_versions?.node;
+	const pnpmVersion = compat?.gold_standard?.tool_versions?.pnpm;
+	if (!nodeVersion && !pnpmVersion) return failures;
+	const files = ['README.md', 'AGENTS.md'];
+	files.forEach((file) => {
+		const filePath = path.join(rootPath, file);
+		if (!fs.existsSync(filePath)) return;
+		const content = read(filePath);
+		if (nodeVersion) {
+			const nodeMatch = content.match(/Node\\s+([0-9]+\\.[0-9]+)(?:\\.x|\\.[0-9]+)?/i);
+			if (nodeMatch && !nodeMatch[1].startsWith(nodeVersion.split('.').slice(0, 2).join('.'))) {
+				failures.push(`doc ${file} Node version mismatch (expected ${nodeVersion})`);
+			}
+		}
+		if (pnpmVersion) {
+			const pnpmMatch = content.match(/pnpm\\s+([0-9]+\\.[0-9]+)(?:\\.x|\\.[0-9]+)?/i);
+			if (pnpmMatch && !pnpmMatch[1].startsWith(pnpmVersion.split('.').slice(0, 2).join('.'))) {
+				failures.push(`doc ${file} pnpm version mismatch (expected ${pnpmVersion})`);
+			}
+		}
+	});
+	return failures;
+}
+
+/**
  * Enforce pointer-mode stub validation and canonical-only constraints.
  * @param {Record<string, unknown>|null} pointer - Pointer metadata.
  * @param {string} targetRoot - Repository root.
  * @returns {string[]} Failure messages.
  */
-function checkPointerStubs(pointer, targetRoot) {
+function checkPointerStubs(pointer, targetRoot, indexPath) {
 	if (!pointer || pointer.mode !== 'pointer') return [];
 	const failures = [];
 	const pointerDir = path.join(targetRoot, '.agentic-governance');
 	const overlayDir = path.join(pointerDir, 'overlays');
+	const nodeModulesDir = path.join(targetRoot, 'node_modules');
 	const stubPaths = [
 		path.join(targetRoot, 'AGENTS.md'),
 		path.join(targetRoot, 'CODESTYLE.md'),
@@ -247,12 +288,18 @@ function checkPointerStubs(pointer, targetRoot) {
 	}
 
 	const forbiddenNamePatterns = [/constitution\.md$/i, /agentic-coding-workflow\.md$/i];
+	const canonicalPrefixes = ['00-core/', '10-flow/', '20-checklists/', '30-compliance/', '90-infra/'];
+	const indexEntries = JSON.parse(read(indexPath));
+	const canonicalDocPaths = Object.values(indexEntries.docs || {})
+		.map((entry) => entry.path)
+		.filter((docPath) => canonicalPrefixes.some((prefix) => docPath.startsWith(prefix)));
 	const visit = (dir) => {
 		const entries = fs.readdirSync(dir, { withFileTypes: true });
 		entries.forEach((entry) => {
 			const entryPath = path.join(dir, entry.name);
 			if (entryPath.startsWith(pointerDir)) return;
 			if (entryPath.startsWith(overlayDir)) return;
+			if (entryPath.startsWith(nodeModulesDir)) return;
 			if (entry.isDirectory()) {
 				visit(entryPath);
 				return;
@@ -261,6 +308,9 @@ function checkPointerStubs(pointer, targetRoot) {
 			if (POINTER_STUB_FILES.has(relPath)) return;
 			const matchesForbidden = forbiddenNamePatterns.some((pattern) => pattern.test(entry.name));
 			if (matchesForbidden) {
+				failures.push(`pointer mode forbids canonical doc copy at ${relPath}`);
+			}
+			if (canonicalDocPaths.includes(relPath)) {
 				failures.push(`pointer mode forbids canonical doc copy at ${relPath}`);
 			}
 		});
@@ -383,9 +433,10 @@ export function runGovernanceValidation(targetRoot = repoRoot, configOverride = 
 	const failures = [
 		...checkIndexIntegrity(indexPath),
 		...checkTokens(indexPath, govRoot, targetRoot, packageRoot, allowRootDocs),
+		...(allowRootDocs ? checkToolchainMentions(govRoot, targetRoot) : []),
 		...checkTasks(targetRoot),
 		...checkConfig(resolvedConfigPath, govRoot, targetRoot),
-		...checkPointerStubs(pointer, targetRoot)
+		...checkPointerStubs(pointer, targetRoot, indexPath)
 	];
 	return { ok: failures.length === 0, failures, hint };
 }
@@ -399,7 +450,7 @@ function main() {
 	if (!result.ok) {
 		console.error('[brAInwav] validate-governance FAILED:');
 		result.failures.forEach((f) => console.error(` - ${f}`));
-		process.exitCode = 1;
+		process.exitCode = 3;
 		return;
 	}
 	console.log('[brAInwav] validate-governance OK');

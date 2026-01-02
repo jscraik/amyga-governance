@@ -125,7 +125,7 @@ jobs:
           echo "always-auth=true" >> "${npmrc}"
           export NPM_CONFIG_USERCONFIG="${npmrc}"
           pnpm add -D "@brainwav/brainwav-agentic-governance@${version}"
-          pnpm exec brainwav-governance install --root . --mode pointer --profile core --yes
+          pnpm exec brainwav-governance install --root . --mode pointer --profile delivery --yes
           pnpm exec brainwav-governance validate --root . --strict
       - name: Publish GitHub Release
         env:
