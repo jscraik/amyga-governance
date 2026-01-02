@@ -1,6 +1,6 @@
 # Governance Templates
 
-This directory contains templates for the enhanced task management workflow combining governance standards with spec-kit-inspired best practices.
+This directory contains templates for the enhanced task management workflow combining governance standards with spec-kit-inspired best practices, including the `sdd` (spec -> plan -> tasks) templates.
 
 ## Templates
 
@@ -24,7 +24,7 @@ This directory contains templates for the enhanced task management workflow comb
 
 **Purpose**: Template for creating feature specifications with prioritized user stories.
 
-**When to Use**: Automatically created by `pnpm governance-task init <feature-name>`
+**When to Use**: Automatically created by `pnpm exec brainwav-governance task init --slug <feature-name>`
 
 **Key Sections**:
 
@@ -49,7 +49,7 @@ This directory contains templates for the enhanced task management workflow comb
 
 **Purpose**: Template for documenting research findings and technical investigation.
 
-**When to Use**: Automatically created by `pnpm governance-task init <feature-name>`
+**When to Use**: Automatically created by `pnpm exec brainwav-governance task init --slug <feature-name>`
 
 **Key Sections**:
 
@@ -76,7 +76,7 @@ This directory contains templates for the enhanced task management workflow comb
 
 **Purpose**: Template for creating comprehensive test-driven development plans with production-ready quality gates.
 
-**When to Use**: Created by `pnpm governance-task plan <task-id>` after research and spec are complete.
+**When to Use**: Created by `pnpm exec brainwav-governance task init --slug <task-id>` followed by your plan workflow.
 
 **Version**: v2.0 (40KB, 1357 lines) - Fully conformant with tdd-coach requirements
 
@@ -143,14 +143,14 @@ This directory contains templates for the enhanced task management workflow comb
 
 ### Automated Template Usage
 
-The `governance-task` CLI automatically populates templates with task-specific information:
+The `brainwav-governance` CLI scaffolds task artifacts and references templates when instructed:
 
 ```bash
 # Initialize task (creates spec + research from templates)
-pnpm governance-task init "Feature Name" --priority P1
+pnpm exec brainwav-governance task init --slug "feature-name" --tier feature
 
 # Create TDD plan (creates plan from template)
-pnpm governance-task plan task-id
+pnpm exec brainwav-governance task init --slug "task-id" --tier feature
 ```
 
 ### Documentation Validation Updates
@@ -224,7 +224,7 @@ To add a new template:
 
 1. Create template in `governance/templates/[name]-template.md`
 2. Define placeholder variables using `[VARIABLE_NAME]` pattern
-3. Update `scripts/governance-task.mjs` if CLI automation needed
+3. Update `scripts/task-scaffold.mjs` if CLI automation needed
 4. Document in this README
 5. Update `governance/docs/task-management-guide.md`
 
@@ -278,7 +278,7 @@ Changelog/
 For questions or issues with templates:
 
 1. Check `governance/docs/task-management-guide.md` for workflow guidance
-2. Review `scripts/governance-task.mjs` for CLI implementation details
+2. Review `scripts/task-scaffold.mjs` for CLI implementation details
 3. Consult the Constitution for standards clarification
 4. Ask in team channels or create GitHub issue
 

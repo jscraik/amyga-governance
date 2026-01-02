@@ -141,6 +141,8 @@ For automated upgrades, see `.github/workflows/governance-upgrade.yml`.
 - `brainwav-governance install --root <path>` — copy governance pack + CI workflow into another repo.
 - `brainwav-governance validate --root <path>` — verify required tokens and Step Budget <=7 across tasks.
 - `brainwav-governance task init --slug <id> --tier <feature|fix|refactor|research|update>` — scaffold a task folder with Evidence Triplet placeholders.
+- `brainwav-governance cleanup-plan --root . --report .agentic-governance/reports/cleanup-plan.json` — plan pointer-mode cleanup.
+- `brainwav-governance cleanup-plan --root . --apply --force` — apply cleanup plan (writes `cleanup.applied.json`).
 - `brainwav-governance packs list [--json]` — list available packs/presets for discovery.
 - `pnpm governance:validate-standards` — check standards link freshness and `as_of` age in `standards.versions.json`.
 - `pnpm governance:sync-hashes:check` — fail on governance hash drift (non-writing).
@@ -153,6 +155,7 @@ For automated upgrades, see `.github/workflows/governance-upgrade.yml`.
 - `brainwav-governance upgrade --root <path>` — refresh installs + update dependency in a consumer repo.
 - `brainwav-governance doctor --root <path>` — readiness + tooling checks.
 - `brainwav-governance <command>` — CLI wrapper for install/upgrade/validate/doctor (alias: `brainwav-agentic-governance`).
+- **SDD pack** (spec-driven development) stores work artifacts under `specs/<slug>/` when enabled.
 - `pnpm commands:docs-list` — list governance docs with summaries for fast discovery.
 - `pnpm governance:generate-control-docs` — generate control catalog docs into `brainwav/governance/generated/`.
 

@@ -89,3 +89,11 @@ governance:
   requireHashVerification:
     file: AGENTS.md
     anchor: "PACK:governance.requireHashVerification"
+
+sdd:
+  specTemplate:
+    file: templates/sdd/spec.md
+  planTemplate:
+    file: templates/sdd/plan.md
+  tasksTemplate:
+    file: templates/sdd/tasks.md

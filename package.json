@@ -39,6 +39,7 @@
     "brainwav/governance/docs/testing-qa.md",
     "brainwav/governance/runbooks/**",
     "brainwav/governance/templates/**",
+    "brainwav/vendor/**",
     "brainwav/governance/README.md",
     "brainwav/governance-pack/**",
     "scripts/",

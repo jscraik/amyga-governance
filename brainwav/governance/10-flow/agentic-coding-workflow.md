@@ -101,6 +101,11 @@ When work changes **models, prompts, third-party services, or data boundaries**,
 - **Refactor / Cleanup** – Internal quality improvements intended to preserve external behaviour while improving design/operability.
 - **Code Review** – Dedicated review-only efforts (e.g., Reviewer Neuron runs, HITL review). Produces dispositions, not code.
 
+**SDD (spec-driven development)**: when the `sdd` pack is enabled, create work artifacts under `specs/<slug>/`:
+- `spec.md` → intent contract
+- `plan.md` → technical contract
+- `tasks.md` → task decomposition and evidence hooks
+
 ### 2.2 Flow Selection Matrix
 
 | Work item type         | Primary flow        | Typical ArcTDD gates            | Notes |

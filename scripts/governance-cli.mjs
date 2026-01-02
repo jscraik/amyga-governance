@@ -1210,6 +1210,60 @@ function evaluatePackCheck({ rootPath, manifest, entry, packOptions, profile }) 
 		};
 	}
 
+	if (packId === 'sdd' && (checkId === 'spec-present' || checkId === 'plan-present' || checkId === 'tasks-present' || checkId === 'traceability')) {
+		const specRoot = options?.specRoot || 'specs';
+		const root = path.join(rootPath, specRoot);
+		if (!fs.existsSync(root)) {
+			return {
+				status: statusFromProfile(profile),
+				message: `missing ${specRoot}/ directory for sdd pack`
+			};
+		}
+		const entries = fs.readdirSync(root, { withFileTypes: true }).filter((entry) => entry.isDirectory());
+		if (entries.length === 0) {
+			return {
+				status: statusFromProfile(profile),
+				message: `no spec directories found under ${specRoot}/`
+			};
+		}
+		const requiredFile = checkId === 'spec-present'
+			? 'spec.md'
+			: checkId === 'plan-present'
+				? 'plan.md'
+				: checkId === 'tasks-present'
+					? 'tasks.md'
+					: null;
+		if (requiredFile) {
+			const missing = entries.filter((entry) => !fs.existsSync(path.join(root, entry.name, requiredFile)));
+			if (missing.length > 0) {
+				return {
+					status: statusFromProfile(profile),
+					message: `${requiredFile} missing in ${missing.map((entry) => path.join(specRoot, entry.name)).join(', ')}`
+				};
+			}
+			return { status: 'pass', message: `${requiredFile} present for sdd pack` };
+		}
+		const traceFailures = [];
+		entries.forEach((entry) => {
+			const tasksPath = path.join(root, entry.name, 'tasks.md');
+			if (!fs.existsSync(tasksPath)) {
+				traceFailures.push(path.join(specRoot, entry.name, 'tasks.md missing'));
+				return;
+			}
+			const content = readTextFile(tasksPath) ?? '';
+			if (!content.includes('tasks/')) {
+				traceFailures.push(path.join(specRoot, entry.name, 'tasks.md missing tasks/ references'));
+			}
+		});
+		if (traceFailures.length > 0) {
+			return {
+				status: statusFromProfile(profile),
+				message: `traceability missing: ${traceFailures.join(', ')}`
+			};
+		}
+		return { status: 'pass', message: 'sdd traceability ok' };
+	}
+
 	if ((packId === 'swift-xcode' || packId === 'swift-appkit') && checkId === 'xcode-project') {
 		const project = options?.xcode?.project;
 		const workspace = options?.xcode?.workspace;

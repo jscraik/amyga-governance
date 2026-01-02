@@ -144,7 +144,7 @@
     },
     "agentic-coding-workflow.md": {
       "path": "10-flow/agentic-coding-workflow.md",
-      "sha256": "0d217eb703d9a17fcdd3804379c5d8ba23a500dc84f33275cbcec54508f5d4f1",
+      "sha256": "66f85c019eb9a55f0e2858885ec62066c47f078687b589bae370af347e5b01c3",
       "required_tokens": [
         "G0 Initialize",
         "Evidence Triplet",
@@ -198,7 +198,7 @@
     },
     "governance-index.json": {
       "path": "90-infra/governance-index.json",
-      "sha256": "5cc61621725a7e3f10e939f8233c5a04209a987b130e741b453402220752fa8e",
+      "sha256": "e941d8bc26fdc9c23aef27e98728fc0c3fc620b53c61ead8e746afe456836ec9",
       "hash_mode": "exclude_self",
       "required_tokens": [
         "precedence",
@@ -233,7 +233,7 @@
     },
     "governance-pack.map.yaml": {
       "path": "90-infra/governance-pack.map.yaml",
-      "sha256": "a95e22426b109bc09d8ad7df7b7894744e9fcbd72e0dc18623fec3cbbbde3b30",
+      "sha256": "09d9f3436e85b7b5fd2de2370345fa3df379d86faea863c5682899bfc03928fe",
       "required_tokens": [
         "pack",
         "overlay"
@@ -279,7 +279,7 @@
     },
     "README.md": {
       "path": "README.md",
-      "sha256": "9e4dbed85f4b70bb6659cf08cce8c1bf58e6ee51d177180d8f5648b0ac17d282",
+      "sha256": "de6f042a11a2090daa93ae038fe9590a37efafab86ad5e725216cab29a00eaed",
       "required_tokens": [
         "governance",
         "structure"

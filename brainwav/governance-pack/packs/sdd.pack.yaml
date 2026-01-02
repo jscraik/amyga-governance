@@ -1,0 +1,29 @@
+pack:
+  id: sdd
+  version: 1.0.0
+  default: false
+  summary: "Spec-driven development (spec -> plan -> tasks) with Brainwav evidence hooks."
+  inputs:
+    optional:
+      specRoot: specs
+  checks:
+    validate:
+      - id: spec-present
+        severity: medium
+        category: pack
+        message: "spec.md must exist under specs/<slug>/"
+      - id: plan-present
+        severity: medium
+        category: pack
+        message: "plan.md must exist under specs/<slug>/"
+      - id: tasks-present
+        severity: medium
+        category: pack
+        message: "tasks.md must exist under specs/<slug>/"
+      - id: traceability
+        severity: low
+        category: pack
+        message: "tasks.md must reference tasks/<slug>/ evidence"
+  standards:
+    - "Spec -> Plan -> Tasks"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

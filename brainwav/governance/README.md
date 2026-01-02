@@ -14,7 +14,7 @@
 ## Core + Packs + Adapters
 
 - **Core**: mandatory policy (AGENTS, step budget, Evidence Triplet, hash index, AI risk controls).
-- **Packs**: opt-in capability bundles (`governance-pack/packs/*`).
+- **Packs**: opt-in capability bundles (`governance-pack/packs/*`). Includes `sdd` (spec -> plan -> tasks).
 - **Adapters**: GitHub Actions templates and stack-specific command mappings.
 
 Control catalog lives in `90-infra/control-registry.core.yaml` with schema validation in `90-infra/control-registry.schema.json`.
