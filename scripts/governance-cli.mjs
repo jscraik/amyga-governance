@@ -2449,7 +2449,7 @@ async function main() {
 	}
 
 	if (command === 'cleanup-plan') {
-		const { govRoot, indexPath, pointerPath } = resolveGovernancePaths(rootPath);
+		const { indexPath, pointerPath } = resolveGovernancePaths(rootPath);
 		const pointer = pointerPath && fs.existsSync(pointerPath)
 			? JSON.parse(fs.readFileSync(pointerPath, 'utf8'))
 			: null;
