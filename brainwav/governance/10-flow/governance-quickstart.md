@@ -91,13 +91,14 @@ This governance quickstart is the entry point for **workflow selection**.
 
 **Steps**:
 
-1. Create task folder and register North-Star acceptance criteria
-2. Run repo context sweep and write `research.md`
-3. Draft `PLAN.md` / `implementation-plan.md` (agent first, human review)
-4. Call **Cortex-Aegis** to validate the plan vs governance + external evidence
-5. Implement code + tests (agent first-pass under JEDI rules)
-6. Run tests, a11y, security checks, and any extra Aegis requirements
-7. Submit PR with Evidence Triplet and link to task folder
+1. If the `sdd` pack is enabled, run `brainwav-governance spec init <slug>` to create `specs/<slug>/{spec.md,plan.md,tasks.md}`
+2. Create task folder and register North-Star acceptance criteria
+3. Run repo context sweep and write `research.md`
+4. Draft `PLAN.md` / `implementation-plan.md` (agent first, human review)
+5. Call **Cortex-Aegis** to validate the plan vs governance + external evidence
+6. Implement code + tests (agent first-pass under JEDI rules)
+7. Run tests, a11y, security checks, and any extra Aegis requirements
+8. Submit PR with Evidence Triplet and link to task folder
 
 **Evidence required**: PLAN.md, tests, logs, Aegis verdict, task folder artifacts
 
