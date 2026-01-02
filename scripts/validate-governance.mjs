@@ -52,6 +52,7 @@ const CANONICAL_PATH_SEGMENTS = [
  * @param {string} rel - Relative doc path.
  * @param {string} govRoot - Governance root.
  * @param {string} rootPath - Repository root.
+ * @param {string|null} packageRoot - Package root for pointer mode.
  * @param {boolean} allowRootDocs - Whether root docs can satisfy governance paths.
  * @returns {string|null} Resolved path or null.
  */
@@ -73,6 +74,7 @@ function resolvePath(rel, govRoot, rootPath, packageRoot, allowRootDocs) {
  * @param {string} indexPath - Governance index path.
  * @param {string} govRoot - Governance root.
  * @param {string} rootPath - Repository root.
+ * @param {string|null} packageRoot - Package root for pointer mode.
  * @param {boolean} allowRootDocs - Whether root docs can satisfy governance paths.
  * @returns {string[]} Failure messages.
  */
