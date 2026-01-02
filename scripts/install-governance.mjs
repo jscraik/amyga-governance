@@ -20,6 +20,7 @@ import { resolvePackSourcePath, groupPacksByRunner, loadPackManifestFromPath, me
 import { formatJson } from './lib/json-format.mjs';
 import {
 	buildAgentsStub,
+	buildCliInstructions,
 	buildGovernanceIndexStub,
 	buildPointerStub
 } from './lib/pointer-stubs.mjs';
@@ -338,6 +339,7 @@ function writePointerFiles(destRoot, profile, { force, dryRun, actions }) {
 	const codeStylePath = path.join(destRoot, 'CODESTYLE.md');
 	const securityPath = path.join(destRoot, 'SECURITY.md');
 	const governanceIndexPath = path.join(destRoot, 'docs', 'GOVERNANCE.md');
+	const instructionsPath = path.join(destRoot, '.agentic-governance', 'instructions.md');
 
 	if (shouldWrite(agentPath, force)) {
 		if (!dryRun) fs.writeFileSync(agentPath, `${buildAgentsStub(pointerPayload)}\n`);
@@ -396,6 +398,25 @@ function writePointerFiles(destRoot, profile, { force, dryRun, actions }) {
 		);
 	} else {
 		recordAction(actions, 'write', null, governanceIndexPath, 'skipped', 'exists');
+	}
+
+	if (shouldWrite(instructionsPath, force)) {
+		if (!dryRun) {
+			fs.writeFileSync(
+				instructionsPath,
+				`${buildCliInstructions(pointerPayload)}\n`
+			);
+		}
+		recordAction(
+			actions,
+			'write',
+			null,
+			instructionsPath,
+			dryRun ? 'planned' : 'written',
+			null
+		);
+	} else {
+		recordAction(actions, 'write', null, instructionsPath, 'skipped', 'exists');
 	}
 }
 
@@ -625,6 +646,33 @@ export function runGovernanceInstall({
 		{ force: resolvedForceConfig, dryRun, actions },
 		configPath
 	);
+
+	if (mode === 'full') {
+		const instructionsPath = path.join(destRoot, '.agentic-governance', 'instructions.md');
+		const pointerPayload = {
+			package: '@brainwav/brainwav-agentic-governance',
+			version: packageJson.version
+		};
+		if (shouldWrite(instructionsPath, force)) {
+			if (!dryRun) {
+				fs.mkdirSync(path.dirname(instructionsPath), { recursive: true });
+				fs.writeFileSync(
+					instructionsPath,
+					`${buildCliInstructions(pointerPayload)}\n`
+				);
+			}
+			recordAction(
+				actions,
+				'write',
+				null,
+				instructionsPath,
+				dryRun ? 'planned' : 'written',
+				null
+			);
+		} else {
+			recordAction(actions, 'write', null, instructionsPath, 'skipped', 'exists');
+		}
+	}
 
 	// Ensure workflows folder + render CI configs
 	if (!dryRun) fs.mkdirSync(path.join(destRoot, '.github'), { recursive: true });

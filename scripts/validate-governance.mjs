@@ -12,6 +12,7 @@ import { fileURLToPath } from 'node:url';
 import { formatPointerHint, resolveGovernancePaths } from './governance-paths.mjs';
 import {
 	buildAgentsStub,
+	buildCliInstructions,
 	buildGovernanceIndexStub,
 	buildPointerStub,
 	POINTER_STUB_MARKER
@@ -140,6 +141,7 @@ function checkPointerStubs(pointer, targetRoot) {
 		path.join(targetRoot, 'SECURITY.md'),
 		path.join(targetRoot, 'docs', 'GOVERNANCE.md')
 	];
+	const instructionsPath = path.join(pointerDir, 'instructions.md');
 
 	const canonicalVersion = pointer.version || 'unknown';
 	const canonicalPackage = pointer.package || '@brainwav/brainwav-agentic-governance';
@@ -192,6 +194,16 @@ function checkPointerStubs(pointer, targetRoot) {
 			failures.push(`pointer stub mismatch: ${rel}`);
 		}
 	});
+
+	if (!fs.existsSync(instructionsPath)) {
+		failures.push('pointer mode missing .agentic-governance/instructions.md');
+	} else {
+		const expectedInstructions = buildCliInstructions(pointerPayload).trimEnd();
+		const actualInstructions = read(instructionsPath).trimEnd();
+		if (actualInstructions !== expectedInstructions) {
+			failures.push('pointer instructions mismatch: .agentic-governance/instructions.md');
+		}
+	}
 
 	const bannedRoots = CANONICAL_PATH_SEGMENTS.map((segment) =>
 		path.join(targetRoot, segment)
