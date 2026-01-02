@@ -153,7 +153,8 @@ export function buildCliInstructions(pointer) {
 		`- List packs:\n` +
 		`  pnpm exec brainwav-governance packs list --json\n` +
 		`- Cleanup plan (pointer mode):\n` +
-		`  pnpm exec brainwav-governance cleanup-plan --root . --report .agentic-governance/reports/cleanup-plan.json\n`
+		`  pnpm exec brainwav-governance cleanup-plan --root . --report .agentic-governance/reports/cleanup-plan.json\n` +
+		`  pnpm exec brainwav-governance cleanup-plan --root . --apply --force\n`
 	);
 }
 

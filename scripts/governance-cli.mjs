@@ -42,6 +42,7 @@ const GLOBAL_FLAGS = new Set([
 	'--plain',
 	'--no-color',
 	'--no-input',
+	'--apply',
 	'--report',
 	'--output'
 ]);
@@ -107,6 +108,7 @@ Usage:
   brainwav-governance [global flags] <init|install|upgrade|validate|doctor|cleanup-plan> [flags]
   brainwav-governance packs list [--json]
   brainwav-governance task init --slug <id> [--tier <feature|fix|refactor|research|update>] [--task-root <dir>]
+  brainwav-governance cleanup-plan --root . [--report <path>] [--apply] [--force]
 `);
 }
 
@@ -128,6 +130,7 @@ function parseArgs(argv) {
 		plain: false,
 		noColor: false,
 		noInput: false,
+		apply: false,
 		report: null,
 		output: null
 	};
@@ -166,6 +169,9 @@ function parseArgs(argv) {
 		}
 		if (GLOBAL_FLAGS.has(arg)) {
 			switch (arg) {
+				case '--apply':
+					global.apply = true;
+					break;
 				case '--root': {
 					const value = takeValue(i);
 					if (!value) return { error: 'Missing value for --root' };
@@ -2279,6 +2285,40 @@ async function main() {
 			profile: normalizedProfile
 		};
 		const plan = buildCleanupPlan(rootPath, pointer, indexPath);
+		const applied = [];
+		if (global.apply) {
+			plan.actions.forEach((action) => {
+				const targetPath = path.join(rootPath, action.path);
+				if (action.action === 'delete') {
+					try {
+						fs.rmSync(targetPath, { recursive: true, force: true });
+						applied.push({ ...action, status: 'deleted' });
+					} catch (error) {
+						applied.push({ ...action, status: 'failed', error: error.message });
+					}
+					return;
+				}
+				if (action.action === 'move') {
+					const destPath = path.join(rootPath, action.target);
+					try {
+						const destDir = path.dirname(destPath);
+						fs.mkdirSync(destDir, { recursive: true });
+						if (fs.existsSync(destPath) && !flags.force) {
+							applied.push({
+								...action,
+								status: 'skipped',
+								error: 'target exists (use --force to overwrite)'
+							});
+							return;
+						}
+						fs.renameSync(targetPath, destPath);
+						applied.push({ ...action, status: 'moved' });
+					} catch (error) {
+						applied.push({ ...action, status: 'failed', error: error.message });
+					}
+				}
+			});
+		}
 		const status = plan.actions.length > 0 ? 'warn' : 'success';
 		const report = {
 			schema: 'brainwav.governance.cleanup-plan.v1',
@@ -2288,7 +2328,8 @@ async function main() {
 			data: {
 				repo_root: rootPath,
 				actions: plan.actions,
-				warnings: plan.warnings
+				warnings: plan.warnings,
+				applied: global.apply ? applied : []
 			},
 			errors: []
 		};
