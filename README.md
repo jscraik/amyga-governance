@@ -75,6 +75,9 @@ Pointer mode is the default, canonical-only adoption path. Use the install/upgra
    `pnpm exec brainwav-governance install --root /path/to/consumer-repo --mode pointer --profile delivery [--packs a11y,supply-chain]`  
 3. Bootstrap-only path (not the standard):  
    `pnpm dlx @brainwav/brainwav-agentic-governance@<version> brainwav-governance install --root /path/to/consumer-repo --mode pointer --profile delivery [--packs a11y,supply-chain]`  
+   - **Private package notice:** `@brainwav/brainwav-agentic-governance` is private to the `@brainwav` org.
+     Consumers and CI must be authenticated (Trusted Publishing or `NODE_AUTH_TOKEN`)
+     before running `pnpm add` / `pnpm exec` installs.
    - Default profile is `delivery`. CI should use `release` for gold-standard gating.
    - Default install mode is `pointer` (canonical-only distribution). Use `full` only for air-gapped or exceptional cases.
    - `full` copies AGENTS, CODESTYLE, SECURITY, `brainwav/governance/**`, and the GitHub Actions workflow.  

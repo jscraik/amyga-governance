@@ -14,7 +14,8 @@ audit:
 
 # AGENTS — Governance Pack (authoritative stub)
 
-This file is intentionally small to avoid instruction truncation. Canonical governance lives under `brainwav/governance/` and is **binding**.
+This file is intentionally small to avoid instruction truncation.
+Canonical governance lives under `brainwav/governance/` and is **binding**.
 
 ## Read first (canonical)
 
@@ -63,6 +64,11 @@ pnpm governance:sync-hashes:check
 pnpm docs:validate
 ```
 
+## Package access (private)
+
+This package is private to the `@brainwav` org. Ensure npm auth is configured in CI
+(Trusted Publishing or `NODE_AUTH_TOKEN`) before running installs in consumer repos.
+
 ## Task evidence contract (required for implementation work)
 
 Use `tasks/<slug>/` layout and Evidence Triplet requirements in:
@@ -79,4 +85,5 @@ Use `tasks/<slug>/` layout and Evidence Triplet requirements in:
 - No fake telemetry, placeholder adapters, or random/non-deterministic outputs.
 - Use ripgrep (`rg`) for repo search.
 
-If you need more detail, read the canonical docs above. Do not expand this file without a strong reason.
+If you need more detail, read the canonical docs above.
+Do not expand this file without a strong reason.

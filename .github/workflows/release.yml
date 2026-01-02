@@ -131,7 +131,8 @@ jobs:
           export NPM_CONFIG_USERCONFIG="${npmrc}"
           pnpm add -D "@brainwav/brainwav-agentic-governance@${version}"
           pnpm exec brainwav-governance install --root . --mode pointer --profile delivery --yes
-          pnpm exec brainwav-governance validate --root . --strict
+          mkdir -p .agentic-governance/reports
+          pnpm exec brainwav-governance validate --root . --strict --json --report .agentic-governance/reports/
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

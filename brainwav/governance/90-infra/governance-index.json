@@ -21,6 +21,7 @@
     "90-infra/egress-governance.md",
     "CODESTYLE.md",
     "docs/documentation-governance.md",
+    "docs/spec-kit-compat.md",
     "SECURITY.md"
   ],
   "infra": [
@@ -198,7 +199,7 @@
     },
     "governance-index.json": {
       "path": "90-infra/governance-index.json",
-      "sha256": "3c7d29f556545d7a8dad325e10faa7ad68cfac96370e05dd03f91a1c840b44a8",
+      "sha256": "23bcfea3bfca75c67e48329f825ff714abdb0ebb226c0ccc31c9c80ea95473e0",
       "hash_mode": "exclude_self",
       "required_tokens": [
         "precedence",
@@ -401,6 +402,17 @@
         "documentation governance",
         "JSDoc",
         "OpenAI Cookbook"
+      ],
+      "class": "normative",
+      "owner": "brAInwav Development Team",
+      "change_class": "docs"
+    },
+    "spec-kit-compat.md": {
+      "path": "docs/spec-kit-compat.md",
+      "sha256": "3041c7a98c729f4b7ff5a816149f57183315aa2f7661668c6115fec50a0551f3",
+      "required_tokens": [
+        "Spec-Kit Compatibility Contract",
+        "Layout"
       ],
       "class": "normative",
       "owner": "brAInwav Development Team",

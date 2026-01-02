@@ -85,7 +85,7 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile=false
       - run: pnpm lint:ci
-      - run: pnpm exec brainwav-governance validate --strict --config .agentic-governance/config.ci.ubuntu.json --report .agentic-governance/reports
+      - run: pnpm exec brainwav-governance validate --strict --json --config .agentic-governance/config.ci.ubuntu.json --report .agentic-governance/reports/
       - run: pnpm governance:validate-evidence
       - run: pnpm test:cli
       - run: pnpm test:fixtures

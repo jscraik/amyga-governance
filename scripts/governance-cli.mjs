@@ -3514,7 +3514,8 @@ async function main() {
 				}
 			});
 		}
-		const status = plan.actions.length > 0 ? 'warn' : 'success';
+		const failedApply = applied.some((item) => item.status === 'failed');
+		const status = failedApply ? 'error' : plan.actions.length > 0 ? 'warn' : 'success';
 		const report = {
 			schema: 'brainwav.governance.cleanup-plan.v1',
 			meta: buildMeta(inputs),
@@ -3536,16 +3537,26 @@ async function main() {
 				schema: 'brainwav.governance.cleanup-apply.v1',
 				meta: buildMeta(inputs),
 				summary: `${applied.length} actions applied`,
-				status: applied.some((item) => item.status === 'failed') ? 'error' : 'success',
+				status: failedApply ? 'error' : 'success',
 				data: {
 					repo_root: rootPath,
 					applied
 				},
 				errors: []
 			};
-			const appliedPath = path.join(path.dirname(reportPath ?? rootPath), 'cleanup.applied.json');
+			const appliedDir = reportPath ? path.dirname(reportPath) : rootPath;
+			const appliedPath = path.join(appliedDir, 'cleanup.applied.json');
 			writeReport(appliedPath, appliedReport);
 		}
+		if (failedApply) {
+			exitWithCode(1);
+			return;
+		}
+		if (plan.actions.length > 0) {
+			exitWithCode(4);
+			return;
+		}
+		exitWithCode(0);
 		return;
 	}
 }

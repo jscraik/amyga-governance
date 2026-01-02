@@ -36,6 +36,7 @@
     "brainwav/governance/docs/documentation-governance.md",
     "brainwav/governance/docs/cortex-aegis.md",
     "brainwav/governance/docs/gold-standard-checklist.md",
+    "brainwav/governance/docs/spec-kit-compat.md",
     "brainwav/governance/docs/testing-qa.md",
     "brainwav/governance/runbooks/**",
     "brainwav/governance/templates/**",

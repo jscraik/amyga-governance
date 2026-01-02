@@ -25,7 +25,8 @@ jobs:
       - name: Upgrade governance
         run: |
           pnpm exec brainwav-governance upgrade --root .
-          pnpm exec brainwav-governance validate --root . --strict
+          mkdir -p .agentic-governance/reports
+          pnpm exec brainwav-governance validate --root . --strict --json --report .agentic-governance/reports/
       - name: Create PR (if changes)
         uses: peter-evans/create-pull-request@v6
         with:

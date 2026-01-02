@@ -231,8 +231,14 @@ function runFixtureLifecycle(fixture) {
 
 		if (mode === 'pointer') {
 			runCli(['upgrade', ...commonArgs, '--no-install'], repoRoot);
+			if (fixture.upgradeTwice) {
+				runCli(['upgrade', ...commonArgs, '--no-install'], repoRoot);
+			}
 		} else {
 			runCli(['upgrade', ...commonArgs], repoRoot);
+			if (fixture.upgradeTwice) {
+				runCli(['upgrade', ...commonArgs], repoRoot);
+			}
 		}
 
 		if (fixture.specInit !== false) {
@@ -451,6 +457,7 @@ function main() {
 			specCompat: 'speckit',
 			specSlug: '001-pointer-after-full',
 			pointerAfterFull: true,
+			upgradeTwice: true,
 			packOptions: {
 				sdd: {
 					specRoot: '.specify/specs'
