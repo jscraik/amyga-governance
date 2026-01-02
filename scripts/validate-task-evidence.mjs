@@ -17,8 +17,11 @@ const repoRoot = path.resolve(__dirname, '..');
  * @param {string} p - Path to check.
  * @returns {boolean} True if file exists and has content.
  */
-function existsNonEmpty(p) {
-	return fs.existsSync(p) && fs.statSync(p).size > 0;
+function existsNonEmptyFile(p) {
+	if (!fs.existsSync(p)) return false;
+	const stat = fs.statSync(p);
+	if (!stat.isFile()) return false;
+	return stat.size > 0;
 }
 
 /**
@@ -38,13 +41,22 @@ function validateTask(taskRoot, slug, repoRootPath, changeClassPath) {
 	}
 	const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 	const triplet = manifest.evidence_triplet || {};
-	const milestone = path.join(repoRootPath, triplet.milestone_test || '');
-	const contract = path.join(repoRootPath, triplet.contract_snapshot || '');
-	const reviewer = path.join(repoRootPath, triplet.reviewer_pointer || '');
-
-	if (!existsNonEmpty(milestone)) failures.push(`${slug}: milestone test log missing/empty (${milestone})`);
-	if (!existsNonEmpty(contract)) failures.push(`${slug}: contract snapshot missing/empty (${contract})`);
-	if (!existsNonEmpty(reviewer)) failures.push(`${slug}: reviewer pointer missing/empty (${reviewer})`);
+	const requiredTripletFields = [
+		['milestone_test', 'milestone test log'],
+		['contract_snapshot', 'contract snapshot'],
+		['reviewer_pointer', 'reviewer pointer']
+	];
+	requiredTripletFields.forEach(([field, label]) => {
+		const relPath = triplet?.[field];
+		if (typeof relPath !== 'string' || !relPath.trim()) {
+			failures.push(`${slug}: missing evidence_triplet.${field}`);
+			return;
+		}
+		const target = path.join(repoRootPath, relPath);
+		if (!existsNonEmptyFile(target)) {
+			failures.push(`${slug}: ${label} missing/empty (${target})`);
+		}
+	});
 
 	const changeClasses = Array.isArray(manifest.change_classes)
 		? manifest.change_classes
@@ -60,24 +72,24 @@ function validateTask(taskRoot, slug, repoRootPath, changeClassPath) {
 		});
 		Array.from(required).forEach((relPath) => {
 			const target = path.join(taskRoot, relPath);
-			if (!existsNonEmpty(target)) {
+			if (!existsNonEmptyFile(target)) {
 				failures.push(`${slug}: missing change-class evidence (${relPath})`);
 			}
 		});
 	}
 
 	const memoryIds = path.join(taskRoot, 'json', 'memory-ids.json');
-	if (!existsNonEmpty(memoryIds)) failures.push(`${slug}: memory-ids.json missing/empty`);
+	if (!existsNonEmptyFile(memoryIds)) failures.push(`${slug}: memory-ids.json missing/empty`);
 
 	const trace = path.join(taskRoot, 'verification', 'trace-context.log');
-	if (fs.existsSync(path.dirname(trace)) && !existsNonEmpty(trace)) {
+	if (fs.existsSync(path.dirname(trace)) && !existsNonEmptyFile(trace)) {
 		failures.push(`${slug}: trace-context.log missing/empty`);
 	}
 
 	const acadFindings = path.join(taskRoot, 'logs', 'academic-research', 'findings.json');
 	const licenseValidation = path.join(taskRoot, 'logs', 'academic-research', 'license-validation.json');
-	if (!existsNonEmpty(acadFindings)) failures.push(`${slug}: academic findings missing/empty`);
-	if (!existsNonEmpty(licenseValidation)) failures.push(`${slug}: license validation missing/empty`);
+	if (!existsNonEmptyFile(acadFindings)) failures.push(`${slug}: academic findings missing/empty`);
+	if (!existsNonEmptyFile(licenseValidation)) failures.push(`${slug}: license validation missing/empty`);
 
 	return failures;
 }

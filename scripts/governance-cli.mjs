@@ -23,8 +23,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
 
-const COMMANDS = new Set(['init', 'install', 'upgrade', 'validate', 'doctor', 'packs']);
+const COMMANDS = new Set(['init', 'install', 'upgrade', 'validate', 'doctor', 'packs', 'task']);
 const COMMON_FLAGS = new Set(['--mode', '--profile', '--packs', '--dry-run', '--yes', '--force', '--no-install']);
+const TASK_FLAGS = new Set(['--slug', '--tier', '--task-root', '--tasks-root']);
 const GLOBAL_FLAGS = new Set([
 	'-h',
 	'--help',
@@ -96,11 +97,12 @@ const HIGH_RISK_ENTITLEMENTS = new Set([
 function usage() {
 	console.log(`brainwav-governance
 
-Initialize, install, upgrade, validate, and diagnose Brainwav governance in a repo.
+Initialize, install, upgrade, validate, diagnose, or scaffold Brainwav governance in a repo.
 
 Usage:
   brainwav-governance [global flags] <init|install|upgrade|validate|doctor> [flags]
   brainwav-governance packs list [--json]
+  brainwav-governance task init --slug <id> [--tier <feature|fix|refactor|research|update>] [--task-root <dir>]
 `);
 }
 
@@ -136,7 +138,10 @@ function parseArgs(argv) {
 		force: false,
 		noInstall: false,
 		strict: false,
-		preserve: true
+		preserve: true,
+		taskSlug: null,
+		taskTier: 'feature',
+		taskRoot: 'tasks'
 	};
 	const unknown = [];
 	let positionalOutput = null;
@@ -266,6 +271,36 @@ function parseArgs(argv) {
 				case '--preserve=true':
 					flags.preserve = true;
 					break;
+				default:
+					break;
+			}
+			continue;
+		}
+
+		if (command === 'task' && TASK_FLAGS.has(arg)) {
+			switch (arg) {
+				case '--slug': {
+					const value = takeValue(i);
+					if (!value) return { error: 'Missing value for --slug' };
+					flags.taskSlug = value;
+					i++;
+					break;
+				}
+				case '--tier': {
+					const value = takeValue(i);
+					if (!value) return { error: 'Missing value for --tier' };
+					flags.taskTier = value;
+					i++;
+					break;
+				}
+				case '--task-root':
+				case '--tasks-root': {
+					const value = takeValue(i);
+					if (!value) return { error: `Missing value for ${arg}` };
+					flags.taskRoot = value;
+					i++;
+					break;
+				}
 				default:
 					break;
 			}
@@ -1230,6 +1265,118 @@ function normalizeProfile(profile) {
 }
 
 /**
+ * Ensure task slug is safe for filesystem usage.
+ * @param {string} slug - Task slug.
+ * @returns {boolean} True when slug is safe.
+ */
+function isSafeSlug(slug) {
+	if (typeof slug !== 'string' || !slug.trim()) return false;
+	if (slug === '.' || slug === '..') return false;
+	if (slug.includes('/') || slug.includes('\\')) return false;
+	if (slug.includes('..')) return false;
+	return true;
+}
+
+/**
+ * Create a directory if missing and record the action.
+ * @param {string} dirPath - Directory path.
+ * @param {Array<object>} actions - Actions array.
+ * @returns {void} No return value.
+ */
+function ensureDir(dirPath, actions) {
+	if (fs.existsSync(dirPath)) return;
+	fs.mkdirSync(dirPath, { recursive: true });
+	actions.push({ action: 'mkdir', path: dirPath });
+}
+
+/**
+ * Write a file if missing or when force is true.
+ * @param {string} filePath - File path.
+ * @param {string} content - File content.
+ * @param {Array<object>} actions - Actions array.
+ * @param {boolean} force - Overwrite when true.
+ * @returns {void} No return value.
+ */
+function writeFile(filePath, content, actions, force) {
+	const existed = fs.existsSync(filePath);
+	if (existed && !force) return;
+	fs.writeFileSync(filePath, content);
+	actions.push({ action: existed ? 'overwrite' : 'write', path: filePath });
+}
+
+/**
+ * Initialize a task scaffold.
+ * @param {{rootPath: string, taskRoot: string, slug: string, tier: string, force: boolean}} args - Inputs.
+ * @returns {Array<object>} Actions performed.
+ */
+function initTask({ rootPath, taskRoot, slug, tier, force }) {
+	const actions = [];
+	const baseRoot = path.join(rootPath, taskRoot, slug);
+	const jsonRoot = path.join(baseRoot, 'json');
+	const logsRoot = path.join(baseRoot, 'logs');
+	const vibeRoot = path.join(logsRoot, 'vibe-check');
+	const researchRoot = path.join(logsRoot, 'academic-research');
+	const testsRoot = path.join(logsRoot, 'tests');
+	const verificationRoot = path.join(baseRoot, 'verification');
+
+	ensureDir(baseRoot, actions);
+	ensureDir(jsonRoot, actions);
+	ensureDir(logsRoot, actions);
+	ensureDir(vibeRoot, actions);
+	ensureDir(researchRoot, actions);
+	ensureDir(testsRoot, actions);
+	ensureDir(verificationRoot, actions);
+
+	writeFile(
+		path.join(baseRoot, 'implementation-plan.md'),
+		'# Implementation Plan\n\nTBD\n',
+		actions,
+		force
+	);
+	writeFile(
+		path.join(baseRoot, 'tdd-plan.md'),
+		'# TDD Plan\n\nTBD\n',
+		actions,
+		force
+	);
+	writeFile(
+		path.join(baseRoot, 'implementation-checklist.md'),
+		'# Implementation Checklist\n\n- [ ] TBD\n',
+		actions,
+		force
+	);
+	writeFile(path.join(baseRoot, 'SUMMARY.md'), '# Summary\n\nTBD\n', actions, force);
+
+	const now = new Date().toISOString();
+	const manifest = {
+		schema: 'brainwav.governance.run-manifest.v1',
+		tier,
+		arcs: [],
+		evidence_triplet: {
+			milestone_test: 'logs/tests/milestone.log',
+			contract_snapshot: 'json/contracts-snapshot.json',
+			reviewer_pointer: 'json/reviewer.json'
+		},
+		created_at: now,
+		updated_at: now
+	};
+	writeFile(
+		path.join(jsonRoot, 'run-manifest.json'),
+		`${JSON.stringify(manifest, null, 2)}\n`,
+		actions,
+		force
+	);
+	writeFile(path.join(jsonRoot, 'memory-ids.json'), '[]\n', actions, force);
+
+	writeFile(path.join(testsRoot, 'milestone.log'), '', actions, force);
+	writeFile(path.join(jsonRoot, 'contracts-snapshot.json'), '', actions, force);
+	writeFile(path.join(jsonRoot, 'reviewer.json'), '', actions, force);
+	writeFile(path.join(verificationRoot, 'trace-context.log'), '', actions, force);
+
+	return actions;
+}
+
+/**
  * CLI entry point for governance commands.
  * @returns {Promise<void>} Resolves when done.
  */
@@ -1334,6 +1481,68 @@ async function main() {
 			writeReport(reportPath, report);
 		}
 		exitWithCode(0);
+		return;
+	}
+
+	if (command === 'task') {
+		const subcommand = positionalOutput ?? 'init';
+		if (subcommand !== 'init') {
+			console.error(`[brAInwav] Unknown task subcommand "${subcommand}".`);
+			exitWithCode(2);
+			return;
+		}
+		if (!flags.taskSlug) {
+			console.error('[brAInwav] Missing required --slug for task init.');
+			exitWithCode(2);
+			return;
+		}
+		if (!isSafeSlug(flags.taskSlug)) {
+			console.error(`[brAInwav] Invalid task slug: ${flags.taskSlug}`);
+			exitWithCode(2);
+			return;
+		}
+		const report = {
+			schema: 'brainwav.governance.task-init.v1',
+			meta: buildMeta({
+				root: rootPath,
+				task_root: flags.taskRoot,
+				slug: flags.taskSlug,
+				tier: flags.taskTier
+			}),
+			summary: '',
+			status: 'success',
+			data: {
+				repo_root: rootPath,
+				task_root: flags.taskRoot,
+				slug: flags.taskSlug,
+				tier: flags.taskTier,
+				actions: []
+			},
+			errors: []
+		};
+		try {
+			const actions = initTask({
+				rootPath,
+				taskRoot: flags.taskRoot,
+				slug: flags.taskSlug,
+				tier: flags.taskTier,
+				force: flags.force
+			});
+			report.data.actions = actions;
+			report.summary = `task init completed (${actions.length} actions)`;
+			outputReport(report, global);
+			writeReport(reportPath, report);
+			writeReport(outputPath, report);
+			exitWithCode(0);
+		} catch (error) {
+			report.status = 'error';
+			report.errors.push(String(error.message ?? error));
+			report.summary = 'task init failed';
+			outputReport(report, global);
+			writeReport(reportPath, report);
+			writeReport(outputPath, report);
+			exitWithCode(1);
+		}
 		return;
 	}
 
@@ -1667,11 +1876,15 @@ async function main() {
 		}
 
 		if (!evidenceCheck.ok) {
+			const status = statusFromRelease(normalizedProfile);
 			evidenceCheck.failures.forEach((failure) => {
-				checks.push(buildCheck('evidence.task', 'fail', 'medium', 'evidence', failure));
+				checks.push(buildCheck('evidence.task', status, 'medium', 'evidence', failure));
 			});
 		} else if (evidenceCheck.skipped) {
-			checks.push(buildCheck('evidence.task', 'warn', 'low', 'evidence', 'no tasks directory; evidence checks skipped'));
+			const status = normalizedProfile === 'release' ? 'warn' : 'info';
+			checks.push(
+				buildCheck('evidence.task', status, 'low', 'evidence', 'no tasks directory; evidence checks skipped')
+			);
 		} else {
 			checks.push(buildCheck('evidence.task', 'pass', 'info', 'evidence', 'task evidence ok'));
 		}

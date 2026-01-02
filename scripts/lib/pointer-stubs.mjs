@@ -105,6 +105,8 @@ export function buildCliInstructions(pointer) {
 		`  pnpm exec brainwav-governance validate --root . --strict --report .agentic-governance/reports\n` +
 		`- Doctor (readiness):\n` +
 		`  pnpm exec brainwav-governance doctor --root . --report .agentic-governance/reports\n` +
+		`- Scaffold a task folder:\n` +
+		`  pnpm exec brainwav-governance task init --slug <slug> --tier <feature|fix|refactor|research|update>\n` +
 		`- List packs:\n` +
 		`  pnpm exec brainwav-governance packs list --json\n`
 	);

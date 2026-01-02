@@ -24,6 +24,7 @@ import { runToolingChecks } from './ensure-tools.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
+const DEFAULT_CONFIG_PATH = path.join(repoRoot, '.agentic-governance', 'config.json');
 
 /**
  * Verify a required file exists at the specified path.
@@ -116,6 +117,21 @@ function parseProfileArg() {
 }
 
 /**
+ * Read profile from config if present.
+ * @param {string} configPath - Config path to read.
+ * @returns {string|null} Profile name or null.
+ */
+function readConfigProfile(configPath) {
+	if (!configPath || !fs.existsSync(configPath)) return null;
+	try {
+		const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+		return typeof config?.profile === 'string' ? config.profile : null;
+	} catch {
+		return null;
+	}
+}
+
+/**
  * Normalize legacy profile names to current equivalents.
  * @param {string} profile - Profile name.
  * @returns {string} Normalized profile.
@@ -134,7 +150,8 @@ function main() {
 	try {
 		const profileArg = parseProfileArg();
 		const profileEnv = process.env.GOVERNANCE_PROFILE || process.env.BRAINWAV_PROFILE;
-		const profile = normalizeProfile(profileArg || profileEnv || 'delivery');
+		const configProfile = readConfigProfile(DEFAULT_CONFIG_PATH);
+		const profile = normalizeProfile(profileArg || profileEnv || configProfile || 'creative');
 		const result = runReadinessCheck(repoRoot, profile);
 		if (!result.ok) {
 			throw new Error(result.failures.join('; '));
