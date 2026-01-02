@@ -169,7 +169,13 @@ function extractVersion(output) {
 function checkToolVersion(command, args, minVersion) {
 	const res = spawnSync(command, args, { encoding: 'utf8' });
 	if (res.status !== 0) return { ok: false, version: 'missing' };
-	const detected = extractVersion(`${res.stdout}\n${res.stderr}`) ?? 'unknown';
+	let detected = extractVersion(`${res.stdout}\n${res.stderr}`) ?? 'unknown';
+	if (detected === 'unknown' && command === 'gitleaks') {
+		const fallback = spawnSync(command, ['--version'], { encoding: 'utf8' });
+		if (fallback.status === 0) {
+			detected = extractVersion(`${fallback.stdout}\n${fallback.stderr}`) ?? 'unknown';
+		}
+	}
 	const ok = detected !== 'unknown' && compareVersions(detected, minVersion) >= 0;
 	return { ok, version: detected };
 }
