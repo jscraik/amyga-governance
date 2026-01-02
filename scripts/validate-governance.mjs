@@ -125,6 +125,28 @@ function checkTasks(rootPath) {
 }
 
 /**
+ * Validate governance index integrity.
+ * @param {string} indexPath - Governance index path.
+ * @returns {string[]} Failure messages.
+ */
+function checkIndexIntegrity(indexPath) {
+	const failures = [];
+	const index = JSON.parse(read(indexPath));
+	Object.entries(index.docs || {}).forEach(([key, entry]) => {
+		if (!entry.fragment_markers) return;
+		if (!Array.isArray(entry.fragment_markers) || entry.fragment_markers.length < 2) {
+			failures.push(`fragment_markers must be a 2-item array for ${key}`);
+			return;
+		}
+		const [startMarker, endMarker] = entry.fragment_markers;
+		if (!startMarker?.trim() || !endMarker?.trim()) {
+			failures.push(`fragment_markers must be non-empty strings for ${key}`);
+		}
+	});
+	return failures;
+}
+
+/**
  * Enforce pointer-mode stub validation and canonical-only constraints.
  * @param {Record<string, unknown>|null} pointer - Pointer metadata.
  * @param {string} targetRoot - Repository root.
@@ -355,6 +377,7 @@ export function runGovernanceValidation(targetRoot = repoRoot, configOverride = 
 	const allowRootDocs = !pointer || pointer.mode !== 'pointer';
 	const resolvedConfigPath = configOverride ?? configPath;
 	const failures = [
+		...checkIndexIntegrity(indexPath),
 		...checkTokens(indexPath, govRoot, targetRoot, allowRootDocs),
 		...checkTasks(targetRoot),
 		...checkConfig(resolvedConfigPath, govRoot, targetRoot),

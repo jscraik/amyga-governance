@@ -124,6 +124,15 @@ export function runGovernanceHashSync(targetRoot = repoRoot, { checkOnly = false
 
 		let hash;
 		if (entry.fragment_markers) {
+			if (
+				!Array.isArray(entry.fragment_markers) ||
+				entry.fragment_markers.length < 2 ||
+				!entry.fragment_markers[0]?.trim() ||
+				!entry.fragment_markers[1]?.trim()
+			) {
+				errors.push(`[brAInwav] fragment_markers must be non-empty strings for ${key}`);
+				continue;
+			}
 			hash = fragmentSha256(filePath, entry.fragment_markers[0], entry.fragment_markers[1]);
 			if (!hash) {
 				errors.push(`[brAInwav] invalid fragment markers for ${key}`);
@@ -142,6 +151,10 @@ export function runGovernanceHashSync(targetRoot = repoRoot, { checkOnly = false
 			entry.sha256 = hash;
 			updated++;
 		}
+	}
+
+	if (!checkOnly) {
+		index.updated = new Date().toISOString().split('T')[0];
 	}
 
 	if (indexKey) {
@@ -171,7 +184,6 @@ export function runGovernanceHashSync(targetRoot = repoRoot, { checkOnly = false
 		return { ok: updated === 0, changes, hint, updated };
 	}
 
-	index.updated = new Date().toISOString().split('T')[0];
 	fs.writeFileSync(indexPath, formatJson(index, 2));
 	const hint = formatPointerHint(pointerPath, packageRoot);
 	return { ok: true, changes, hint, updated };

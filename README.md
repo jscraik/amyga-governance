@@ -71,7 +71,7 @@ pnpm readiness:check
 2. Install governance into the target repo (local clone):  
    `brainwav-governance install --root /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
 3. Install governance into the target repo (published package):  
-   `pnpm dlx @brainwav/brainwav-agentic-governance@<version> install --root /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
+   `pnpm dlx @brainwav/brainwav-agentic-governance@<version> brainwav-governance install --root /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
    Or, if installed as a dependency:  
    `pnpm exec brainwav-governance install --root /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
    - Default profile is `release` (gold standard).
@@ -86,7 +86,7 @@ pnpm readiness:check
 ### Upgrade in a consumer project
 
 ```bash
-pnpm dlx @brainwav/brainwav-agentic-governance@<version> upgrade --root /path/to/consumer-repo [--packs a11y,supply-chain]
+pnpm dlx @brainwav/brainwav-agentic-governance@<version> brainwav-governance upgrade --root /path/to/consumer-repo [--packs a11y,supply-chain]
 ```
 
 `upgrade` refreshes pointer stubs + workflows, updates the pinned dependency, and runs `pnpm install` when a pnpm lockfile is present.

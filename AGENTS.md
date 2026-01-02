@@ -261,7 +261,7 @@ pnpm lint:smart
 pnpm typecheck:smart
 ```
 
-- **Environment baseline:** Node 24.11.x; pnpm 10.19.x pinned in `.mise.toml`.
+- **Environment baseline:** Node 24.11.x; pnpm 10.26.x pinned in `.mise.toml`.
 - **Use Nx** (`nx run/affected`) for repo‑aware ops.
 
 ---
