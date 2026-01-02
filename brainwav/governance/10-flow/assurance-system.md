@@ -11,12 +11,10 @@
 **Key Capabilities**:
 
 - Plan validation against governance frameworks
-- Risk assessment and mitigation recommendations  
+- Risk assessment and mitigation recommendations
 - Evidence verification and audit trail generation
 - Time-freshness validation for research and external sources
 - Compliance checking for security, privacy, and accessibility standards
-
-**Practical minimum**: call Assurance for feature/fix/refactor **only when risk ≥ medium**, when you change contracts, or when you rely on external research. Skip it for low‑risk docs/typos if no new evidence is required.
 
 ---
 
@@ -46,7 +44,7 @@ The Assurance System MUST validate time-freshness for:
 
 ## 3. When to Call the Assurance System
 
-### 2.1 Mandatory Invocation
+### 3.1 Mandatory Invocation
 
 - **Feature Implementation (G2 + G5)**: All feature flows must call the Assurance System at plan validation (G2) and verification (G5) stages
 - **High-Risk Changes**: Any modification with risk tags ≥ `medium` or touching security/privacy boundaries
@@ -54,7 +52,7 @@ The Assurance System MUST validate time-freshness for:
 - **Research Validation**: Academic source verification and time-freshness checks
 - **Compliance Requirements**: When WCAG, security, or regulatory compliance is involved
 
-### 2.2 Optional but Recommended
+### 3.2 Optional but Recommended
 
 - Fix flows for non-trivial bugs or system-level issues
 - Refactoring that affects multiple packages or core abstractions
@@ -63,9 +61,9 @@ The Assurance System MUST validate time-freshness for:
 
 ---
 
-## 3. Academic Research Integration (Mandatory)
+## 4. Academic Research Integration (Mandatory)
 
-### 3.1 Available Academic MCP Providers
+### 4.1 Available Academic MCP Providers
 
 Before running Cortex-Aegis validation, all implementation plans MUST be enhanced with academic research using the built-in MCP providers:
 
@@ -75,7 +73,7 @@ Before running Cortex-Aegis validation, all implementation plans MUST be enhance
 - **OpenAlex API**: Discover broad research patterns and collaborations
 - **Context7 MCP**: Access domain-specific knowledge and best practices via `mcp_context7_*` tools
 
-### 3.2 Research Workflow
+### 4.2 Research Workflow
 
 ```typescript
 // Example: Query academic sources via MCP
@@ -90,7 +88,7 @@ fs.writeFileSync(
 );
 ```
 
-### 3.3 License Validation Requirements
+### 4.3 License Validation Requirements
 
 - **License Risk Assessment**: Classify all academic sources by risk level (SAFE/REVIEW/RESTRICTED/PROHIBITED)
 - **Content Filtering**: Only include SAFE and REVIEW content in implementation plans
@@ -99,9 +97,9 @@ fs.writeFileSync(
 
 ---
 
-## 4. Implementation Guidelines
+## 5. Implementation Guidelines
 
-### 4.1 MCP Tool Invocation
+### 5.1 MCP Tool Invocation
 
 ```typescript
 // Call cortex-aegis MCP tool (replaces legacy vibe_check)

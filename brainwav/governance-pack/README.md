@@ -57,7 +57,7 @@ Templates use `${var}` placeholders. See `config.example.yaml` for the canonical
 
 ## Enforcement Wiring (future)
 
-Core + overlay sources are merged into `governance-pack/dist/` for CI and AGENTS consumption. CI and agents should read the `governance-pack/dist/*.yaml` files as the authoritative pack.
+Core + overlay sources are merged into `governance-pack/dist/` for CI and AGENTS consumption. CI and agents should read the `governance-pack/dist/*.yaml` files as the authoritative pack. A heavier variant can include `dist/docs.index.yaml` enriched with `full_text` for offline use.
 
 ## Output targets
 - Top-level `governance-pack/*.yaml` are the current Cortex defaults.
@@ -66,7 +66,7 @@ Core + overlay sources are merged into `governance-pack/dist/` for CI and AGENTS
 
 ## Render to dist
 
-- When pack sources change, regenerate and commit `governance-pack/dist/` with the same merge logic used by CI.
+- When pack sources change, regenerate and commit `governance-pack/dist/` using the same merge logic used by CI.
 - Flags: `--overlay <org>` (default `cortex`), `--project <name>` (optional), `--config <path>` (default `config.example.yaml`), `--full-doc` to force inlining doc `full_text`.
 - Behavior: deep-merge core → overlay → project; arrays are replaced by later layers; unknown placeholders are left as-is.
 - Outputs: `governance.yaml`, `checklists.yaml`, `assurance.yaml`, `structure.yaml`, `dist/docs.index.yaml`, `agents-header.md` under `governance-pack/dist/`.

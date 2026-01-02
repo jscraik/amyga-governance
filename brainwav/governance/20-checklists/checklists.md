@@ -41,12 +41,12 @@
 
 > Related governance: `10-flow/governance-quickstart.md`, `10-flow/agentic-coding-workflow.md`, `10-flow/assurance-system.md` (Time Freshness Policy), `00-core/constitution.md`, `00-core/AGENT_CHARTER.md`.
 
-### 1.1 Minimal checklist for low‑risk work
+### 1.1 Fast path (low‑risk work)
 
-Use this when the change is docs‑only, a tiny fix, or a low‑risk refactor:
+Use this when the change is docs‑only, a small fix, or a low‑risk refactor:
 
 - [ ] Task slug exists and `run-manifest.json` updated.
-- [ ] Tests updated (or marked N/A with rationale).
+- [ ] Tests updated or marked N/A with rationale.
 - [ ] Evidence Triplet pointers set.
 - [ ] `brainwav-governance validate --strict` passes.
 - [ ] CI green.

@@ -8,16 +8,6 @@
 
 ---
 
-## Quick minimum path (use this for small changes)
-
-1. `brainwav-governance task init --slug <id> --tier <feature|fix|refactor|research|update>`
-2. Choose a flow (Feature/Fix/Refactor/Research).
-3. Use **Compact Flow** unless risk ≥ medium.
-4. Produce Evidence Triplet + update `run-manifest.json`.
-5. Run `brainwav-governance validate --strict` before merge.
-
-This keeps the workflow strict without forcing full G0–G10 overhead for low‑risk work.
-
 ## Table of Contents
 
 - [0. Document Metadata](#0-document-metadata)
@@ -62,7 +52,7 @@ This keeps the workflow strict without forcing full G0–G10 overhead for low‑
   - Tooling hooks (vibe check → Assurance System, Local Memory parity, knowledge connectors, MCP usage, OpenFeature requirement).
 
 - **Out of Scope**  
-  - People management, HR, or roadmap governance (see `governance/rules/vision.md`).  
+  - People management, HR, or roadmap governance (see `00-core/vision.md`).  
   - Product/portfolio intake (handled by Strategy Council).  
   - Non-code business processes (finance, vendor, HR).
 
