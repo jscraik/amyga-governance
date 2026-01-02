@@ -139,6 +139,7 @@ For automated upgrades, see `.github/workflows/governance-upgrade.yml`.
 - `pnpm readiness:check` — confirms core governance files exist and required tools are present.
 - `brainwav-governance install --root <path>` — copy governance pack + CI workflow into another repo.
 - `brainwav-governance validate --root <path>` — verify required tokens and Step Budget <=7 across tasks.
+- `brainwav-governance task init --slug <id> --tier <feature|fix|refactor|research|update>` — scaffold a task folder with Evidence Triplet placeholders.
 - `brainwav-governance packs list [--json]` — list available packs/presets for discovery.
 - `pnpm governance:validate-standards` — check standards link freshness and `as_of` age in `standards.versions.json`.
 - `pnpm governance:sync-hashes:check` — fail on governance hash drift (non-writing).
