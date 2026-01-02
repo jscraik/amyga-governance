@@ -22,7 +22,7 @@
         "core",
         "full"
       ],
-      "default": "release"
+      "default": "delivery"
     },
     "mode": {
       "type": "string",

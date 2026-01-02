@@ -290,6 +290,15 @@ function checkPointerStubs(pointer, targetRoot, indexPath) {
 		);
 	}
 
+	const localPackDir = path.join(pointerDir, 'packs');
+	const vendorDir = path.join(pointerDir, 'vendor');
+	if (fs.existsSync(localPackDir)) {
+		failures.push('pointer mode forbids local pack manifests (.agentic-governance/packs); use canonical packs only');
+	}
+	if (fs.existsSync(vendorDir)) {
+		failures.push('pointer mode forbids vendored governance packs (.agentic-governance/vendor); pin package instead');
+	}
+
 	const forbiddenNamePatterns = [/constitution\.md$/i, /agentic-coding-workflow\.md$/i];
 	const canonicalPrefixes = ['00-core/', '10-flow/', '20-checklists/', '30-compliance/', '90-infra/'];
 	const indexEntries = JSON.parse(read(indexPath));
@@ -311,10 +320,14 @@ function checkPointerStubs(pointer, targetRoot, indexPath) {
 			if (POINTER_STUB_FILES.has(relPath)) return;
 			const matchesForbidden = forbiddenNamePatterns.some((pattern) => pattern.test(entry.name));
 			if (matchesForbidden) {
-				failures.push(`pointer mode forbids canonical doc copy at ${relPath}`);
+				failures.push(
+					`pointer mode forbids canonical doc copy at ${relPath} (delete it or move deltas to .agentic-governance/overlays/<name>.local.md)`
+				);
 			}
 			if (canonicalDocPaths.includes(relPath)) {
-				failures.push(`pointer mode forbids canonical doc copy at ${relPath}`);
+				failures.push(
+					`pointer mode forbids canonical doc copy at ${relPath} (delete it or move deltas to .agentic-governance/overlays/<name>.local.md)`
+				);
 			}
 		});
 	};

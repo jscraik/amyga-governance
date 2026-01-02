@@ -52,6 +52,7 @@ const CHECK_REGISTRY = new Set([
 	'policy.config',
 	'governance.json.pretty',
 	'hash.drift',
+	'standards.freshness',
 	'evidence.task',
 	'file.agents',
 	'file.index',
@@ -961,6 +962,40 @@ function checkRiskRegisterEvidence(rootPath) {
 	});
 
 	return { dataIssues, vendorIssues, skipped: false };
+}
+
+/**
+ * Check standards freshness based on standards.versions.json as_of.
+ * @param {string} govRoot - Governance root.
+ * @returns {{ok: boolean, ageDays: number|null, maxDays: number, message: string}} Result.
+ */
+function checkStandardsFreshness(govRoot) {
+	const standardsPath = path.join(govRoot, '90-infra', 'standards.versions.json');
+	const maxDays = Number.parseInt(process.env.STANDARDS_MAX_AGE_DAYS || '90', 10);
+	if (!fs.existsSync(standardsPath)) {
+		return { ok: false, ageDays: null, maxDays, message: 'standards.versions.json missing' };
+	}
+	try {
+		const data = JSON.parse(fs.readFileSync(standardsPath, 'utf8'));
+		const asOf = new Date(data.as_of);
+		if (Number.isNaN(asOf.getTime())) {
+			return { ok: false, ageDays: null, maxDays, message: 'standards.versions.json missing valid as_of date' };
+		}
+		const ageDays = Math.floor(
+			Math.abs(new Date().getTime() - asOf.getTime()) / (1000 * 60 * 60 * 24)
+		);
+		if (ageDays > maxDays) {
+			return {
+				ok: false,
+				ageDays,
+				maxDays,
+				message: `standards.versions.json is stale by ${ageDays} days (max ${maxDays})`
+			};
+		}
+		return { ok: true, ageDays, maxDays, message: 'standards freshness ok' };
+	} catch (error) {
+		return { ok: false, ageDays: null, maxDays, message: `standards.versions.json parse error: ${error.message}` };
+	}
 }
 
 /**
@@ -1991,6 +2026,24 @@ async function main() {
 			);
 		} else {
 			checks.push(buildCheck('governance.json.pretty', 'pass', 'info', 'policy', 'governance JSON formatting ok'));
+		}
+
+		const standardsFreshness = checkStandardsFreshness(govRoot);
+		if (!standardsFreshness.ok) {
+			const status = statusFromRelease(normalizedProfile);
+			checks.push(
+				buildCheck(
+					'standards.freshness',
+					status,
+					'medium',
+					'policy',
+					standardsFreshness.message
+				)
+			);
+		} else {
+			checks.push(
+				buildCheck('standards.freshness', 'pass', 'info', 'policy', standardsFreshness.message)
+			);
 		}
 
 		if (!evidenceCheck.ok) {

@@ -51,8 +51,12 @@ function runCli(args, cwd, allowedStatuses = [0], reportPath = null) {
 		if (reportPath && fs.existsSync(reportPath)) {
 			reportPayload = `\n${fs.readFileSync(reportPath, 'utf8')}`;
 		}
+		const output = `${result.stdout}\n${result.stderr}${reportPayload}`;
+		const hint = output.includes('Node version out of range')
+			? '\nHint: switch to Node 24.11.x (policy is >=24.11.0 <25) and rerun pnpm test:fixtures.'
+			: '';
 		throw new Error(
-			`CLI failed (${args.join(' ')}): ${result.status}\n${result.stdout}\n${result.stderr}${reportPayload}`
+			`CLI failed (${args.join(' ')}): ${result.status}\n${output}${hint}`
 		);
 	}
 }

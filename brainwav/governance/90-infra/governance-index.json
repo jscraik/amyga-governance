@@ -198,7 +198,7 @@
     },
     "governance-index.json": {
       "path": "90-infra/governance-index.json",
-      "sha256": "ca6350715535b4d0ea1d1289e80a6e94df88c5d0746f57f837c89f81e19ba18b",
+      "sha256": "a5418b0ed0a2a9cce8c7fe9afe88d85da6a7dd1ecc8f5f8acd86d72f64329dfe",
       "hash_mode": "exclude_self",
       "required_tokens": [
         "precedence",
@@ -221,7 +221,7 @@
     },
     "agentic-config.schema.json": {
       "path": "90-infra/agentic-config.schema.json",
-      "sha256": "df119bacf76ee47854c4f304f628db978cb1bcf0bf2cbc3b2ac703adb66cc8a7",
+      "sha256": "464a5390b328fba71d9ac8579217066bbf15bbe8172fd9da18289ae763676acb",
       "required_tokens": [
         "Governance Config",
         "profile",
@@ -279,7 +279,7 @@
     },
     "README.md": {
       "path": "README.md",
-      "sha256": "e2db474cb1599f85243f54d3a4669c6c183e5fa594877bec44a09f0f9492933a",
+      "sha256": "1418c65a56f035842650f82b6ea0f19081049e7294ed6f504d7f8908ab776fce",
       "required_tokens": [
         "governance",
         "structure"

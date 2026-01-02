@@ -70,12 +70,11 @@ pnpm readiness:check
 Pointer mode is the default, canonical-only adoption path. Use the install/upgrade commands below for consumer repos.
 
 1. From this repo: `pnpm install` (Node 24.11.x, pnpm 10.26.x).  
-2. Install governance into the target repo (local clone):  
-   `brainwav-governance install --root /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
-3. Install governance into the target repo (published package):  
-   `pnpm dlx @brainwav/brainwav-agentic-governance@<version> brainwav-governance install --root /path/to/consumer-repo [--mode pointer|full] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
-   Or, if installed as a dependency:  
-   `pnpm exec brainwav-governance install --root /path/to/consumer-repo [--mode full|pointer] [--profile creative|delivery|release] [--packs a11y,supply-chain]`  
+2. Recommended install path (devDependency + pnpm exec):  
+   `pnpm add -D @brainwav/brainwav-agentic-governance`  
+   `pnpm exec brainwav-governance install --root /path/to/consumer-repo --mode pointer --profile delivery [--packs a11y,supply-chain]`  
+3. Bootstrap-only path (not the standard):  
+   `pnpm dlx @brainwav/brainwav-agentic-governance@<version> brainwav-governance install --root /path/to/consumer-repo --mode pointer --profile delivery [--packs a11y,supply-chain]`  
    - Default profile is `delivery`. CI should use `release` for gold-standard gating.
    - Default install mode is `pointer` (canonical-only distribution). Use `full` only for air-gapped or exceptional cases.
    - `full` copies AGENTS, CODESTYLE, SECURITY, `brainwav/governance/**`, and the GitHub Actions workflow.  
@@ -89,7 +88,7 @@ Pointer mode is the default, canonical-only adoption path. Use the install/upgra
 ### Upgrade in a consumer project
 
 ```bash
-pnpm dlx @brainwav/brainwav-agentic-governance@<version> brainwav-governance upgrade --root /path/to/consumer-repo [--packs a11y,supply-chain]
+pnpm exec brainwav-governance upgrade --root /path/to/consumer-repo [--packs a11y,supply-chain]
 ```
 
 `upgrade` refreshes pointer stubs + workflows, updates the pinned dependency, and runs `pnpm install` when a pnpm lockfile is present.

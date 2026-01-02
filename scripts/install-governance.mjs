@@ -61,7 +61,7 @@ function parseArgs() {
 	const args = process.argv.slice(2);
 	let dest;
 	let usedDestFlag = false;
-	let mode = 'full';
+	let mode = 'pointer';
 	let profile = 'delivery';
 	let profileWasProvided = false;
 	let preserveConfig = false;
