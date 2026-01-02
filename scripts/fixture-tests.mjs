@@ -189,7 +189,10 @@ function ensurePackOptionsConfig(repoRootPath, packs, packOptions) {
 function runFixtureLifecycle(fixture) {
 	const tempRoot = copyFixture(fixture.name);
 	try {
-		const packsArg = fixture.packs.join(',');
+		const basePacks = Array.isArray(fixture.packs) ? fixture.packs : [];
+		const packs =
+			fixture.requireSdd === false ? basePacks : Array.from(new Set(['sdd', ...basePacks]));
+		const packsArg = packs.join(',');
 		const mode = fixture.mode ?? 'full';
 		const profile = fixture.profile ?? 'release';
 		const commonArgs = [
@@ -207,7 +210,7 @@ function runFixtureLifecycle(fixture) {
 			installLocalGovernancePackage(tempRoot);
 		}
 		if (fixture.packOptions) {
-			ensurePackOptionsConfig(tempRoot, fixture.packs, fixture.packOptions);
+			ensurePackOptionsConfig(tempRoot, packs, fixture.packOptions);
 		}
 		if (mode === 'pointer') {
 			runCli(['install', ...commonArgs, '--no-install'], repoRoot);
@@ -236,6 +239,13 @@ function runFixtureLifecycle(fixture) {
 			runCli(['upgrade', ...commonArgs, '--no-install'], repoRoot);
 		} else {
 			runCli(['upgrade', ...commonArgs], repoRoot);
+		}
+
+		if (fixture.specInit !== false) {
+			runCli(
+				['spec', 'init', '--root', tempRoot, '--slug', 'fixture-spec', '--no-input', '--yes'],
+				repoRoot
+			);
 		}
 
 		const validateReport = path.join(tempRoot, 'validate.report.json');

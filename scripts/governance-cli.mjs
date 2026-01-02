@@ -814,7 +814,7 @@ function statusForMissing(profile, required) {
 	if (required) {
 		return profile === 'delivery' || profile === 'release' ? 'fail' : 'warn';
 	}
-	return profile === 'release' ? 'fail' : 'warn';
+	return 'warn';
 }
 
 /**
@@ -1736,6 +1736,7 @@ function detectSpecKitLayout(rootPath, specRootFlag) {
  * Build spec-kit compatibility checks.
  * @param {string} rootPath - Repository root.
  * @param {string} specRootFlag - Optional spec root override.
+ * @param {string|null} compat - Optional compatibility mode.
  * @returns {{checks: Array<object>, specRoot: string|null, layout: string}} Check results.
  */
 function runSpecKitValidation(rootPath, specRootFlag, compat) {
@@ -2314,7 +2315,7 @@ async function main() {
 		return;
 	}
 
-	const { command, global, flags, unknown, positionalOutput } = parsed;
+	const { command, global, flags, specFlags, unknown, positionalOutput } = parsed;
 	if (global.json) {
 		process.env.BRAINWAV_JSON = '1';
 	}
