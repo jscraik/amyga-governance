@@ -7,6 +7,19 @@
   "promptFile": ".agentic-governance/loop/PROMPT.md",
   "reportDir": ".agentic-governance/reports/loop",
   "stopFile": ".agentic-governance/STOP",
+  "noProgress": {
+    "maxIterationsWithoutDiff": 2,
+    "maxRepeatedFailure": 2
+  },
+  "backoffMs": 2000,
+  "diffPolicy": {
+    "requireDiffEachIteration": true,
+    "enforceAllowlist": true
+  },
+  "commitPolicy": {
+    "enabled": false,
+    "messageTemplate": "chore(loop): {slug} iter {iteration}"
+  },
   "branch": {
     "enforced": true,
     "prefix": "bw/loop/"

@@ -108,25 +108,42 @@ function ensureDir(dirPath) {
 	}
 }
 
-function main() {
-	const args = process.argv.slice(2);
-	const slugIndex = args.indexOf('--slug');
-	const configIndex = args.indexOf('--config');
-	const slug = slugIndex >= 0 ? args[slugIndex + 1] : null;
-	const configPath = configIndex >= 0 ? args[configIndex + 1] : DEFAULT_CONFIG;
+function sleepMs(ms) {
+	if (!ms || ms <= 0) return;
+	const buffer = new SharedArrayBuffer(4);
+	const view = new Int32Array(buffer);
+	Atomics.wait(view, 0, 0, ms);
+}
 
+function commitChanges(root, message) {
+	try {
+		execSync('git add -A', { cwd: root, stdio: 'inherit' });
+		execSync(`git commit -m "${message}"`, { cwd: root, stdio: 'inherit' });
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+function writeIterationReport(reportDir, slug, iteration, payload) {
+	const filename = `iteration-${slug}-${String(iteration).padStart(2, '0')}.json`;
+	const outputPath = path.join(reportDir, filename);
+	fs.writeFileSync(outputPath, `${JSON.stringify(payload, null, 2)}\n`);
+}
+
+export function runAgentLoop({ slug, configPath = DEFAULT_CONFIG, cwd = process.cwd() }) {
 	if (!slug) {
 		console.error('[brAInwav] --slug <slug> is required.');
-		process.exit(2);
+		return 2;
 	}
 
 	const config = readJson(configPath);
 	if (!config) {
 		console.error(`[brAInwav] config not found or invalid: ${configPath}`);
-		process.exit(2);
+		return 2;
 	}
 
-	const root = getGitRoot(process.cwd()) || process.cwd();
+	const root = getGitRoot(cwd) || cwd;
 	const runner = config.runner?.command || 'codex';
 	const runnerArgs = normalizeArray(config.runner?.args);
 	const promptFile = config.promptFile || '.agentic-governance/loop/PROMPT.md';
@@ -140,10 +157,20 @@ function main() {
 	const maxFailures = Number(budgets.maxFailures ?? 1);
 	const branchPrefix = config.branch?.prefix || 'bw/loop/';
 	const branchEnforced = config.branch?.enforced === true;
+	const noProgress = config.noProgress || {};
+	const maxNoDiff = Number(noProgress.maxIterationsWithoutDiff ?? 0);
+	const maxRepeatedFailure = Number(noProgress.maxRepeatedFailure ?? 0);
+	const backoffMs = Number(config.backoffMs ?? 0);
+	const diffPolicy = config.diffPolicy || {};
+	const requireDiffEachIteration = diffPolicy.requireDiffEachIteration === true;
+	const enforceAllowlist = diffPolicy.enforceAllowlist !== false;
+	const commitPolicy = config.commitPolicy || {};
+	const commitEnabled = commitPolicy.enabled === true;
+	const commitTemplate = commitPolicy.messageTemplate || 'chore(loop): {slug} iter {iteration}';
 
 	if (verifyCommands.length === 0) {
 		console.error('[brAInwav] verify.commands must contain at least one command.');
-		process.exit(2);
+		return 2;
 	}
 
 	if (branchEnforced) {
@@ -151,29 +178,29 @@ function main() {
 		const expected = `${branchPrefix}${slug}`;
 		if (!current || current === 'HEAD') {
 			console.error('[brAInwav] unable to determine git branch.');
-			process.exit(2);
+			return 2;
 		}
 		if (!ensureCleanTree(root)) {
 			console.error('[brAInwav] working tree must be clean before starting the loop.');
-			process.exit(2);
+			return 2;
 		}
 		if (!current.startsWith(branchPrefix)) {
 			try {
 				execSync(`git checkout -b ${expected}`, { cwd: root, stdio: 'inherit' });
 			} catch (error) {
 				console.error(`[brAInwav] failed to create loop branch: ${error.message}`);
-				process.exit(2);
+				return 2;
 			}
 		} else if (current !== expected) {
 			console.error(`[brAInwav] loop branch must be ${expected} (currently ${current}).`);
-			process.exit(2);
+			return 2;
 		}
 	}
 
 	const promptTemplate = loadPrompt(path.join(root, promptFile));
 	if (!promptTemplate) {
 		console.error(`[brAInwav] prompt file missing: ${promptFile}`);
-		process.exit(2);
+		return 2;
 	}
 
 	ensureDir(path.join(root, reportDir));
@@ -196,6 +223,10 @@ function main() {
 	};
 
 	let failures = 0;
+	let noDiffCount = 0;
+	let repeatedFailureCount = 0;
+	let lastFailureKey = null;
+
 	for (let iteration = 1; iteration <= maxIterations; iteration += 1) {
 		if (fs.existsSync(path.join(root, stopFile))) {
 			report.status = 'stopped';
@@ -216,20 +247,63 @@ function main() {
 			allowlist,
 			verifyCommands
 		});
+		if (/{{[^}]+}}/.test(prompt)) {
+			console.error('[brAInwav] prompt placeholders unresolved.');
+			return 2;
+		}
 		const runnerCmd = [runner, ...runnerArgs].join(' ').trim();
 		const runnerStatus = runCommand(runnerCmd, root, prompt);
 		const changed = listChangedFiles(root);
 		const outside = changed.filter((filePath) => !matchesAllowlist(filePath, allowlist));
-		if (outside.length > 0) {
-			report.iterations.push({
+		if (enforceAllowlist && outside.length > 0) {
+			const payload = {
 				iteration,
 				runner_status: runnerStatus,
 				verify: [],
+				changed_files: changed,
 				status: 'failed',
 				reason: `changes outside allowlist: ${outside.join(', ')}`
-			});
+			};
+			writeIterationReport(path.join(root, reportDir), slug, iteration, payload);
+			report.iterations.push(payload);
 			report.status = 'failed';
 			report.reason = 'allowlist violation';
+			break;
+		}
+
+		if (changed.length === 0) {
+			noDiffCount += 1;
+		} else {
+			noDiffCount = 0;
+		}
+		if (requireDiffEachIteration && changed.length === 0) {
+			const payload = {
+				iteration,
+				runner_status: runnerStatus,
+				verify: [],
+				changed_files: changed,
+				status: 'blocked',
+				reason: 'no changes produced'
+			};
+			writeIterationReport(path.join(root, reportDir), slug, iteration, payload);
+			report.iterations.push(payload);
+			report.status = 'failed';
+			report.reason = 'no-progress';
+			break;
+		}
+		if (maxNoDiff > 0 && noDiffCount >= maxNoDiff) {
+			const payload = {
+				iteration,
+				runner_status: runnerStatus,
+				verify: [],
+				changed_files: changed,
+				status: 'blocked',
+				reason: 'no-progress threshold exceeded'
+			};
+			writeIterationReport(path.join(root, reportDir), slug, iteration, payload);
+			report.iterations.push(payload);
+			report.status = 'failed';
+			report.reason = 'no-progress';
 			break;
 		}
 
@@ -242,19 +316,47 @@ function main() {
 		});
 		if (runnerStatus !== 0 || verifyFailed) {
 			failures += 1;
+			const failureKey = runnerStatus !== 0 ? 'runner' : 'verify';
+			if (failureKey === lastFailureKey) {
+				repeatedFailureCount += 1;
+			} else {
+				repeatedFailureCount = 1;
+				lastFailureKey = failureKey;
+			}
+		} else {
+			repeatedFailureCount = 0;
+			lastFailureKey = null;
 		}
 
-		report.iterations.push({
+		const iterationPayload = {
 			iteration,
 			runner_status: runnerStatus,
 			verify: verifyResults,
+			changed_files: changed,
 			status: runnerStatus === 0 && !verifyFailed ? 'pass' : 'fail'
-		});
+		};
+		writeIterationReport(path.join(root, reportDir), slug, iteration, iterationPayload);
+		report.iterations.push(iterationPayload);
+
+		if (runnerStatus === 0 && !verifyFailed && commitEnabled && changed.length > 0) {
+			const message = commitTemplate
+				.replace('{slug}', slug)
+				.replace('{iteration}', String(iteration));
+			commitChanges(root, message);
+		}
 
 		if (failures >= maxFailures) {
 			report.status = 'failed';
 			report.reason = 'failure budget exceeded';
 			break;
+		}
+		if (maxRepeatedFailure > 0 && repeatedFailureCount >= maxRepeatedFailure) {
+			report.status = 'failed';
+			report.reason = 'repeated failure threshold exceeded';
+			break;
+		}
+		if (runnerStatus !== 0 || verifyFailed || changed.length === 0) {
+			sleepMs(backoffMs);
 		}
 	}
 
@@ -270,9 +372,21 @@ function main() {
 	fs.writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
 
 	if (report.status === 'failed') {
-		process.exit(1);
+		return 1;
 	}
-	process.exit(0);
+	return 0;
 }
 
-main();
+function main() {
+	const args = process.argv.slice(2);
+	const slugIndex = args.indexOf('--slug');
+	const configIndex = args.indexOf('--config');
+	const slug = slugIndex >= 0 ? args[slugIndex + 1] : null;
+	const configPath = configIndex >= 0 ? args[configIndex + 1] : DEFAULT_CONFIG;
+	const exitCode = runAgentLoop({ slug, configPath, cwd: process.cwd() });
+	process.exit(exitCode);
+}
+
+if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('agent-loop.mjs')) {
+	main();
+}

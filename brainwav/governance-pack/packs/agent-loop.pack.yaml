@@ -5,38 +5,66 @@ pack:
   summary: "Bounded agent loop harness with budgets, allowlist, and verification gates."
   checks:
     validate:
-      - id: config-present
+      - id: pack:agent-loop:config-present
         severity: medium
         category: pack
         message: "loop config must exist at .agentic-governance/loop/config.json"
-      - id: prompt-present
+      - id: pack:agent-loop:prompt-present
         severity: medium
         category: pack
         message: "loop prompt must exist at .agentic-governance/loop/PROMPT.md"
-      - id: runner-present
+      - id: pack:agent-loop:runner-command
         severity: medium
         category: pack
         message: "runner command must be configured"
-      - id: budgets
+      - id: pack:agent-loop:budgets
         severity: medium
         category: pack
         message: "loop budgets must be configured"
-      - id: verify-commands
+      - id: pack:agent-loop:verify-commands
         severity: medium
         category: pack
         message: "verify.commands must be configured"
-      - id: allowlist
+      - id: pack:agent-loop:verify-commands-exist
+        severity: medium
+        category: pack
+        message: "verify.commands must reference existing scripts when using pnpm -s"
+      - id: pack:agent-loop:allowlist
         severity: medium
         category: pack
         message: "allowlist paths must be configured"
-      - id: branch-guard
+      - id: pack:agent-loop:branch-guard
         severity: medium
         category: pack
         message: "branch guard must be enforced"
-      - id: runner-script
+      - id: pack:agent-loop:stop-file
+        severity: medium
+        category: pack
+        message: "stop file must be configured"
+      - id: pack:agent-loop:report-dir
+        severity: medium
+        category: pack
+        message: "report directory must be configured"
+      - id: pack:agent-loop:prompt-placeholders
+        severity: medium
+        category: pack
+        message: "prompt placeholders must be renderable"
+      - id: pack:agent-loop:allowlist-enforced
+        severity: medium
+        category: pack
+        message: "diff policy must enforce allowlist"
+      - id: pack:agent-loop:no-progress
+        severity: medium
+        category: pack
+        message: "no-progress thresholds must be configured"
+      - id: pack:agent-loop:runner-script
         severity: medium
         category: pack
         message: "agent-loop runner script must exist"
+      - id: pack:agent-loop:runner-available
+        severity: medium
+        category: pack
+        message: "runner command should be available on PATH"
   standards:
     - "Bounded agent loop with verification gates"
   controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

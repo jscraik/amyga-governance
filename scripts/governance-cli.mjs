@@ -8,6 +8,7 @@ import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { createInterface } from 'node:readline/promises';
+import { execSync } from 'node:child_process';
 import { runGovernanceInstall } from './install-governance.mjs';
 import { runGovernanceHashSync } from './sync-governance-hashes.mjs';
 import { runGovernanceValidation } from './validate-governance.mjs';
@@ -18,15 +19,17 @@ import { resolveGovernancePaths } from './governance-paths.mjs';
 import { resolveGovernanceDocPath } from './lib/governance-docs.mjs';
 import { isPrettyJson } from './lib/json-format.mjs';
 import { resolvePacks, loadPackManifestFromRoot, PRESETS } from './pack-utils.mjs';
+import { runAgentLoop } from '../brainwav/governance/tools/agent-loop.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
 
-const COMMANDS = new Set(['init', 'install', 'upgrade', 'validate', 'doctor', 'packs', 'task', 'cleanup-plan', 'spec']);
+const COMMANDS = new Set(['init', 'install', 'upgrade', 'validate', 'doctor', 'packs', 'task', 'cleanup-plan', 'spec', 'loop']);
 const COMMON_FLAGS = new Set(['--mode', '--profile', '--packs', '--dry-run', '--yes', '--force', '--no-install']);
 const TASK_FLAGS = new Set(['--slug', '--tier', '--task-root', '--tasks-root']);
 const SPEC_FLAGS = new Set(['--slug', '--spec-root', '--compat']);
+const LOOP_FLAGS = new Set(['--slug', '--loop-config']);
 const GLOBAL_FLAGS = new Set([
 	'-h',
 	'--help',
@@ -101,7 +104,22 @@ const CHECK_REGISTRY = new Set([
 	'decision.hierarchy.present',
 	'spec.clarify.missing',
 	'spec.analyze.consistency',
-	'spec.checklist.missing'
+	'spec.checklist.missing',
+	'pack:agent-loop:config-present',
+	'pack:agent-loop:prompt-present',
+	'pack:agent-loop:runner-command',
+	'pack:agent-loop:budgets',
+	'pack:agent-loop:verify-commands',
+	'pack:agent-loop:verify-commands-exist',
+	'pack:agent-loop:allowlist',
+	'pack:agent-loop:branch-guard',
+	'pack:agent-loop:stop-file',
+	'pack:agent-loop:report-dir',
+	'pack:agent-loop:prompt-placeholders',
+	'pack:agent-loop:allowlist-enforced',
+	'pack:agent-loop:no-progress',
+	'pack:agent-loop:runner-script',
+	'pack:agent-loop:runner-available'
 ]);
 
 const HIGH_RISK_ENTITLEMENTS = new Set([
@@ -125,7 +143,7 @@ function usage() {
 Initialize, install, upgrade, validate, diagnose, or scaffold Brainwav governance in a repo.
 
 Usage:
-  brainwav-governance [global flags] <init|install|upgrade|validate|doctor|cleanup-plan|spec> [flags]
+  brainwav-governance [global flags] <init|install|upgrade|validate|doctor|cleanup-plan|spec|loop> [flags]
   brainwav-governance packs list [--json]
   brainwav-governance task init --slug <id> [--tier <feature|fix|refactor|research|update>] [--task-root <dir>]
   brainwav-governance spec init --slug <id> [--spec-root <dir>] [--compat speckit]
@@ -134,6 +152,7 @@ Usage:
   brainwav-governance spec analyze [--spec-root <dir>] [--compat speckit]
   brainwav-governance spec checklist [--spec-root <dir>] [--compat speckit]
   brainwav-governance cleanup-plan --root . [--report <path>] [--apply] [--force]
+  brainwav-governance loop run --slug <id> [--loop-config <path>]
 `);
 }
 
@@ -179,6 +198,10 @@ function parseArgs(argv) {
 		specRoot: 'specs',
 		compat: null
 	};
+	const loopFlags = {
+		loopSlug: null,
+		loopConfig: '.agentic-governance/loop/config.json'
+	};
 	const unknown = [];
 	let positionalOutput = null;
 
@@ -194,7 +217,7 @@ function parseArgs(argv) {
 			continue;
 		}
 		if (!command && (arg === '-h' || arg === '--help' || arg === '--version')) {
-			return { command: arg, global, flags, unknown, positionalOutput };
+			return { command: arg, global, flags, specFlags, loopFlags, unknown, positionalOutput };
 		}
 		if (GLOBAL_FLAGS.has(arg)) {
 			switch (arg) {
@@ -255,9 +278,9 @@ function parseArgs(argv) {
 					break;
 				case '--help':
 				case '-h':
-					return { command: '--help', global, flags, unknown, positionalOutput };
+					return { command: '--help', global, flags, specFlags, loopFlags, unknown, positionalOutput };
 				case '--version':
-					return { command: '--version', global, flags, unknown, positionalOutput };
+					return { command: '--version', global, flags, specFlags, loopFlags, unknown, positionalOutput };
 				default:
 					break;
 			}
@@ -373,6 +396,27 @@ function parseArgs(argv) {
 			}
 			continue;
 		}
+		if (command === 'loop' && LOOP_FLAGS.has(arg)) {
+			switch (arg) {
+				case '--slug': {
+					const value = takeValue(i);
+					if (!value) return { error: 'Missing value for --slug' };
+					loopFlags.loopSlug = value;
+					i++;
+					break;
+				}
+				case '--loop-config': {
+					const value = takeValue(i);
+					if (!value) return { error: 'Missing value for --loop-config' };
+					loopFlags.loopConfig = value;
+					i++;
+					break;
+				}
+				default:
+					break;
+			}
+			continue;
+		}
 
 		if (!arg.startsWith('-') && !positionalOutput) {
 			positionalOutput = arg;
@@ -381,7 +425,7 @@ function parseArgs(argv) {
 		unknown.push(arg);
 	}
 
-	return { command, global, flags, specFlags, unknown, positionalOutput };
+	return { command, global, flags, specFlags, loopFlags, unknown, positionalOutput };
 }
 
 /**
@@ -921,6 +965,29 @@ function statusFromProfile(profile) {
 }
 
 /**
+ * Identify missing pnpm script references in verify commands.
+ * @param {string[]} commands - Verify commands list.
+ * @param {string} rootPath - Repo root.
+ * @returns {string[]} Missing script names.
+ */
+function findMissingVerifyScripts(commands, rootPath) {
+	const pkgPath = path.join(rootPath, 'package.json');
+	if (!fs.existsSync(pkgPath)) return [];
+	const pkgJson = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+	const scripts = pkgJson?.scripts ?? {};
+	const missing = [];
+	commands.forEach((command) => {
+		const match = command.trim().match(/^pnpm\s+-s\s+([\\w:-]+)/);
+		if (!match) return;
+		const scriptName = match[1];
+		if (!scripts[scriptName]) {
+			missing.push(scriptName);
+		}
+	});
+	return missing;
+}
+
+/**
  * Resolve fail or warn status with release-only enforcement.
  * @param {string} profile - Profile name.
  * @returns {string} Status value.
@@ -1390,23 +1457,23 @@ function evaluatePackCheck({ rootPath, manifest, entry, packOptions, profile }) 
 			? resolveRootPath(rootPath, config.promptFile)
 			: path.join(loopRoot, 'PROMPT.md');
 
-		if (checkId === 'config-present') {
+		if (checkId === 'pack:agent-loop:config-present') {
 			if (config) return { status: 'pass', message: 'loop config present' };
 			return { status: statusFromProfile(profile), message: 'missing loop config.json' };
 		}
-		if (checkId === 'prompt-present') {
+		if (checkId === 'pack:agent-loop:prompt-present') {
 			if (promptPath && fs.existsSync(promptPath)) {
 				return { status: 'pass', message: 'loop prompt present' };
 			}
 			return { status: statusFromProfile(profile), message: 'missing loop prompt' };
 		}
-		if (checkId === 'runner-present') {
+		if (checkId === 'pack:agent-loop:runner-command') {
 			if (typeof config?.runner?.command === 'string' && config.runner.command.trim()) {
 				return { status: 'pass', message: 'runner command configured' };
 			}
 			return { status: statusFromProfile(profile), message: 'runner command missing' };
 		}
-		if (checkId === 'budgets') {
+		if (checkId === 'pack:agent-loop:budgets') {
 			const budgets = config?.budgets ?? {};
 			const maxIterations = Number(budgets.maxIterations);
 			const maxMinutes = Number(budgets.maxMinutes);
@@ -1417,21 +1484,31 @@ function evaluatePackCheck({ rootPath, manifest, entry, packOptions, profile }) 
 				message: ok ? 'budgets configured' : 'missing or invalid budget values'
 			};
 		}
-		if (checkId === 'verify-commands') {
+		if (checkId === 'pack:agent-loop:verify-commands') {
 			const commands = Array.isArray(config?.verify?.commands) ? config.verify.commands : [];
 			return {
 				status: commands.length > 0 ? 'pass' : statusFromProfile(profile),
 				message: commands.length > 0 ? 'verify.commands configured' : 'verify.commands missing'
 			};
 		}
-		if (checkId === 'allowlist') {
+		if (checkId === 'pack:agent-loop:verify-commands-exist') {
+			const commands = Array.isArray(config?.verify?.commands) ? config.verify.commands : [];
+			const missingScripts = findMissingVerifyScripts(commands, rootPath);
+			return {
+				status: missingScripts.length === 0 ? 'pass' : statusFromProfile(profile),
+				message: missingScripts.length === 0
+					? 'verify.commands script references ok'
+					: `missing scripts: ${missingScripts.join(', ')}`
+			};
+		}
+		if (checkId === 'pack:agent-loop:allowlist') {
 			const allowlist = Array.isArray(config?.allowlist) ? config.allowlist : [];
 			return {
 				status: allowlist.length > 0 ? 'pass' : statusFromProfile(profile),
 				message: allowlist.length > 0 ? 'allowlist configured' : 'allowlist missing'
 			};
 		}
-		if (checkId === 'branch-guard') {
+		if (checkId === 'pack:agent-loop:branch-guard') {
 			const enforced = config?.branch?.enforced === true;
 			const prefix = config?.branch?.prefix;
 			const ok = enforced && typeof prefix === 'string' && prefix.startsWith('bw/loop/');
@@ -1440,11 +1517,68 @@ function evaluatePackCheck({ rootPath, manifest, entry, packOptions, profile }) 
 				message: ok ? 'branch guard enforced' : 'branch guard must enforce bw/loop/ prefix'
 			};
 		}
-		if (checkId === 'runner-script') {
+		if (checkId === 'pack:agent-loop:stop-file') {
+			const stopFile = config?.stopFile;
+			const ok = typeof stopFile === 'string' && stopFile.trim().length > 0;
+			return {
+				status: ok ? 'pass' : statusFromProfile(profile),
+				message: ok ? 'stop file configured' : 'stop file missing'
+			};
+		}
+		if (checkId === 'pack:agent-loop:report-dir') {
+			const reportDir = config?.reportDir;
+			const ok = typeof reportDir === 'string' && reportDir.trim().length > 0;
+			return {
+				status: ok ? 'pass' : statusFromProfile(profile),
+				message: ok ? 'report dir configured' : 'report dir missing'
+			};
+		}
+		if (checkId === 'pack:agent-loop:prompt-placeholders') {
+			if (!promptPath || !fs.existsSync(promptPath)) {
+				return { status: statusFromProfile(profile), message: 'prompt missing for placeholder checks' };
+			}
+			const content = readTextFile(promptPath) ?? '';
+			const required = ['{{slug}}', '{{iteration}}', '{{allowlist}}', '{{verifyCommands}}'];
+			const missing = required.filter((token) => !content.includes(token));
+			return {
+				status: missing.length === 0 ? 'pass' : statusFromProfile(profile),
+				message: missing.length === 0 ? 'prompt placeholders present' : `missing placeholders: ${missing.join(', ')}`
+			};
+		}
+		if (checkId === 'pack:agent-loop:allowlist-enforced') {
+			const enforce = config?.diffPolicy?.enforceAllowlist === true;
+			return {
+				status: enforce ? 'pass' : statusFromProfile(profile),
+				message: enforce ? 'allowlist enforcement enabled' : 'allowlist enforcement not enabled'
+			};
+		}
+		if (checkId === 'pack:agent-loop:no-progress') {
+			const noProgress = config?.noProgress ?? {};
+			const maxNoDiff = Number(noProgress.maxIterationsWithoutDiff);
+			const maxRepeat = Number(noProgress.maxRepeatedFailure);
+			const ok = maxNoDiff > 0 && maxRepeat > 0;
+			return {
+				status: ok ? 'pass' : statusFromProfile(profile),
+				message: ok ? 'no-progress thresholds configured' : 'no-progress thresholds missing'
+			};
+		}
+		if (checkId === 'pack:agent-loop:runner-script') {
 			if (fs.existsSync(runnerPath)) {
 				return { status: 'pass', message: 'agent-loop runner present' };
 			}
 			return { status: statusFromProfile(profile), message: 'agent-loop runner missing' };
+		}
+		if (checkId === 'pack:agent-loop:runner-available') {
+			const command = config?.runner?.command;
+			if (!command || typeof command !== 'string') {
+				return { status: statusFromProfile(profile), message: 'runner command missing' };
+			}
+			try {
+				execSync(`command -v ${command}`, { stdio: ['ignore', 'ignore', 'ignore'] });
+				return { status: 'pass', message: 'runner command available' };
+			} catch {
+				return { status: statusFromProfile(profile), message: `runner command not found: ${command}` };
+			}
 		}
 	}
 
@@ -2446,7 +2580,7 @@ async function main() {
 		return;
 	}
 
-	const { command, global, flags, specFlags, unknown, positionalOutput } = parsed;
+	const { command, global, flags, specFlags, loopFlags, unknown, positionalOutput } = parsed;
 	if (global.json) {
 		process.env.BRAINWAV_JSON = '1';
 	}
@@ -2846,6 +2980,33 @@ async function main() {
 			writeReport(specOutputPath, report);
 			exitWithCode(1);
 		}
+		return;
+	}
+
+	if (command === 'loop') {
+		const subcommand = positionalOutput ?? 'run';
+		if (subcommand !== 'run') {
+			console.error(`[brAInwav] Unknown loop subcommand "${subcommand}".`);
+			exitWithCode(2);
+			return;
+		}
+		if (!loopFlags.loopSlug) {
+			console.error('[brAInwav] Missing required --slug for loop run.');
+			exitWithCode(2);
+			return;
+		}
+		if (!isSafeSlug(loopFlags.loopSlug)) {
+			console.error(`[brAInwav] Invalid loop slug: ${loopFlags.loopSlug}`);
+			exitWithCode(2);
+			return;
+		}
+		const resolvedConfig = resolveRootPath(rootPath, loopFlags.loopConfig);
+		const exitCode = runAgentLoop({
+			slug: loopFlags.loopSlug,
+			configPath: resolvedConfig ?? loopFlags.loopConfig,
+			cwd: rootPath
+		});
+		exitWithCode(exitCode);
 		return;
 	}
 

@@ -16,6 +16,8 @@ Requirements:
 3) After changes, ensure verification commands pass:
    {{verifyCommands}}
 4) If blocked, write a brief note in `.agentic-governance/reports/loop/` describing the blocker and stop.
+5) If you cannot make a meaningful change this iteration, write a blocker note and stop.
+6) Always state: "Next task: <id or file>" in your summary.
 
 Output:
 - What changed
