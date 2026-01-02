@@ -112,14 +112,14 @@ jobs:
         with:
           repository: jscraik/brainwav-governance-canary
           token: ${{ secrets.GH_CANARY_TOKEN }}
-          path: /tmp/brainwav-governance-canary
+          path: brainwav-governance-canary
       - name: Canary validation
         env:
           RELEASE_VERSION: ${{ github.ref_name }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           version="${RELEASE_VERSION#v}"
-          cd /tmp/brainwav-governance-canary
+          cd brainwav-governance-canary
           npmrc="${RUNNER_TEMP}/.npmrc"
           echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > "${npmrc}"
           echo "always-auth=true" >> "${npmrc}"

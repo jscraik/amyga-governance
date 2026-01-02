@@ -1,6 +1,6 @@
 {
   "name": "@brainwav/brainwav-agentic-governance",
-  "version": "0.2.31",
+  "version": "0.2.32",
   "private": false,
   "type": "module",
   "description": "Governance automation scripts and MCP helpers",
