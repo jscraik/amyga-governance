@@ -55,8 +55,12 @@ const CANONICAL_PATH_SEGMENTS = [
  * @param {boolean} allowRootDocs - Whether root docs can satisfy governance paths.
  * @returns {string|null} Resolved path or null.
  */
-function resolvePath(rel, govRoot, rootPath, allowRootDocs) {
+function resolvePath(rel, govRoot, rootPath, packageRoot, allowRootDocs) {
 	const rootDocPath = path.join(rootPath, rel);
+	const packageDocPath = packageRoot ? path.join(packageRoot, rel) : null;
+	if (ROOT_DOCS.has(rel) && packageDocPath && fs.existsSync(packageDocPath)) {
+		return packageDocPath;
+	}
 	if (allowRootDocs && ROOT_DOCS.has(rel) && fs.existsSync(rootDocPath)) return rootDocPath;
 	const govPath = path.join(govRoot, rel);
 	if (fs.existsSync(govPath)) return govPath;
@@ -72,7 +76,7 @@ function resolvePath(rel, govRoot, rootPath, allowRootDocs) {
  * @param {boolean} allowRootDocs - Whether root docs can satisfy governance paths.
  * @returns {string[]} Failure messages.
  */
-function checkTokens(indexPath, govRoot, rootPath, allowRootDocs) {
+function checkTokens(indexPath, govRoot, rootPath, packageRoot, allowRootDocs) {
 	const index = JSON.parse(read(indexPath));
 	const failures = [];
 	const docPaths = new Set(Object.values(index.docs || {}).map((entry) => entry.path));
@@ -87,7 +91,7 @@ function checkTokens(indexPath, govRoot, rootPath, allowRootDocs) {
 	});
 	Object.entries(index.docs).forEach(([key, entry]) => {
 		if (!entry.required_tokens) return;
-		const target = resolvePath(entry.path, govRoot, rootPath, allowRootDocs);
+		const target = resolvePath(entry.path, govRoot, rootPath, packageRoot, allowRootDocs);
 		if (!target) {
 			failures.push(`missing doc for ${key} at ${entry.path}`);
 			return;
@@ -378,7 +382,7 @@ export function runGovernanceValidation(targetRoot = repoRoot, configOverride = 
 	const resolvedConfigPath = configOverride ?? configPath;
 	const failures = [
 		...checkIndexIntegrity(indexPath),
-		...checkTokens(indexPath, govRoot, targetRoot, allowRootDocs),
+		...checkTokens(indexPath, govRoot, targetRoot, packageRoot, allowRootDocs),
 		...checkTasks(targetRoot),
 		...checkConfig(resolvedConfigPath, govRoot, targetRoot),
 		...checkPointerStubs(pointer, targetRoot)
