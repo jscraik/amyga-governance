@@ -15,6 +15,8 @@ import { runReadinessCheck } from './readiness-check.mjs';
 import { runTaskEvidenceValidation } from './validate-task-evidence.mjs';
 import { runGovernanceUpgrade } from './upgrade-governance.mjs';
 import { resolveGovernancePaths } from './governance-paths.mjs';
+import { resolveGovernanceDocPath } from './lib/governance-docs.mjs';
+import { isPrettyJson } from './lib/json-format.mjs';
 import { resolvePacks, loadPackManifestFromRoot, PRESETS } from './pack-utils.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -281,17 +283,6 @@ function resolvePathForRoot(rootPath, value) {
 	return path.isAbsolute(value) ? value : path.resolve(rootPath, value);
 }
 
-const ROOT_DOCS = new Set(['README.md', 'CODESTYLE.md', 'SECURITY.md']);
-
-function resolveGovernanceDocPath(rootPath, govRoot, docPath) {
-	const rootDocPath = path.join(rootPath, docPath);
-	if (ROOT_DOCS.has(docPath) && fs.existsSync(rootDocPath)) return rootDocPath;
-	const govPath = path.join(govRoot, docPath);
-	if (fs.existsSync(govPath)) return govPath;
-	if (fs.existsSync(rootDocPath)) return rootDocPath;
-	return null;
-}
-
 function checkPrettyJson(indexPath, govRoot, rootPath) {
 	const issues = [];
 	if (!fs.existsSync(indexPath)) return { ok: true, issues };
@@ -302,9 +293,8 @@ function checkPrettyJson(indexPath, govRoot, rootPath) {
 		if (!target || !fs.existsSync(target)) return;
 		const raw = fs.readFileSync(target, 'utf8');
 		try {
-			const parsed = JSON.parse(raw);
-			const formatted = `${JSON.stringify(parsed, null, 2)}\n`;
-			if (raw !== formatted) {
+			const pretty = isPrettyJson(raw, 2);
+			if (!pretty.ok) {
 				issues.push(entry.path);
 			}
 		} catch {

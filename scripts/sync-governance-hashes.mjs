@@ -21,6 +21,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { formatPointerHint, resolveGovernancePaths } from './governance-paths.mjs';
+import { formatJson } from './lib/json-format.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
@@ -148,7 +149,7 @@ export function runGovernanceHashSync(targetRoot = repoRoot, { checkOnly = false
 		if (indexClone.docs?.[indexKey]) {
 			indexClone.docs[indexKey].sha256 = '';
 		}
-		const indexHash = sha256String(`${JSON.stringify(indexClone, null, 2)}\n`);
+		const indexHash = sha256String(formatJson(indexClone, 2));
 		if (index.docs[indexKey].sha256 !== indexHash) {
 			changes.push({
 				key: indexKey,
@@ -171,7 +172,7 @@ export function runGovernanceHashSync(targetRoot = repoRoot, { checkOnly = false
 	}
 
 	index.updated = new Date().toISOString().split('T')[0];
-	fs.writeFileSync(indexPath, `${JSON.stringify(index, null, 2)}\n`);
+	fs.writeFileSync(indexPath, formatJson(index, 2));
 	const hint = formatPointerHint(pointerPath, packageRoot);
 	return { ok: true, changes, hint, updated };
 }

@@ -17,6 +17,7 @@ import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { resolvePackSourcePath, groupPacksByRunner, loadPackManifestFromPath, mergePermissions } from './pack-utils.mjs';
+import { formatJson } from './lib/json-format.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
@@ -30,6 +31,21 @@ const COPY_LIST = [
 	'.github/ISSUE_TEMPLATE',
 	'.github/pull_request_template.md',
 ];
+
+function loadCompat() {
+	const compatPath = path.join(repoRoot, 'brainwav', 'governance', '90-infra', 'compat.json');
+	if (!fs.existsSync(compatPath)) return {};
+	try {
+		return JSON.parse(fs.readFileSync(compatPath, 'utf8'));
+	} catch {
+		return {};
+	}
+}
+
+function getToolVersions() {
+	const compat = loadCompat();
+	return compat?.gold_standard?.tool_versions ?? {};
+}
 
 /**
  * Parse CLI arguments for governance install.
@@ -174,7 +190,7 @@ function writeConfigFile(destRoot, profile, mode, overlays = [], packs, packOpti
 		return;
 	}
 	if (!dryRun) {
-		fs.writeFileSync(configPath, `${JSON.stringify(configPayload, null, 2)}\n`);
+		fs.writeFileSync(configPath, formatJson(configPayload, 2));
 	}
 	recordAction(actions, 'write', null, configPath, dryRun ? 'planned' : 'written', null);
 }
@@ -211,11 +227,14 @@ function renderWorkflow({ permissions, includeMacos }) {
 		.map(([key, value]) => `  ${key}: ${value}`)
 		.join('\n');
 	const env = `\n\nenv:\n  GOVERNANCE_MODE: delivery\n  GOVERNANCE_PROFILE: release\n\n`;
-	const baseJobs = `jobs:\n  governance-ubuntu:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1\n      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0\n        with:\n          version: 10.26.0\n      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0\n        with:\n          node-version: '24.11.0'\n          cache: 'pnpm'\n      - run: pnpm install --frozen-lockfile\n      - run: pnpm exec brainwav-governance validate --strict --config .agentic-governance/config.ci.ubuntu.json --report .agentic-governance/reports\n\n`;
+	const versions = getToolVersions();
+	const nodeVersion = versions.node ?? '24.11.0';
+	const pnpmVersion = versions.pnpm ?? '10.26.0';
+	const baseJobs = `jobs:\n  governance-ubuntu:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1\n      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0\n        with:\n          version: ${pnpmVersion}\n      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0\n        with:\n          node-version: '${nodeVersion}'\n          cache: 'pnpm'\n      - run: pnpm install --frozen-lockfile\n      - run: pnpm exec brainwav-governance validate --strict --config .agentic-governance/config.ci.ubuntu.json --report .agentic-governance/reports\n\n`;
 	if (!includeMacos) {
 		return `${header}${permLines}${env}${baseJobs}`;
 	}
-	const macosJob = `  governance-macos:\n    runs-on: macos-latest\n    needs: [governance-ubuntu]\n    steps:\n      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1\n      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0\n        with:\n          version: 10.26.0\n      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0\n        with:\n          node-version: '24.11.0'\n          cache: 'pnpm'\n      - run: pnpm install --frozen-lockfile\n      - run: pnpm exec brainwav-governance validate --strict --config .agentic-governance/config.ci.macos.json --report .agentic-governance/reports\n`;
+	const macosJob = `  governance-macos:\n    runs-on: macos-latest\n    needs: [governance-ubuntu]\n    steps:\n      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1\n      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0\n        with:\n          version: ${pnpmVersion}\n      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0\n        with:\n          node-version: '${nodeVersion}'\n          cache: 'pnpm'\n      - run: pnpm install --frozen-lockfile\n      - run: pnpm exec brainwav-governance validate --strict --config .agentic-governance/config.ci.macos.json --report .agentic-governance/reports\n`;
 	return `${header}${permLines}${env}${baseJobs}${macosJob}`;
 }
 
@@ -262,7 +281,7 @@ function writeCiConfigs(destRoot, profile, mode, packs, packOptions, overlays, {
 	const ubuntuConfig = { ...baseConfig, packs: ubuntuPacks };
 	const ubuntuPath = path.join(configDir, 'config.ci.ubuntu.json');
 	if (!dryRun) {
-		fs.writeFileSync(ubuntuPath, `${JSON.stringify(ubuntuConfig, null, 2)}\n`);
+		fs.writeFileSync(ubuntuPath, formatJson(ubuntuConfig, 2));
 	}
 	recordAction(actions, 'write', null, ubuntuPath, dryRun ? 'planned' : 'written', null);
 	let includeMacos = false;
@@ -271,7 +290,7 @@ function writeCiConfigs(destRoot, profile, mode, packs, packOptions, overlays, {
 		const macosConfig = { ...baseConfig, packs: macosPacks };
 		const macosPath = path.join(configDir, 'config.ci.macos.json');
 		if (!dryRun) {
-			fs.writeFileSync(macosPath, `${JSON.stringify(macosConfig, null, 2)}\n`);
+			fs.writeFileSync(macosPath, formatJson(macosConfig, 2));
 		}
 		recordAction(actions, 'write', null, macosPath, dryRun ? 'planned' : 'written', null);
 	}
@@ -302,7 +321,7 @@ function writePointerFiles(destRoot, profile, { force, dryRun, actions }) {
 	const pointerPath = path.join(pointerDir, 'pointer.json');
 	if (shouldWrite(pointerPath, force)) {
 		if (!dryRun) {
-			fs.writeFileSync(pointerPath, `${JSON.stringify(pointerPayload, null, 2)}\n`);
+			fs.writeFileSync(pointerPath, formatJson(pointerPayload, 2));
 		}
 		recordAction(actions, 'write', null, pointerPath, dryRun ? 'planned' : 'written', null);
 	} else {
@@ -625,7 +644,7 @@ export function runGovernanceInstall({
 	};
 	const manifestPath = path.join(destRoot, '.agentic-governance', 'packs.json');
 	if (!dryRun) {
-		fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+		fs.writeFileSync(manifestPath, formatJson(manifest, 2));
 	}
 	recordAction(actions, 'write', null, manifestPath, dryRun ? 'planned' : 'written', null);
 

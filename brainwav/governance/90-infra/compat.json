@@ -18,6 +18,19 @@
     ]
   },
   "gold_standard": {
+    "tool_versions": {
+      "node": "24.11.0",
+      "pnpm": "10.26.0",
+      "npm": "11.5.1",
+      "go": "1.25.5",
+      "semgrep": "1.146.0",
+      "gitleaks": "8.30.0",
+      "osv_scanner": "1.9.2",
+      "trivy": "0.68.2",
+      "markdownlint_cli2": "0.20.0",
+      "cosign": "v3.0.3",
+      "cyclonedx_npm": "4.1.2"
+    },
     "release_artifacts": [
       "tgz",
       "sbom.cyclonedx@1.7",

@@ -115,12 +115,21 @@ function parseProfileArg() {
 	return null;
 }
 
+/**
+ * Normalize legacy profile names to current equivalents.
+ * @param {string} profile - Profile name.
+ * @returns {string} Normalized profile.
+ */
 function normalizeProfile(profile) {
 	if (profile === 'core') return 'delivery';
 	if (profile === 'full') return 'release';
 	return profile;
 }
 
+/**
+ * CLI entry point for readiness check.
+ * @returns {void} No return value.
+ */
 function main() {
 	try {
 		const profileArg = parseProfileArg();

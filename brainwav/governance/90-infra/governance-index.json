@@ -1,7 +1,7 @@
 {
   "description": "Governance document index with precedence order and SHA verification",
   "version": "2025.12.2",
-  "updated": "2026-01-01",
+  "updated": "2026-01-02",
   "precedence": [
     "00-core/constitution.md",
     "00-core/AGENT_CHARTER.md",
@@ -199,7 +199,7 @@
     },
     "governance-index.json": {
       "path": "90-infra/governance-index.json",
-      "sha256": "4e731fa59078686b78c172659b571a3085c37b7d82cc6263c3e90fe71d66278f",
+      "sha256": "60f90e3546704d75bc3039efe580a06feb852fe6f75da1a1f3d16444e43ecc65",
       "hash_mode": "exclude_self",
       "required_tokens": [
         "precedence",
@@ -363,7 +363,7 @@
     },
     "compat.json": {
       "path": "90-infra/compat.json",
-      "sha256": "22a209c26895a6c1f88ba417d71b62b5fecd5025f27e5df8d2ccae96ffe4bccb",
+      "sha256": "5f6b7a48b0865e062f848d4596709b6493bb2a84d7ca0cbb93a883ce1b105634",
       "required_tokens": [
         "compatibility_policy",
         "support_matrix",
