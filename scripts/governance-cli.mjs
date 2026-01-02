@@ -3643,7 +3643,13 @@ async function main() {
 		const plan = buildCleanupPlan(rootPath, pointer, indexPath);
 		const applied = [];
 		if (global.apply) {
-			plan.actions.forEach((action) => {
+			const applyActions = [...plan.actions].sort((a, b) => {
+				if (a.action === b.action) return 0;
+				if (a.action === 'move') return -1;
+				if (b.action === 'move') return 1;
+				return 0;
+			});
+			applyActions.forEach((action) => {
 				const targetPath = path.join(rootPath, action.path);
 				if (action.action === 'delete') {
 					try {
@@ -3676,7 +3682,13 @@ async function main() {
 			});
 		}
 		const failedApply = applied.some((item) => item.status === 'failed');
-		const status = failedApply ? 'error' : plan.actions.length > 0 ? 'warn' : 'success';
+		const status = failedApply
+			? 'error'
+			: global.apply
+				? 'success'
+				: plan.actions.length > 0
+					? 'warn'
+					: 'success';
 		const report = {
 			schema: 'brainwav.governance.cleanup-plan.v1',
 			meta: buildMeta(inputs),
@@ -3713,7 +3725,7 @@ async function main() {
 			exitWithCode(1);
 			return;
 		}
-		if (plan.actions.length > 0) {
+		if (!global.apply && plan.actions.length > 0) {
 			exitWithCode(4);
 			return;
 		}

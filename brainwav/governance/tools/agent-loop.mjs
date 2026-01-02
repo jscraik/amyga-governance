@@ -125,12 +125,25 @@ function commitChanges(root, message) {
 	}
 }
 
+/**
+ * Write an iteration report to the loop report directory.
+ * @param {string} reportDir - Report directory path.
+ * @param {string} slug - Loop slug.
+ * @param {number} iteration - Iteration number.
+ * @param {object} payload - Report payload.
+ * @returns {void} No return value.
+ */
 function writeIterationReport(reportDir, slug, iteration, payload) {
 	const filename = `iteration-${slug}-${String(iteration).padStart(2, '0')}.json`;
 	const outputPath = path.join(reportDir, filename);
 	fs.writeFileSync(outputPath, `${JSON.stringify(payload, null, 2)}\n`);
 }
 
+/**
+ * Run the bounded agent loop with governance guardrails.
+ * @param {{slug: string, configPath?: string, cwd?: string}} args - Loop inputs.
+ * @returns {number} Exit code.
+ */
 export function runAgentLoop({ slug, configPath = DEFAULT_CONFIG, cwd = process.cwd() }) {
 	if (!slug) {
 		console.error('[brAInwav] --slug <slug> is required.');
