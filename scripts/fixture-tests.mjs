@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const cliPath = path.join(repoRoot, 'scripts', 'governance-cli.mjs');
+const pnpmCommand = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
 
 /**
  * Resolve fixture directory path.
@@ -52,6 +53,27 @@ function runCli(args, cwd, allowedStatuses = [0], reportPath = null) {
 		}
 		throw new Error(
 			`CLI failed (${args.join(' ')}): ${result.status}\n${result.stdout}\n${result.stderr}${reportPayload}`
+		);
+	}
+}
+
+/**
+ * Install the local governance package into a fixture (pointer mode).
+ * @param {string} repoRootPath - Fixture repo root.
+ * @returns {void} No return value.
+ */
+function installLocalGovernancePackage(repoRootPath) {
+	const result = spawnSync(
+		pnpmCommand,
+		['add', '-D', `file:${repoRoot}`, '--ignore-scripts', '--silent'],
+		{
+			cwd: repoRootPath,
+			encoding: 'utf8'
+		}
+	);
+	if ((result.status ?? 0) !== 0) {
+		throw new Error(
+			`pnpm add failed in ${repoRootPath}: ${result.status}\n${result.stdout}\n${result.stderr}`
 		);
 	}
 }
@@ -166,25 +188,28 @@ function runFixtureLifecycle(fixture) {
 		const packsArg = fixture.packs.join(',');
 		const mode = fixture.mode ?? 'full';
 		const profile = fixture.profile ?? 'release';
+		const commonArgs = [
+			'--root',
+			tempRoot,
+			'--mode',
+			mode,
+			'--profile',
+			profile,
+			...(packsArg ? ['--packs', packsArg] : []),
+			'--no-input',
+			'--yes'
+		];
+		if (mode === 'pointer') {
+			installLocalGovernancePackage(tempRoot);
+		}
 		if (fixture.packOptions) {
 			ensurePackOptionsConfig(tempRoot, fixture.packs, fixture.packOptions);
 		}
-		runCli(
-			[
-				'install',
-				'--root',
-				tempRoot,
-				'--mode',
-				mode,
-				'--profile',
-				profile,
-				'--packs',
-				packsArg,
-				'--no-input',
-				'--yes'
-			],
-			repoRoot
-		);
+		if (mode === 'pointer') {
+			runCli(['install', ...commonArgs, '--no-install'], repoRoot);
+		} else {
+			runCli(['install', ...commonArgs], repoRoot);
+		}
 
 		if (fixture.packOptions) {
 			writePackOptions(tempRoot, fixture.packOptions);
@@ -197,39 +222,17 @@ function runFixtureLifecycle(fixture) {
 			syncRootDocs(tempRoot);
 		}
 
-		runCli(
-			[
-				'install',
-				'--root',
-				tempRoot,
-				'--mode',
-				mode,
-				'--profile',
-				profile,
-				'--packs',
-				packsArg,
-				'--no-input',
-				'--yes'
-			],
-			repoRoot
-		);
+		if (mode === 'pointer') {
+			runCli(['install', ...commonArgs, '--no-install'], repoRoot);
+		} else {
+			runCli(['install', ...commonArgs], repoRoot);
+		}
 
-		runCli(
-			[
-				'upgrade',
-				'--root',
-				tempRoot,
-				'--mode',
-				mode,
-				'--profile',
-				profile,
-				'--packs',
-				packsArg,
-				'--no-input',
-				'--yes'
-			],
-			repoRoot
-		);
+		if (mode === 'pointer') {
+			runCli(['upgrade', ...commonArgs, '--no-install'], repoRoot);
+		} else {
+			runCli(['upgrade', ...commonArgs], repoRoot);
+		}
 
 		const validateReport = path.join(tempRoot, 'validate.report.json');
 		runCli(
