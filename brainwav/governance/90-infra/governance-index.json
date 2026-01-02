@@ -199,7 +199,7 @@
     },
     "governance-index.json": {
       "path": "90-infra/governance-index.json",
-      "sha256": "60f90e3546704d75bc3039efe580a06feb852fe6f75da1a1f3d16444e43ecc65",
+      "sha256": "bdff283afd13c9cbf7ceedf441ccd5888419dee4068cd06b6a8d79bad294162a",
       "hash_mode": "exclude_self",
       "required_tokens": [
         "precedence",
@@ -280,7 +280,7 @@
     },
     "README.md": {
       "path": "README.md",
-      "sha256": "236dccd4ae656eac69681aeac857315332f92b092b8b97fd7f6d8aa0ba0bd8c1",
+      "sha256": "912344cdc860e2aa4039e9057af67653d95df7b49594cd08715d0ff0374f1612",
       "required_tokens": [
         "governance",
         "structure"
