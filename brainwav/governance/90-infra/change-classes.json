@@ -19,6 +19,13 @@
     },
     "worker": {
       "summary": "Edge/runtime worker changes (Cloudflare Workers, cron/queues).",
+      "applies_profiles": [
+        "delivery",
+        "release"
+      ],
+      "packs_required": [
+        "cloudflare-workers"
+      ],
       "required_evidence": [
         "verification/worker-tests.log",
         "verification/egress-allowlist.json"
@@ -26,6 +33,13 @@
     },
     "mcp": {
       "summary": "MCP servers, tools, and schema surface changes.",
+      "applies_profiles": [
+        "delivery",
+        "release"
+      ],
+      "packs_required": [
+        "mcp-core"
+      ],
       "required_evidence": [
         "verification/mcp-contract-snapshot.json",
         "verification/mcp-egress-allowlist.json"

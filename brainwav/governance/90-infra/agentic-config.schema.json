@@ -90,6 +90,11 @@
     "mergeStrategy": {
       "type": "object",
       "additionalProperties": true
+    },
+    "deprecated": {
+      "type": "object",
+      "description": "Legacy compatibility fields. 'profile=full' is deprecated; use mode='full'.",
+      "additionalProperties": true
     }
   }
 }

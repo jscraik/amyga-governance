@@ -79,5 +79,9 @@
       "osv-scanner",
       "markdownlint-cli2"
     ]
+  },
+  "profile_defaults": {
+    "mode": "pointer",
+    "profile": "delivery"
   }
 }

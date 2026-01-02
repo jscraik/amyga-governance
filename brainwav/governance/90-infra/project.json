@@ -7,7 +7,7 @@
     "memorize": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node brainwav/governance/commands/memorize.mjs $TASK_SLUG"
+        "command": "pnpm run commands:memorize -- $TASK_SLUG"
       },
       "outputs": [
         "{homedir}/.agentic-governance/tasks/*/logs/memorize"
@@ -37,5 +37,6 @@
   "tags": [
     "scope:governance",
     "type:ops"
-  ]
+  ],
+  "_note": "Nx integration is pack-scoped (pack:nx/pack:monorepo). Core governance must not require Nx. Consumer repos not using Nx should not receive this file."
 }

@@ -88,9 +88,9 @@ pnpm governance:sync-hashes:dry-run
 
 The `governance:sync-hashes` script automatically updates:
 
-1. **`governance/rules/governance-index.json`** - Recomputes SHA-256 for all documents listed
-2. **`AGENTS.md`** - Updates the embedded charter fragment SHA reference
-3. **`CLAUDE.md`** - Same updates as AGENTS.md
+1. **`brainwav/governance/90-infra/governance-index.json`** - Recomputes SHA-256 for all indexed documents
+2. **Root stubs** (if applicable) - updates embedded fragment hashes or version pointers when used
+3. **Legacy compatibility stubs** (optional) - only if the repo maintains them (do not require non-standard files)
 
 ### Manual Hash Generation
 
@@ -130,9 +130,9 @@ The `agents-governance.yml` workflow validates:
 3. Verify no uncommitted changes
 4. Check file encoding (must be UTF-8)
 
-**Runtime Failures in governance/loader.ts**:
+**Runtime Failures in governance loader / CLI**:
 
-1. Ensure all paths in governance-index.json are relative to governance root
+1. Ensure all paths in governance-index.json are relative to the governance root
 2. Verify files exist at declared locations
 3. Check JSON syntax validity
 
@@ -192,5 +192,5 @@ If hashes become systematically corrupted:
 
 - **Main Documentation**: `10-flow/governance-quickstart.md`
 - **Structure Reference**: `README.md`
-- **CI Workflows**: `.github/workflows/agents-governance.yml`
-- **Hash Sync Script**: `scripts/governance/sync-hashes.js`
+- **CI Workflows**: `.github/workflows/*governance*.yml`
+- **Hash Sync Script**: `scripts/sync-governance-hashes.mjs` (canonical entrypoint via `brainwav-governance validate`)

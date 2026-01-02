@@ -107,7 +107,8 @@
       "references": [
         "https://github.com/ossf/scorecard-action",
         "https://github.com/ossf/scorecard-action/releases"
-      ]
+      ],
+      "verified_on": "2026-01-01"
     },
     "mitre_atlas": {
       "name": "MITRE ATLAS",
@@ -116,7 +117,8 @@
       "references": [
         "https://atlas.mitre.org/",
         "https://www.mbgsec.com/archive/2025-10-22-updates-mitre-atlastm/"
-      ]
+      ],
+      "note": "Second reference is non-authoritative; used for release notes tracking only."
     }
   }
 }

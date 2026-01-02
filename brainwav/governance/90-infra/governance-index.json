@@ -36,6 +36,19 @@
     "90-infra/governance-maintainers.md",
     "90-infra/governance-index.json"
   ],
+  "pack_scoped": {
+    "packs": {
+      "nx": [
+        "90-infra/project.json"
+      ],
+      "monorepo-memory": [
+        "90-infra/dependency-cruiser-memory.cjs"
+      ]
+    },
+    "generated": [
+      "90-infra/export-freeze.snapshot.json"
+    ]
+  },
   "reference": [
     "README.md"
   ],
@@ -177,7 +190,7 @@
     },
     "checklists.md": {
       "path": "20-checklists/checklists.md",
-      "sha256": "de1c2528707eaabb6404eb143df8c372ae01139886cbd1c80c7b7e3256e30acf",
+      "sha256": "96ecdc1a70dc62fb7b685a475f409302e81c631b69bae50e92c8cdf8b35d9099",
       "required_tokens": [
         "checklist",
         "quality gates"
@@ -188,7 +201,7 @@
     },
     "governance-maintainers.md": {
       "path": "90-infra/governance-maintainers.md",
-      "sha256": "bbec06add1675704d8163f1e9944bf2aa443e3c8d3b487f6dc79209eefdccdf4",
+      "sha256": "8699690553096b105914c69e94f0d742118edb8577dc3331dbfda17314c32d7f",
       "required_tokens": [
         "hash sync",
         "maintainer"
@@ -199,7 +212,7 @@
     },
     "governance-index.json": {
       "path": "90-infra/governance-index.json",
-      "sha256": "9fd0a7c74f9160a995b29c5334bccd516090d970f3d8cc6cfafd15c322a27eb2",
+      "sha256": "5914c4a060876504e2459fc1291e1c8d4da3e3e19895790609ad3aacfbf7e0b2",
       "hash_mode": "exclude_self",
       "required_tokens": [
         "precedence",
@@ -211,7 +224,7 @@
     },
     "agentic.core.schema.json": {
       "path": "90-infra/agentic.core.schema.json",
-      "sha256": "44aaea6a1565bc3e882d84aff69d222bd5c8e2a0bf8083c60536dda94270ee7b",
+      "sha256": "a25978771a6c5510201aca1950a8bb8e616856e1eef4d112fbeaf46ab5856891",
       "required_tokens": [
         "schema",
         "validation"
@@ -222,7 +235,7 @@
     },
     "agentic-config.schema.json": {
       "path": "90-infra/agentic-config.schema.json",
-      "sha256": "464a5390b328fba71d9ac8579217066bbf15bbe8172fd9da18289ae763676acb",
+      "sha256": "506989973856f653bda87b252852499fdb22ee2d6d640a68ee7c35d151acc5a5",
       "required_tokens": [
         "Governance Config",
         "profile",
@@ -234,7 +247,7 @@
     },
     "governance-pack.map.yaml": {
       "path": "90-infra/governance-pack.map.yaml",
-      "sha256": "09d9f3436e85b7b5fd2de2370345fa3df379d86faea863c5682899bfc03928fe",
+      "sha256": "0450fbb2255ce288952d17a387ed11af0bb45826a8cb721beba87c75f61eaf0e",
       "required_tokens": [
         "pack",
         "overlay"
@@ -242,6 +255,17 @@
       "class": "infra",
       "owner": "brAInwav Development Team",
       "change_class": "docs"
+    },
+    "structure-guard.json": {
+      "path": "90-infra/structure-guard.json",
+      "sha256": "d1517eae54926f9cf351b8892bf37536bcae4ee104d94f0dd8be668c8aedc185",
+      "required_tokens": [
+        "path_restrictions"
+      ],
+      "class": "infra",
+      "owner": "brAInwav Development Team",
+      "change_class": "docs",
+      "note": "Core schema; pack-specific restrictions must be applied via overlays."
     },
     "SECURITY.md": {
       "path": "SECURITY.md",
@@ -257,7 +281,7 @@
     },
     "standards.versions.json": {
       "path": "90-infra/standards.versions.json",
-      "sha256": "7c76bb548f26b8a1b1fde59fe698ca01c46a00fcd693c7dbfd6955702a291998",
+      "sha256": "aa9d459184c57545392ebca0172cf0fbdc4aebb41fb897b4126710f2a973b5a4",
       "required_tokens": [
         "standards",
         "owasp_top10",
@@ -269,7 +293,7 @@
     },
     "change-classes.json": {
       "path": "90-infra/change-classes.json",
-      "sha256": "006ca241de6077b41d80f43580ae80cfe36403b8f8f0edf3d7fd475669029cf4",
+      "sha256": "ed9a7870ba7d7b4fc9a53ebc4d2f69db59a978e520ca22826bdb1316884d4e14",
       "required_tokens": [
         "classes",
         "required_evidence"
@@ -339,7 +363,7 @@
     },
     "eu-ai-act.md": {
       "path": "30-compliance/eu-ai-act.md",
-      "sha256": "205b636e0337bf9e8b4a0aa67376422ba84d2b759880abe697b4107fb66c8144",
+      "sha256": "70bfff04b254782a50e14b81c2ad7a742a1a909f7e639239b015cbb440d93f0f",
       "required_tokens": [
         "EU AI Act",
         "risk classification",
@@ -351,7 +375,7 @@
     },
     "egress-governance.md": {
       "path": "90-infra/egress-governance.md",
-      "sha256": "896358acd33cff20e48093f7c1f5322c62d95c2d0997bb9f1d5ff5c7dc475874",
+      "sha256": "19581610c0206e485e8da89670e9bb18dae2afa93e61216e568096a0022916eb",
       "required_tokens": [
         "egress",
         "allowlist",
@@ -363,7 +387,7 @@
     },
     "compat.json": {
       "path": "90-infra/compat.json",
-      "sha256": "5f6b7a48b0865e062f848d4596709b6493bb2a84d7ca0cbb93a883ce1b105634",
+      "sha256": "e9b97308721e1ecdf2aadc8355f3753423c33784fe150556b8ecd6e357471f43",
       "required_tokens": [
         "compatibility_policy",
         "support_matrix",
@@ -375,7 +399,7 @@
     },
     "control-registry.core.yaml": {
       "path": "90-infra/control-registry.core.yaml",
-      "sha256": "588f5db0123f3a1d4ca3352da61c2edd4fabe1dd8aeab0d9fa0da07e77b69cc2",
+      "sha256": "f038856c320c30377f575ed478e5c59979fb6d389e997f5036deb36578a690fa",
       "required_tokens": [
         "BW-GOV-001",
         "controls"
@@ -386,7 +410,7 @@
     },
     "control-registry.schema.json": {
       "path": "90-infra/control-registry.schema.json",
-      "sha256": "b724e47e9c00b82dbb50aa86a546f3a1697b8306f4dd16ba0e6e84f21228c4f1",
+      "sha256": "9a92f7a34e5e20b63708b43ff66d4d09e001e45743a49d5195af7175bfcad2c2",
       "required_tokens": [
         "Control Catalog",
         "controls"

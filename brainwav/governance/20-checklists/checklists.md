@@ -57,12 +57,12 @@ Use this when the change is docs‑only, a small fix, or a low‑risk refactor:
 
 > Run before you commit or ask an agent to change files.
 
-### 2.1 General Local Sanity
+### 2.1 General Local Sanity (Pack-aware)
 
 - [ ] Dependencies install cleanly: `pnpm install` (or `pnpm install --frozen-lockfile`).
-- [ ] Lint passes for affected projects: `pnpm nx affected -t lint` (fallback `pnpm lint`).
-- [ ] Typecheck passes: `pnpm nx affected -t typecheck` (fallback `pnpm typecheck`).
-- [ ] Build/dev target succeeds for touched surface: `pnpm nx affected -t build` or the package-specific `pnpm --filter <pkg> build`.
+- [ ] Lint passes for affected projects. If a monorepo pack is enabled it may provide `nx affected` helpers; otherwise use the repo default (`pnpm lint`, `pnpm -r lint`, or package-level scripts).
+- [ ] Typecheck passes. If a monorepo pack is enabled it may provide workspace helpers; otherwise use `pnpm typecheck` (or package-level scripts).
+- [ ] Build/dev target succeeds for touched surface using the repo standard. Monorepo/runtime packs may provide helper commands; core governance does not assume Nx.
 
 ### 2.2 Agent Session Startup
 
@@ -71,7 +71,7 @@ Use this when the change is docs‑only, a small fix, or a low‑risk refactor:
 - [ ] Agent configured for:
   - [ ] Patch-first diffs (no whole-file rewrites).
   - [ ] Structured outputs / JSON schemas where required.
-  - [ ] JEDI rules (named exports, ≤40-line functions, no TODO/FIXME/HACK, cancellation support for HTTP/tool calls).
+  - [ ] JEDI rules (named exports, <=40-line functions, no TODO/FIXME/HACK, cancellation support for HTTP/tool calls).
 
 ### 2.3 Local Quality Checks (Developer)
 
@@ -103,12 +103,12 @@ Use this when the change is docs‑only, a small fix, or a low‑risk refactor:
 #### Feature
 
 - [ ] `meta/task.json`, `context/requirements.md` (North-Star), `context/research.md`, `plan/PLAN.md`, `plan/tdd-plan.md`, `work/implementation-log.md`.
-- [ ] `evidence/aegis-report.json` uploaded (Cortex-Aegis G2/G5 verdicts) + `logs/vibe-check/*.json`.
+- [ ] `evidence/aegis-report.json` uploaded when required by profile/change class (Cortex-Aegis G2/G5 verdicts). Legacy `logs/vibe-check/*.json` allowed via adapters.
 - [ ] `implementation-plan.md#reuse-ledger` updated; `run-manifest.json.reuseEvidence.*` filled.
 
 #### Research / Spike
 
-- [ ] `meta/task.json` type=Research; `context/research.md` with queries + citations; license checks logged in `research/connectors-health.log`.
+- [ ] `meta/task.json` type=Research; `context/research.md` with queries + citations; connector health checks logged via pack/adapters (store under `research/connectors-health.log` if enabled).
 - [ ] Recommendation recorded in `plan/PLAN.md` and `SUMMARY.md`; code changes flagged as experimental if any.
 
 #### Fix
@@ -153,11 +153,11 @@ Use this when the change is docs‑only, a small fix, or a low‑risk refactor:
 - [ ] Task folder + `run-manifest.json` present and current.
 - [ ] Reuse-first artefacts (analysis/reuse-evaluation.md + PLAN reuse ledger) reviewed; helper diffs cite evidence.
 
-### 4.2 Correctness & Tests
+### 4.2 Correctness & Tests (Profile + Change Class)
 
 - [ ] Tests cover new behaviour, edge cases, and failure modes; regression tests prove fixes.
 - [ ] Evidence Triplet verified (failing→passing tests, plan anchor, reviewer proof).
-- [ ] Coverage ≥90% global / 95% changed lines; mutation ≥90% where enabled.
+- [ ] Coverage/mutation thresholds are enforced by **profile** and **change class** (see `90-infra/change-classes.json`). Release is strict; delivery is risk-based; creative is advisory.
 
 ### 4.3 Accessibility & UX
 
@@ -179,9 +179,9 @@ Use this when the change is docs‑only, a small fix, or a low‑risk refactor:
 - [ ] Rollback plan realistic; feature flags guard risky features.
 - [ ] RTO/RPO targets referenced for critical services; most recent recovery drill noted or waiver recorded.
 
-### 4.6 AI / MCP Specific
+### 4.6 AI / MCP Specific (Adapter-scoped)
 
-- [ ] Live model usage only; `logs/models/*` show health/smoke runs with IDs + latency.
+- [ ] Model usage policy is profile-driven (release requires live or verifiably recorded inputs with time-freshness evidence). Store health/smoke evidence in the task evidence bundle.
 - [ ] Prompt/schema changes versioned + tested; MCP connectors documented + healthy.
 - [ ] Reviewer notes include disposition for each AI finding (Accept/Reject/Follow-up) in `evidence/review-notes.md`.
 - [ ] AgentFacts metadata + trust evidence verified (signature valid, trust score ≥ thresholds, runtime governance logs referenced).
@@ -193,7 +193,7 @@ Use this when the change is docs‑only, a small fix, or a low‑risk refactor:
 
 | Section | Responsible Job (default) | Required Evidence |
 |---------|---------------------------|-------------------|
-| `CI:lint-type` | `pnpm nx run-many -t lint,typecheck` or package CI task | Lint/type logs attached; fails on warning-as-error. |
+| `CI:lint-type` | Workspace-aware lint/typecheck when available (monorepo packs may use `nx run-many`); otherwise repo standard commands | Lint/type logs attached; fails on warning-as-error. |
 | `CI:test` | `pnpm nx affected -t test --coverage` (or package test cmd) | `coverage-results.json`, HTML diff; ≥90% global / 95% changed lines. |
 | `CI:mutation` | `pnpm exec tsx scripts/ci/mutation.sh` | `mutation-results.json`, `reports/mutation/`. Threshold ≥90%. |
 | `CI:a11y` | `pnpm test:a11y` / Playwright axe run | axe/jest-axe reports; fails on critical issues. |
@@ -215,11 +215,11 @@ CI jobs must fail closed; waivers recorded in `governance/waivers/` with expiry 
 - [ ] Flow selected and logged in `run-manifest.json`.
 - [ ] Time freshness anchor noted per [cortex-aegis.md](../docs/cortex-aegis.md).
 
-### G1 – Discover / Research
+### G1 – Discover / Research (No hardcoded connectors)
 
 - [ ] Repo/project scan + Local Memory `/recall` executed; findings logged in `context/research.md`.
 - [ ] `/gather` run to structure discovery questions; responses captured in `context/requirements.md`.
-- [ ] Academic connectors (Wikidata 3029, arXiv 3041, Semantic Scholar, OpenAlex, Context7) health-checked; log under `research/connectors-health.log`.
+- [ ] Connector selection/ports are adapter-specific. Do not hardcode ports/providers in core checklists. If enabled, record connector health evidence under `research/connectors-health.log`.
 - [ ] RAIDs/assumptions documented; North-Star acceptance test path recorded.
 
 ### G2 – Plan / Design
@@ -281,8 +281,7 @@ CI jobs must fail closed; waivers recorded in `governance/waivers/` with expiry 
 
 > Assurance system hooking plan/evidence validation.
 >
-> **Installation:** `npm i -g @brainwav/cortex-aegis-mcp@latest`  
-> **Documentation:** [cortex-aegis.md](../docs/cortex-aegis.md)
+> Aegis installation and client wiring are adapter/pack responsibilities. Core governance requires the **artifact** (`evidence/aegis-report.json`) when the profile/change class requires it.
 
 ### 7.1 When Aegis MUST Run
 

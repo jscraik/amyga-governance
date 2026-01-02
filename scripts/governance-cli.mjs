@@ -119,7 +119,11 @@ const CHECK_REGISTRY = new Set([
 	'pack:agent-loop:allowlist-enforced',
 	'pack:agent-loop:no-progress',
 	'pack:agent-loop:runner-script',
-	'pack:agent-loop:runner-available'
+	'pack:agent-loop:runner-available',
+	'core.precedence.no_pack_files',
+	'pointer.no_canonical_trees',
+	'pack.install.only_when_selected',
+	'structure_guard.schema_core_only'
 ]);
 
 const HIGH_RISK_ENTITLEMENTS = new Set([
@@ -458,6 +462,84 @@ function checkPrettyJson(indexPath, govRoot, rootPath) {
 		}
 	});
 	return { ok: issues.length === 0, issues };
+}
+
+function readGovernanceIndex(indexPath) {
+	if (!indexPath || !fs.existsSync(indexPath)) return { index: null, errors: ['index missing'] };
+	try {
+		const index = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+		return { index, errors: [] };
+	} catch (error) {
+		return { index: null, errors: [`index parse error: ${error.message}`] };
+	}
+}
+
+function extractPackScopedPaths(index) {
+	const packScoped = index?.pack_scoped ?? {};
+	const packs = packScoped?.packs ?? {};
+	const generated = Array.isArray(packScoped?.generated) ? packScoped.generated : [];
+	const all = new Set(generated);
+	Object.values(packs).forEach((entries) => {
+		if (Array.isArray(entries)) {
+			entries.forEach((entry) => {
+				if (entry) all.add(entry);
+			});
+		}
+	});
+	return { packs, generated, all };
+}
+
+function checkPackScopedPrecedence(index) {
+	const precedence = Array.isArray(index?.precedence) ? index.precedence : [];
+	const packScoped = extractPackScopedPaths(index);
+	const violations = precedence.filter((entry) => packScoped.all.has(entry));
+	return { violations, packScoped };
+}
+
+function checkStructureGuardSchema(index) {
+	const structureEntry = index?.docs?.['structure-guard.json']?.path ?? null;
+	const precedence = Array.isArray(index?.precedence) ? index.precedence : [];
+	const inPrecedence = structureEntry ? precedence.includes(structureEntry) : false;
+	return { present: Boolean(structureEntry), inPrecedence, path: structureEntry };
+}
+
+function readPackManifestList(rootPath) {
+	const manifestPath = path.join(rootPath, '.agentic-governance', 'packs.json');
+	if (!fs.existsSync(manifestPath)) return { packs: [], path: null, errors: [] };
+	try {
+		const data = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+		const packs = Array.isArray(data?.packs) ? data.packs : [];
+		return { packs, path: manifestPath, errors: [] };
+	} catch (error) {
+		return { packs: [], path: manifestPath, errors: [error.message] };
+	}
+}
+
+function readConfigOverlays(configPath) {
+	if (!configPath || !fs.existsSync(configPath)) return [];
+	try {
+		const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+		const overlays = Array.isArray(config?.overlays) ? config.overlays : [];
+		const paths = [];
+		overlays.forEach((overlay) => {
+			if (!overlay) return;
+			const overlayPaths = Array.isArray(overlay.paths) ? overlay.paths : [];
+			overlayPaths.forEach((entry) => {
+				if (typeof entry === 'string' && entry.trim()) {
+					paths.push(entry.trim());
+				}
+			});
+		});
+		return paths;
+	} catch {
+		return [];
+	}
+}
+
+function normalizeOverlayPackId(fileName) {
+	const match = /^structure-guard\\.([a-z0-9-]+)\\.json$/i.exec(fileName);
+	if (!match) return null;
+	return match[1];
 }
 
 /**
@@ -3302,7 +3384,8 @@ async function main() {
 			validation.failures.forEach((failure) => {
 				const id = failure.includes('token') ? 'policy.required_tokens'
 					: failure.includes('Step Budget') ? 'policy.step_budget'
-						: 'policy.config';
+						: failure.includes('pointer mode forbids canonical') ? 'pointer.no_canonical_trees'
+							: 'policy.config';
 				checks.push(buildCheck(id, 'fail', 'high', 'policy', failure));
 			});
 		} else {
@@ -3343,6 +3426,160 @@ async function main() {
 			);
 		} else {
 			checks.push(buildCheck('governance.json.pretty', 'pass', 'info', 'policy', 'governance JSON formatting ok'));
+		}
+
+		const { index, errors: indexErrors } = readGovernanceIndex(indexPath);
+		if (indexErrors.length > 0) {
+			checks.push(
+				buildCheck(
+					'policy.config',
+					'fail',
+					'high',
+					'policy',
+					`governance index read failed: ${indexErrors.join(', ')}`
+				)
+			);
+		} else {
+			const packScopedCheck = checkPackScopedPrecedence(index);
+			if (packScopedCheck.violations.length > 0) {
+				const status = statusFromProfile(normalizedProfile);
+				packScopedCheck.violations.forEach((entry) => {
+					checks.push(
+						buildCheck(
+							'core.precedence.no_pack_files',
+							status,
+							'high',
+							'policy',
+							`pack-scoped entry present in precedence: ${entry}`
+						)
+					);
+				});
+			} else {
+				checks.push(
+					buildCheck(
+						'core.precedence.no_pack_files',
+						'pass',
+						'info',
+						'policy',
+						'precedence excludes pack-scoped files'
+					)
+				);
+			}
+
+			const structureGuardCheck = checkStructureGuardSchema(index);
+			if (!structureGuardCheck.present) {
+				checks.push(
+					buildCheck(
+						'structure_guard.schema_core_only',
+						'warn',
+						'low',
+						'policy',
+						'structure-guard schema missing from governance index'
+					)
+				);
+			} else if (structureGuardCheck.inPrecedence) {
+				checks.push(
+					buildCheck(
+						'structure_guard.schema_core_only',
+						'fail',
+						'high',
+						'policy',
+						`structure-guard schema must not be in precedence (${structureGuardCheck.path})`
+					)
+				);
+			} else {
+				checks.push(
+					buildCheck(
+						'structure_guard.schema_core_only',
+						'pass',
+						'info',
+						'policy',
+						'structure-guard schema stored as infra only'
+					)
+				);
+			}
+		}
+
+		const configPackList = installedPacks.packs;
+		const manifestPacks = readPackManifestList(rootPath);
+		if (manifestPacks.path && manifestPacks.packs.length > 0) {
+			const extra = manifestPacks.packs.filter((packId) => !configPackList.includes(packId));
+			if (extra.length > 0) {
+				const status = statusFromRelease(normalizedProfile);
+				checks.push(
+					buildCheck(
+						'pack.install.only_when_selected',
+						status,
+						'medium',
+						'pack',
+						`pack manifest includes packs not selected in config: ${extra.join(', ')}`
+					)
+				);
+			} else {
+				checks.push(
+					buildCheck(
+						'pack.install.only_when_selected',
+						'pass',
+						'info',
+						'pack',
+						'pack manifest matches selected packs'
+					)
+				);
+			}
+		}
+
+		if (pointer?.mode === 'pointer' && index) {
+			const { packs: packScopedPacks, generated: packGenerated } = extractPackScopedPaths(index);
+			const status = statusFromProfile(normalizedProfile);
+			Object.entries(packScopedPacks).forEach(([packId, entries]) => {
+				if (configPackList.includes(packId)) return;
+				(entries || []).forEach((entry) => {
+					const absolutePath = resolveGovernanceDocPath(rootPath, govRoot, entry);
+					if (!absolutePath || !fs.existsSync(absolutePath)) return;
+					const relPath = path.relative(rootPath, absolutePath).replace(/\\/g, '/');
+					checks.push(
+						buildCheck(
+							'pack.install.only_when_selected',
+							status,
+							'medium',
+							'pack',
+							`pack-scoped file present without pack enabled (${packId}): ${relPath}`
+						)
+					);
+				});
+			});
+
+			(packGenerated || []).forEach((entry) => {
+				const absolutePath = resolveGovernanceDocPath(rootPath, govRoot, entry);
+				if (!absolutePath || !fs.existsSync(absolutePath)) return;
+				const relPath = path.relative(rootPath, absolutePath).replace(/\\/g, '/');
+				checks.push(
+					buildCheck(
+						'pack.install.only_when_selected',
+						status,
+						'medium',
+						'pack',
+						`generated artifact present in pointer mode (remove or relocate): ${relPath}`
+					)
+				);
+			});
+
+			const overlayPaths = readConfigOverlays(configPath);
+			overlayPaths.forEach((overlayPath) => {
+				const overlayFile = path.basename(overlayPath);
+				const packId = normalizeOverlayPackId(overlayFile);
+				if (!packId) return;
+				if (configPackList.includes(packId)) return;
+				checks.push(
+					buildCheck(
+						'pack.install.only_when_selected',
+						status,
+						'medium',
+						'pack',
+						`overlay requires missing pack (${packId}): ${overlayPath}`
+					)
+				);
+			});
 		}
 
 		const standardsFreshness = checkStandardsFreshness(govRoot);

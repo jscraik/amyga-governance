@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Structure Guard Rules",
-  "description": "Import boundary enforcement for project packages",
+  "description": "Import boundary enforcement for project packages. Core schema only; pack-specific restrictions belong in overlays.",
   "type": "object",
   "properties": {
     "version": {
@@ -125,6 +125,26 @@
         }
       ],
       "path_restrictions": [
+        {
+          "pattern": "^00-core/|^10-flow/|^20-checklists/|^30-compliance/|^90-infra/",
+          "severity": "error",
+          "message": "Canonical governance docs must not be copied into consumer repos in pointer mode; use root stubs + .agentic-governance/overlays only."
+        },
+        {
+          "pattern": "^brainwav/governance/|^brainwav/governance-pack/",
+          "severity": "error",
+          "message": "Canonical governance trees are package-owned; consumer repos must not vendor them unless in full mode."
+        },
+        {
+          "pattern": "^\\.agentic-governance/STOP$",
+          "severity": "error",
+          "message": "STOP file is managed by the agent loop pack; do not vendor it into consumer repos outside pack-managed workflows."
+        },
+        {
+          "pattern": "^\\.agentic-governance/reports/",
+          "severity": "warning",
+          "message": "Agent reports are runtime artifacts and should not be committed unless explicitly required by policy."
+        },
         {
           "pattern": "\\.\\./\\.\\./",
           "severity": "error",

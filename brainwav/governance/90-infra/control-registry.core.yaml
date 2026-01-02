@@ -10,7 +10,7 @@ controls:
     intent: "Prevent policy drift via hash-pinned governance index."
     rationale: "Hash pinning ensures governance changes are explicit, auditable, and cannot silently drift."
     enforcement: "hard"
-    scope: ["creative", "delivery"]
+    scope: ["creative", "delivery", "release"]
     gates: ["G0", "G5"]
     evidence_required:
       - "brainwav/governance/90-infra/governance-index.json"
@@ -50,7 +50,7 @@ controls:
     intent: "Keep delivery arcs small via Step Budget and Ask-First caps."
     rationale: "Small arcs reduce review risk and improve auditability."
     enforcement: "hard"
-    scope: ["creative", "delivery"]
+    scope: ["creative", "delivery", "release"]
     gates: ["G0", "G1"]
     evidence_required:
       - "tasks/<slug>/json/run-manifest.json"

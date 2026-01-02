@@ -62,6 +62,7 @@ structure:
     file: structure-guard.json
   snapshotValidation:
     file: export-freeze.snapshot.json
+  note: "structure-guard.json is core schema; pack-specific restrictions must be applied via overlays."
 
 checklists:
   items:

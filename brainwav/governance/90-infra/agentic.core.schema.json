@@ -345,6 +345,10 @@
             }
           }
         },
+        "changeClassGates": {
+          "type": "object",
+          "description": "Optional overrides keyed by change class (see 90-infra/change-classes.json). Enables profile/change-class-driven quality gates."
+        },
         "a11y": {
           "type": "object",
           "required": [
@@ -518,6 +522,11 @@
           }
         }
       }
+    },
+    "phaseMapping": {
+      "type": "object",
+      "description": "Optional mapping between workflow phases (R/G/F/REVIEW) and checklist groupings (PLAN/IMPLEMENT/VERIFY/REVIEW).",
+      "additionalProperties": true
     },
     "governance": {
       "type": "object",

@@ -9,7 +9,9 @@
 
 ## Purpose
 
-This document defines egress control policies for agent network access. Based on Cloudflare Workers edge execution patterns, it establishes allowlists, rate limiting, logging requirements, and isolation policies for outbound network requests.
+This document defines egress control policies for agent network access. It establishes allowlists, rate limiting, logging requirements, and isolation policies for outbound network requests.
+
+**Neutrality:** runtime-specific patterns (e.g., Cloudflare Workers) belong in a runtime pack (e.g., `pack:cloudflare-workers`). This core policy remains runtime-agnostic.
 
 ---
 
@@ -50,22 +52,8 @@ egress:
 
 ```yaml
 allowlist:
-  # AI Model Providers
-  ai_providers:
-    - domain: "api.openai.com"
-      ports: [443]
-      protocols: [https]
-      rate_limit: 100/min
-      
-    - domain: "api.anthropic.com"
-      ports: [443]
-      protocols: [https]
-      rate_limit: 100/min
-      
-    - domain: "generativelanguage.googleapis.com"
-      ports: [443]
-      protocols: [https]
-      rate_limit: 100/min
+  # AI providers are project-specific. Core policy requires explicit declaration in config; examples live in packs.
+  ai_providers: []
       
   # Development Services
   dev_services:
@@ -79,12 +67,8 @@ allowlist:
       protocols: [https]
       rate_limit: 200/min
       
-  # Memory & Storage
-  storage:
-    - domain: "localhost"
-      ports: [3002, 6333]
-      protocols: [http]
-      note: "Local Memory MCP and Qdrant"
+  # Storage endpoints are environment-specific and should be declared via packs/adapters.
+  storage: []
 ```
 
 ### 2.2 Project-Specific Allowlist
@@ -105,16 +89,13 @@ project_allowlist:
 
 ### 2.3 Temporary Allowlist
 
-For time-limited access during development:
+For time-limited access during development (adapter-provided tooling may implement helper commands; core policy defines required fields and expiry):
 
-```bash
-# Request temporary access (expires in 24 hours)
-pnpm egress:allow-temp \
-  --domain "api.new-service.com" \
-  --duration 24h \
-  --reason "Testing integration" \
-  --task "feat-new-integration"
-```
+Required fields for temporary allowlist requests:
+- domain, ports, protocols
+- justification
+- approved_by
+- expires (<= 30 days recommended)
 
 ---
 
@@ -188,7 +169,7 @@ Every outbound request must log:
     "latency_ms": 1523,
     "size_bytes": 5678
   },
-  "trace_id": "trace-12345",
+  "trace_id": "c6f2b0d7a9124f6c9c1d77cd2a4f6aa1",
   "allowed_by": "core_allowlist"
 }
 ```
@@ -373,13 +354,7 @@ Certificate failures are:
 
 ### 8.3 Real-Time Dashboard
 
-```bash
-# View egress metrics
-pnpm egress:dashboard
-
-# Export for analysis
-pnpm egress:export --format json --from "1 hour ago"
-```
+Dashboards/export tooling is adapter-specific. Core policy requires the metrics to exist and be exportable; the mechanism depends on runtime/ops stack.
 
 ---
 
@@ -412,19 +387,7 @@ compliance_logging:
 
 ### 10.1 Allowlist Updates
 
-```bash
-# Add domain to allowlist (requires approval)
-pnpm egress:request \
-  --domain "api.new-service.com" \
-  --reason "New integration requirement" \
-  --project "feat-integration"
-
-# Approve request (maintainer)
-pnpm egress:approve --request-id "req-123"
-
-# List current allowlist
-pnpm egress:list
-```
+Core policy defines the lifecycle (request -> approve -> apply -> audit). Implementation tooling is adapter/pack scoped.
 
 ### 10.2 Emergency Override
 
@@ -486,8 +449,4 @@ project_blocklist:
 
 ## References
 
-- Cloudflare Workers Security Model
-- OWASP ASVS - Network Security Controls
-- `00-core/llm-threat-controls.md` - LLM02 (Data Leakage)
-- `10-flow/emergency-stop-protocol.md` - Termination procedures
-- `30-compliance/eu-ai-act.md` - Regulatory requirements
+Runtime-specific references belong in runtime packs. Core references should remain runtime-agnostic.
