@@ -159,6 +159,8 @@ function testProfileFallback() {
 function testSpecInitSpeckit() {
 	const tempRoot = makeTempRepo();
 	try {
+		const templateRoot = path.join(repoRoot, 'brainwav', 'governance', 'templates', 'sdd');
+		const templateTarget = path.join(tempRoot, 'brainwav', 'governance', 'templates', 'sdd');
 		writeFile(
 			path.join(tempRoot, 'package.json'),
 			JSON.stringify(
@@ -171,6 +173,10 @@ function testSpecInitSpeckit() {
 				2
 			) + '\n'
 		);
+		fs.mkdirSync(templateTarget, { recursive: true });
+		['spec.md', 'plan.md', 'tasks.md'].forEach((file) => {
+			fs.copyFileSync(path.join(templateRoot, file), path.join(templateTarget, file));
+		});
 		writeFile(
 			path.join(tempRoot, '.agentic-governance', 'config.json'),
 			JSON.stringify(
