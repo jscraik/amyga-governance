@@ -3650,6 +3650,7 @@ async function main() {
 					const absolutePath = resolveGovernanceDocPath(rootPath, govRoot, entry);
 					if (!absolutePath || !fs.existsSync(absolutePath)) return;
 					const relPath = path.relative(rootPath, absolutePath).replace(/\\/g, '/');
+					if (relPath.startsWith('node_modules/') || relPath.startsWith('.pnpm/')) return;
 					checks.push(
 						buildCheck(
 							'pack.install.only_when_selected',
@@ -3666,6 +3667,7 @@ async function main() {
 				const absolutePath = resolveGovernanceDocPath(rootPath, govRoot, entry);
 				if (!absolutePath || !fs.existsSync(absolutePath)) return;
 				const relPath = path.relative(rootPath, absolutePath).replace(/\\/g, '/');
+				if (relPath.startsWith('node_modules/') || relPath.startsWith('.pnpm/')) return;
 				checks.push(
 					buildCheck(
 						'pack.install.only_when_selected',
