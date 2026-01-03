@@ -16,10 +16,10 @@ Any item listed as “Enforced in CI (hard fail)” MUST map to:
 
 | Requirement | CI command | Stable check IDs | Evidence |
 |---|---|---|---|
-| Governance validation | `pnpm exec brainwav-governance validate --strict --json --report .agentic-governance/reports/validate.json` | `policy.required_tokens`, `hash.drift`, `file.agents`, `file.index`, `file.charter`, `file.workflow`, `file.checklists`, `spec.*`, `core.precedence.no_pack_files`, `pointer.no_canonical_trees`, `pack.install.only_when_selected`, `structure_guard.schema_core_only` | `.agentic-governance/reports/validate.json` |
-| Hash drift | included in `validate` OR `pnpm exec brainwav-governance sync-hashes --check` | `hash.drift` | `.agentic-governance/reports/validate.json` |
-| AGENTS integrity | `pnpm exec brainwav-governance validate --strict --json --report .agentic-governance/reports/validate.json` | `file.agents` | `.agentic-governance/reports/validate.json` |
-| Docs validation (pack-scoped) | `pnpm exec brainwav-governance validate --strict --json --report .agentic-governance/reports/validate.json` | `pack:docs:docs-validate` | `.agentic-governance/reports/validate.json` |
+| Governance validation | `pnpm exec brainwav-governance validate --strict --json --report <REPORT_DIR>` | `policy.required_tokens`, `hash.drift`, `file.agents`, `file.index`, `file.charter`, `file.workflow`, `file.checklists`, `spec.*`, `core.precedence.no_pack_files`, `pointer.no_canonical_trees`, `pack.install.only_when_selected`, `structure_guard.schema_core_only` | `<REPORT_DIR>/validate.report.json` |
+| Hash drift | included in `validate` OR `pnpm exec brainwav-governance sync-hashes --check` | `hash.drift` | `<REPORT_DIR>/validate.report.json` |
+| AGENTS integrity | `pnpm exec brainwav-governance validate --strict --json --report <REPORT_DIR>` | `file.agents` | `<REPORT_DIR>/validate.report.json` |
+| Docs validation (pack-scoped) | `pnpm exec brainwav-governance validate --strict --json --report <REPORT_DIR>` | `pack:docs:docs-validate` | `<REPORT_DIR>/validate.report.json` |
 | Security scans (pack-scoped) | pack CI command | `pack:<id>:<check>` (pack-defined) | `evidence/<security>/` |
 | SBOM + provenance (pack-scoped) | pack CI command | `pack:<id>:<check>` (pack-defined) | `sbom/<artifact>.cdx.json`, `attestations/<artifact>.json`, `dist/` |
 
