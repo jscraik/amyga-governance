@@ -1,0 +1,22 @@
+pack:
+  id: mcp-aegis
+  version: 1.0.0
+  default: false
+  summary: "Cortex-Aegis oversight evidence checks."
+  checks:
+    validate:
+      - id: aegis.required
+        severity: high
+        category: pack
+        message: "Aegis evidence required for task runs"
+      - id: aegis.report.present
+        severity: high
+        category: pack
+        message: "Aegis report must be present and valid"
+      - id: aegis.disposition.valid
+        severity: medium
+        category: pack
+        message: "Aegis warn dispositions require review notes"
+  standards:
+    - "Aegis oversight evidence"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"

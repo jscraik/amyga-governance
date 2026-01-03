@@ -4,6 +4,7 @@
   "mode": "pointer",
   "profile": "delivery",
   "packs": [
+    "docs",
     "sdd",
     "ts-base"
   ],

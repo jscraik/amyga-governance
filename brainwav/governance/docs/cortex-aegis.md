@@ -157,7 +157,7 @@ POST to `${CORTEX_AEGIS_HTTP_URL:-<adapter-configured>}/mcp` with standard JSON 
 
 ### Connector Outage Protocol
 
-- Check `/health` endpoints for academic MCPs as configured by adapters.
+- Check adapter-defined health endpoints for research connectors, if enabled.
 - If unavailable, document a waiver in `tasks/<slug>/logs/academic-research/<timestamp>-waiver.json` with service identity (`[<service>]`) and link in `run-manifest.json`.
 - Re-run research + oversight within 72 hours or once services recover.
 
@@ -208,7 +208,10 @@ tasks/<slug>/
 ## Stable check IDs (core + pack)
 
 - Core validation emits generic evidence checks (for example `evidence.task`); Aegis-specific checks are pack-defined.
-- Aegis packs SHOULD emit `pack:<id>:aegis.required` and `pack:<id>:aegis.report.present` when enforcement is enabled.
+- Aegis packs MUST emit:
+  - `pack:mcp-aegis:aegis.required`
+  - `pack:mcp-aegis:aegis.report.present`
+  - `pack:mcp-aegis:aegis.disposition.valid`
 
 ---
 

@@ -1118,6 +1118,61 @@ function readJsonFile(filePath) {
 }
 
 /**
+ * Check whether a path exists and is non-empty.
+ * @param {string} target - Path to check.
+ * @returns {boolean} True if file exists and has content.
+ */
+function existsNonEmptyFile(target) {
+	if (!fs.existsSync(target)) return false;
+	const stat = fs.statSync(target);
+	if (!stat.isFile()) return false;
+	return stat.size > 0;
+}
+
+const AEGIS_EVIDENCE_CACHE = new Map();
+
+/**
+ * Collect Aegis evidence status across tasks.
+ * @param {string} rootPath - Repo root.
+ * @returns {{skipped: boolean, missingReports: string[], invalidReports: string[], warnMissingNotes: string[]}}
+ */
+function collectAegisEvidence(rootPath) {
+	if (AEGIS_EVIDENCE_CACHE.has(rootPath)) return AEGIS_EVIDENCE_CACHE.get(rootPath);
+	const tasksRoot = path.join(rootPath, 'tasks');
+	if (!fs.existsSync(tasksRoot)) {
+		const result = { skipped: true, missingReports: [], invalidReports: [], warnMissingNotes: [] };
+		AEGIS_EVIDENCE_CACHE.set(rootPath, result);
+		return result;
+	}
+	const slugs = fs
+		.readdirSync(tasksRoot, { withFileTypes: true })
+		.filter((dirent) => dirent.isDirectory() && !dirent.isSymbolicLink() && isSafeSlug(dirent.name))
+		.map((dirent) => dirent.name);
+	const missingReports = [];
+	const invalidReports = [];
+	const warnMissingNotes = [];
+	slugs.forEach((slug) => {
+		const reportPath = path.join(tasksRoot, slug, 'evidence', 'aegis-report.json');
+		if (!existsNonEmptyFile(reportPath)) {
+			missingReports.push(slug);
+			return;
+		}
+		const content = readJsonFile(reportPath);
+		if (!content || typeof content.verdict !== 'string') {
+			invalidReports.push(slug);
+			return;
+		}
+		if (content.verdict === 'warn') {
+			const notesPath = path.join(tasksRoot, slug, 'evidence', 'review-notes.md');
+			if (!existsNonEmptyFile(notesPath)) warnMissingNotes.push(slug);
+		}
+	});
+	const result = { skipped: false, missingReports, invalidReports, warnMissingNotes };
+	AEGIS_EVIDENCE_CACHE.set(rootPath, result);
+	return result;
+}
+
+/**
  * Evaluate pointer-mode dependency drift rules.
  * @param {string} rootPath - Repo root.
  * @param {Record<string, unknown>|null} pointer - Pointer metadata.
@@ -1528,6 +1583,64 @@ function evaluatePackCheck({ rootPath, manifest, entry, packOptions, profile }) 
 			};
 		}
 		return { status: 'pass', message: 'sdd traceability ok' };
+	}
+
+	if (packId === 'docs' && checkId === 'docs-validate') {
+		const pkg = readPackageJson(rootPath);
+		const fallbackCommand = typeof options?.validateCommand === 'string'
+			? options.validateCommand.trim()
+			: null;
+		const hasScript = Boolean(pkg?.scripts?.['docs:validate']);
+		const command = fallbackCommand || (hasScript ? 'pnpm -s docs:validate' : null);
+		if (!command) {
+			return {
+				status: statusFromProfile(profile),
+				message: 'missing docs validation command (define packOptions.docs.validateCommand or add docs:validate script)'
+			};
+		}
+		try {
+			execSync(command, { stdio: ['ignore', 'ignore', 'ignore'] });
+			return { status: 'pass', message: 'docs validation passed' };
+		} catch (error) {
+			return {
+				status: statusFromProfile(profile),
+				message: `docs validation failed (${error.message})`
+			};
+		}
+	}
+
+	if (packId === 'mcp-aegis') {
+		const evidence = collectAegisEvidence(rootPath);
+		if (evidence.skipped) {
+			return { status: 'pass', message: 'no tasks directory; aegis checks skipped' };
+		}
+		if (checkId === 'aegis.required') {
+			if (evidence.missingReports.length > 0) {
+				return {
+					status: statusFromProfile(profile),
+					message: `missing aegis-report.json in tasks: ${evidence.missingReports.join(', ')}`
+				};
+			}
+			return { status: 'pass', message: 'aegis reports present' };
+		}
+		if (checkId === 'aegis.report.present') {
+			if (evidence.invalidReports.length > 0) {
+				return {
+					status: statusFromProfile(profile),
+					message: `invalid aegis-report.json in tasks: ${evidence.invalidReports.join(', ')}`
+				};
+			}
+			return { status: 'pass', message: 'aegis reports valid' };
+		}
+		if (checkId === 'aegis.disposition.valid') {
+			if (evidence.warnMissingNotes.length > 0) {
+				return {
+					status: statusFromProfile(profile),
+					message: `missing review-notes.md for warn verdicts: ${evidence.warnMissingNotes.join(', ')}`
+				};
+			}
+			return { status: 'pass', message: 'aegis dispositions valid' };
+		}
 	}
 
 	if (packId === 'agent-loop') {

@@ -1,0 +1,17 @@
+pack:
+  id: docs
+  version: 1.0.0
+  default: false
+  summary: "Documentation validation and link integrity checks."
+  inputs:
+    optional:
+      scripts.docsValidate: "docs:validate"
+  checks:
+    validate:
+      - id: docs-validate
+        severity: high
+        category: pack
+        message: "docs validation must pass"
+  standards:
+    - "Repository docs validation"
+  controlsRegistry: "brainwav/governance/90-infra/control-registry.core.yaml"
