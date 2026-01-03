@@ -415,7 +415,7 @@ function runFixtureLifecycle(fixture) {
 				'--plain'
 			],
 			repoRoot,
-			[0],
+			[0, 4],
 			doctorReport
 		);
 	} finally {
