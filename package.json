@@ -44,8 +44,7 @@
     "brainwav/vendor/**",
     "brainwav/governance/README.md",
     "brainwav/governance-pack/**",
-    "scripts/",
-    ".agentic-governance/"
+    "scripts/"
   ],
   "bin": {
     "brainwav-governance": "scripts/governance-cli.mjs",

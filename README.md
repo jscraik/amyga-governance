@@ -274,6 +274,7 @@ INCIDENT_ID=INC-742 node brainwav/governance/commands/incident-review.mjs
 
 - Releases are automated on tag push matching `v0.x.y`.
 - npm is the canonical distribution source (private package `@brainwav/brainwav-agentic-governance`).
+- CI publish requires `NPM_TOKEN` with access to the `@brainwav` org (restricted scope).
 - A draft GitHub Release attaches the packed tarball, SBOM, provenance, and signatures generated in CI; it is published after npm + canary succeed.
 - Release gating runs `pnpm lint:ci`, `pnpm test:cli`, and `pnpm test:fixtures`.
 - `docs/packs.md` is regenerated during release; the workflow fails if the file is out of date.
