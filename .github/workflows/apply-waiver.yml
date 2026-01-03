@@ -34,28 +34,39 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - name: Resolve waiver path
         id: resolve
+        env:
+          WAIVER_ID: ${{ inputs.waiver_id }}
+          WAIVER_PATH_INPUT: ${{ inputs.waiver_path }}
         run: |
-          if [ -n "${{ inputs.waiver_path }}" ]; then
-            echo "waiver_path=${{ inputs.waiver_path }}" >> "$GITHUB_OUTPUT"
+          if [ -n "$WAIVER_PATH_INPUT" ]; then
+            echo "waiver_path=$WAIVER_PATH_INPUT" >> "$GITHUB_OUTPUT"
           else
-            echo "waiver_path=brainwav/governance/audit/waivers/${{ inputs.waiver_id }}.md" >> "$GITHUB_OUTPUT"
+            echo "waiver_path=brainwav/governance/audit/waivers/${WAIVER_ID}.md" >> "$GITHUB_OUTPUT"
           fi
       - name: Verify waiver file exists
+        env:
+          WAIVER_PATH: ${{ steps.resolve.outputs.waiver_path }}
         run: |
-          if [ ! -f "${{ steps.resolve.outputs.waiver_path }}" ]; then
-            echo "Waiver file not found: ${{ steps.resolve.outputs.waiver_path }}"
+          if [ ! -f "$WAIVER_PATH" ]; then
+            echo "Waiver file not found: $WAIVER_PATH"
             exit 1
           fi
       - name: Record waiver approval summary
+        env:
+          APPROVER: ${{ inputs.approver }}
+          EXPIRY: ${{ inputs.expiry }}
+          REASON: ${{ inputs.reason }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          WAIVER_ID: ${{ inputs.waiver_id }}
+          WAIVER_PATH: ${{ steps.resolve.outputs.waiver_path }}
         run: |
-          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           {
             echo "## Waiver approval recorded"
             echo ""
-            echo "- Waiver ID: ${{ inputs.waiver_id }}"
-            echo "- Waiver file: ${{ steps.resolve.outputs.waiver_path }}"
-            echo "- Approver: ${{ inputs.approver }}"
-            echo "- Expiry: ${{ inputs.expiry }}"
-            echo "- Reason: ${{ inputs.reason }}"
-            echo "- Run URL: ${RUN_URL}"
+            echo "- Waiver ID: $WAIVER_ID"
+            echo "- Waiver file: $WAIVER_PATH"
+            echo "- Approver: $APPROVER"
+            echo "- Expiry: $EXPIRY"
+            echo "- Reason: $REASON"
+            echo "- Run URL: $RUN_URL"
           } >> "$GITHUB_STEP_SUMMARY"
