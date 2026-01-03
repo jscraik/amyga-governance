@@ -213,7 +213,7 @@
     },
     "governance-index.json": {
       "path": "90-infra/governance-index.json",
-      "sha256": "24f7ce78fbe83ecd765281941d3ebc4e5fcb704caa9055094bb148068e8eddf6",
+      "sha256": "142be5b6cff4f3dcf9643fe9acd2323de91316cbb97888ab2c9a06c3ff8dfd84",
       "hash_mode": "exclude_self",
       "required_tokens": [
         "precedence",
@@ -340,7 +340,7 @@
     },
     "memory-governance.md": {
       "path": "10-flow/memory-governance.md",
-      "sha256": "a48f92cb996762e94da9eb214a85c8c5217e4362eb2b5c9fd5889448615fcd09",
+      "sha256": "aa59ff331617f5bd977d2711d0def71f8b3e0ffb932d66c5ff0aeafd86b75ab5",
       "required_tokens": [
         "memory",
         "retention",

@@ -27,6 +27,7 @@ argument-hint: [new | update (memory-id | tag) | (blank for auto)]
 
 - **Endpoint**: set `LOCAL_MEMORY_BASE_URL` (preferred) or `MEMORY_ADAPTER_BASE_URL` (legacy)
 - **Auth**: set `LOCAL_MEMORY_API_KEY` (preferred) or `MEMORY_ADAPTER_API_KEY` (legacy) if required by the adapter
+- **Local Memory MCP (default adapter)**: run `npx local-memory-mcp@latest` in a separate terminal
 
 ## Mode Selection
 

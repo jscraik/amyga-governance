@@ -44,7 +44,10 @@
     "brainwav/vendor/**",
     "brainwav/governance/README.md",
     "brainwav/governance-pack/**",
-    "scripts/"
+    "scripts/*.mjs",
+    "scripts/lib/**",
+    "!scripts/cli-tests.mjs",
+    "!scripts/fixture-tests.mjs"
   ],
   "bin": {
     "brainwav-governance": "scripts/governance-cli.mjs",

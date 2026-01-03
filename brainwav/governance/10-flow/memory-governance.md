@@ -68,6 +68,16 @@ This document establishes governance policies for persistent AI memory operation
 }
 ```
 
+### 1.3 Local Memory MCP (adapter-scoped)
+
+Local Memory MCP is the default adapter for local runs. Start it in a separate terminal:
+
+```bash
+npx local-memory-mcp@latest
+```
+
+Configure agents with `LOCAL_MEMORY_BASE_URL` (preferred) or `MEMORY_ADAPTER_BASE_URL` (legacy). If your environment uses a different adapter, follow the pack-provided setup and set the same environment variables accordingly.
+
 ---
 
 ## 2. Access Control
