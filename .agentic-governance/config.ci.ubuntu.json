@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "mode": "full",
+  "profile": "delivery",
+  "packs": [
+    "docs",
+    "sdd",
+    "ts-base"
+  ],
+  "packOptions": {
+    "sdd": {
+      "specRoot": "specs"
+    }
+  },
+  "overlays": []
+}

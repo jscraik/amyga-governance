@@ -11,7 +11,7 @@ permissions:
 
 env:
   GOVERNANCE_MODE: delivery
-  GOVERNANCE_PROFILE: release
+  GOVERNANCE_PROFILE: delivery
 
 jobs:
   governance-ubuntu:

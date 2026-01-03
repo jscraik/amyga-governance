@@ -30,6 +30,7 @@ node_modules/
 # Local governance state
 .agentic-governance/
 !.agentic-governance/config.json
+!.agentic-governance/config.ci.ubuntu.json
 
 # Python cache (if any Python tools are used)
 __pycache__/
