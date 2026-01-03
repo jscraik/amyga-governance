@@ -67,18 +67,7 @@ Endpoint configuration is adapter-specific. Do not hardcode ports in core govern
 
 ### MCP Client Configuration
 
-Add to your MCP client configuration (e.g., Claude Desktop, VS Code):
-
-```json
-{
-  "mcpServers": {
-    "cortex-aegis": {
-      "command": "cortex-aegis-mcp",
-      "args": ["--port", "2091"]
-    }
-  }
-}
-```
+MCP client configuration is adapter-specific. Core governance only requires that the Aegis endpoint is registered and reachable via the active adapter.
 
 ### Environment Variables
 
@@ -101,10 +90,8 @@ Primary oversight gate that validates agent plans before execution. Legacy calle
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `goal` | string | ✅ | The task or goal being validated |
-| `plan` | string | ✅ | Execution plan (≤7 steps recommended) |
+| `plan` | string | ✅ | Execution plan (<=7 steps recommended) |
 | `session` | string | ✅ | Session identifier for tracking |
-| `with_academic_research` | boolean | ❌ | Enable academic research enhancement |
-| `validate_licenses` | boolean | ❌ | Validate license compliance |
 
 **Response Schema:**
 
@@ -128,76 +115,13 @@ Primary oversight gate that validates agent plans before execution. Legacy calle
 | `warn` | Proceed with caution; log disposition in `evidence/review-notes.md` |
 | `block` | Halt execution; address issues before retrying |
 
-### `connector_health`
-
-Probe health status of research MCP connectors.
-
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `connectors` | string[] | ❌ | Specific connectors to check (default: all) |
-
-Connector sets and transport details are adapter-specific.
-
-### `license_validate`
-
-Validate license compliance for dependencies and content.
-
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `content` | object[] | ✅ | Items to validate |
-| `policy` | string | ❌ | License policy (default: "permissive") |
-
-**Response:**
-
-```json
-{
-  "results": [
-    {
-      "item": "string",
-      "license": "MIT | Apache-2.0 | GPL-3.0 | ...",
-      "status": "SAFE | REVIEW | BLOCKED",
-      "reason": "string"
-    }
-  ]
-}
-```
-
-### `time_freshness`
-
-Validate time-sensitive data and anchor timestamps.
-
-**Parameters:**
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `reference_date` | string | ✅ | ISO-8601 date to validate against |
-| `max_age_days` | number | ❌ | Maximum acceptable age (default: 30) |
+Adapter-provided tools MAY include connector health checks, license validation, or time-freshness checks. These capabilities are pack-scoped and must not be required by core governance.
 
 ---
 
 ## Oversight Invocation
 
-### CLI Wrapper (Recommended)
-
-The governance framework exposes a convenience CLI:
-
-```bash
-pnpm oversight:vibe-check \
-  --goal "<task>" \
-  --plan "<≤7 steps>" \
-  --session "<id>" \
-  --save "tasks/<slug>/logs/aegis/initial.json" \
-  --with-academic-research \
-  --validate-licenses \
-  --license-validation "tasks/<slug>/logs/academic-research/license-validation.json"
-```
-
-- `goal`: concise objective (≤140 chars).
-- `plan`: ordered steps (≤7) referencing control IDs when relevant (`brainwav/governance/00-core/llm-threat-controls.md`).
+Use adapter-provided CLI tooling or MCP clients to invoke Aegis. Store responses under `tasks/<slug>/logs/aegis/` and link them in the task evidence bundle.
 - `session`: stable identifier (`<task-slug>-<timestamp>` recommended).
 
 ### MCP Tool Invocation (Direct)

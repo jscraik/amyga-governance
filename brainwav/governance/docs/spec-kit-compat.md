@@ -42,6 +42,12 @@ If both layouts exist, validation warns and you must choose one.
 - `plan.md` (must include: Architecture/approach, Risks, Verification plan)
 - `tasks.md` (must include: a task list and trace pointers to implementation artifacts)
 
+## Enforcement policy (profile + change class)
+
+- creative: warn if spec chain is missing; require only when change class mandates.
+- delivery: require spec chain for Feature/Refactor classes; warn for Minor docs/ops changes.
+- release: require spec chain for any change class flagged as `requires_spec_chain`.
+
 ## Naming
 
 - `<slug>` SHOULD match `^\d{3}-[a-z0-9][a-z0-9-]*$` (warn in creative; fail in release if enabled by change class).

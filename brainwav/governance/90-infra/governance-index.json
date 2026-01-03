@@ -1,7 +1,7 @@
 {
   "description": "Governance document index with precedence order and SHA verification",
   "version": "2025.12.2",
-  "updated": "2026-01-02",
+  "updated": "2026-01-03",
   "note": "Core governance docs only. Pack-scoped artifacts (Nx configs, dependency-cruiser configs, generated snapshots) must not be included in precedence/infra; they are installed only by packs or treated as generated outputs.",
   "precedence": [
     "00-core/constitution.md",
@@ -213,7 +213,7 @@
     },
     "governance-index.json": {
       "path": "90-infra/governance-index.json",
-      "sha256": "0696f335aa11f632705bb5900eabacba0619f4c35186bc3cd2b249ee4658d3b8",
+      "sha256": "ead5fc13eb98d047b6c5ff6f761f8132b1a13747572456fb892a7d392839ef56",
       "hash_mode": "exclude_self",
       "required_tokens": [
         "precedence",
@@ -426,7 +426,7 @@
       "required_tokens": [
         "documentation governance",
         "JSDoc",
-        "OpenAI Cookbook"
+        "Industry-aligned"
       ],
       "class": "normative",
       "owner": "brAInwav Development Team",
@@ -434,7 +434,7 @@
     },
     "spec-kit-compat.md": {
       "path": "docs/spec-kit-compat.md",
-      "sha256": "d3c2a44c15fe7793d11d979290b05eabfc9267cea370140a1aa0f2146f632be8",
+      "sha256": "92987289d73586ebaaf44f32a8863905022ffecc202ab428483bdde59748331a",
       "required_tokens": [
         "Spec-Kit Compatibility Contract",
         "Layout"
