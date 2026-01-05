@@ -88,6 +88,7 @@ Use `tasks/<slug>/` layout and Evidence Triplet requirements in:
 - No TODO/FIXME/HACK in production paths.
 - No fake telemetry, placeholder adapters, or random/non-deterministic outputs.
 - Use ripgrep (`rg`) for repo search.
+- All work must follow CODESTYLE.md
 
 If you need more detail, read the canonical docs above.
 Do not expand this file without a strong reason.

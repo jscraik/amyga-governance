@@ -1,0 +1,13 @@
+id: tailwind
+version: 1.0.0
+status: stable
+description: Tailwind governance pack (class discipline, a11y-safe UI, token usage, linting expectations).
+applies_to:
+  - tailwind
+requires:
+  - node>=24
+waiver_model: uniform (reason + ticket + expires|adr)
+commands: commands.yml
+nx_targets_suggested:
+  - tailwind:lint
+  - tailwind:format:check

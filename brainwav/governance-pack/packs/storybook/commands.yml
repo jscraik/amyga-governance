@@ -1,0 +1,46 @@
+schema_version: "1.0.0"
+pack_id: "storybook"
+
+tools:
+  - name: "storybook"
+    verify: "pnpm exec storybook --version"
+
+waiver_model:
+  type: "uniform"
+  path: ".agentic-governance/waivers/"
+
+targets:
+  - name: "storybook:build"
+    description: "Build static Storybook."
+    executor: "nx:run-commands"
+    command: "pnpm -s storybook:build"
+    cache: true
+    inputs:
+      - "{projectRoot}/**/*"
+    outputs:
+      - "{projectRoot}/storybook-static"
+    ci:
+      required: false
+      stage: "build"
+
+  - name: "storybook:test"
+    description: "Run Storybook interaction tests (repo-selected runner)."
+    executor: "nx:run-commands"
+    command: "pnpm -s storybook:test"
+    cache: true
+    inputs:
+      - "{projectRoot}/**/*"
+    ci:
+      required: false
+      stage: "test"
+
+  - name: "storybook:a11y"
+    description: "Run Storybook accessibility checks (repo-selected)."
+    executor: "nx:run-commands"
+    command: "pnpm -s storybook:a11y"
+    cache: true
+    inputs:
+      - "{projectRoot}/**/*"
+    ci:
+      required: false
+      stage: "a11y"

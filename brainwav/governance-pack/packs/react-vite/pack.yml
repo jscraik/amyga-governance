@@ -1,0 +1,20 @@
+id: react-vite
+version: 1.0.0
+status: stable
+description: React + Vite governance pack (component discipline, env rules, testing, a11y defaults).
+applies_to:
+  - react
+  - vite
+requires:
+  - node>=24
+  - typescript>=5.9
+  - eslint>=9
+  - biome
+waiver_model: uniform (reason + ticket + expires|adr)
+commands: commands.yml
+nx_targets_suggested:
+  - web:lint
+  - web:typecheck
+  - web:test
+  - web:build
+  - web:bundle:budget

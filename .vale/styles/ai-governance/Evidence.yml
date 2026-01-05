@@ -1,0 +1,9 @@
+extends: existence
+message: "Claims must be paired with evidence (test, metric, or gate)."
+level: warning
+
+tokens:
+  - '\bensures\b'
+  - '\bprevents\b'
+  - '\beliminates\b'
+  - '\bprotects against\b'

@@ -1,0 +1,14 @@
+id: storybook
+version: 1.0.0
+status: stable
+description: Storybook governance pack (a11y addon, interaction tests, deterministic stories, CI readiness).
+applies_to:
+  - storybook
+requires:
+  - node>=24
+waiver_model: uniform (reason + ticket + expires|adr)
+commands: commands.yml
+nx_targets_suggested:
+  - storybook:build
+  - storybook:test
+  - storybook:a11y

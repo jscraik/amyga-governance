@@ -1,0 +1,11 @@
+extends: existence
+message: "Production claim requires evidence (tests, CI gate, or ADR reference)."
+level: error
+
+tokens:
+  - '\bproduction[- ]ready\b'
+  - '\bfully implemented\b'
+  - '\benterprise[- ]grade\b'
+  - '\bbattle[- ]tested\b'
+  - '\bsecure by default\b'
+  - '\bguaranteed\b'

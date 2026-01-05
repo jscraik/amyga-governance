@@ -1,0 +1,15 @@
+{
+    "version": 1,
+    "lineLength": 120,
+    "indentation": {
+        "spaces": 2
+    },
+    "respectsExistingLineBreaks": true,
+    "rules": {
+        "AlwaysUseLowerCamelCase": true,
+        "DoNotUseSemicolons": true,
+        "GroupNumericLiterals": true,
+        "NoEmptyTrailingClosureParentheses": true,
+        "UseShorthandTypeNames": true
+    }
+}

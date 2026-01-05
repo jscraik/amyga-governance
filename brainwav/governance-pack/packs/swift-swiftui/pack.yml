@@ -1,0 +1,16 @@
+id: swift-swiftui
+version: 1.0.0
+status: stable
+description: Swift 6 + SwiftUI governance pack (swift-format, SwiftLint, concurrency isolation, testing discipline).
+applies_to:
+  - swift
+  - swiftui
+requires:
+  - swift>=6
+waiver_model: uniform (reason + ticket + expires|adr)
+commands: commands.yml
+nx_targets_suggested:
+  - swift:lint
+  - swift:format:check
+  - swift:test
+  - swift:actor:bench

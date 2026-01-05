@@ -1,0 +1,36 @@
+schema_version: "1.0.0"
+pack_id: "tailwind"
+
+tools:
+  - name: "tailwindcss"
+    verify: "pnpm exec tailwindcss --help"
+  - name: "biome"
+    verify: "pnpm exec biome --version"
+
+waiver_model:
+  type: "uniform"
+  path: ".agentic-governance/waivers/"
+
+targets:
+  - name: "tailwind:lint"
+    description: "Tailwind policy checks (repo-selected linter/script)."
+    executor: "nx:run-commands"
+    command: "pnpm -s tailwind:lint"
+    cache: true
+    inputs:
+      - "{projectRoot}/**/*"
+      - "{workspaceRoot}/tailwind.config.*"
+    ci:
+      required: false
+      stage: "lint"
+
+  - name: "tailwind:format:check"
+    description: "Class ordering/format drift check (repo-selected)."
+    executor: "nx:run-commands"
+    command: "pnpm -s tailwind:format:check"
+    cache: true
+    inputs:
+      - "{projectRoot}/**/*"
+    ci:
+      required: false
+      stage: "lint"

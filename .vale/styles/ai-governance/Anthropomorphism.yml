@@ -1,0 +1,8 @@
+extends: existence
+message: "Avoid anthropomorphic AI language; describe mechanisms, not intent."
+level: warning
+
+tokens:
+  - '\b(thinks|decides|believes|wants|understands|knows)\b'
+  - '\bintelligent decision\b'
+  - '\bhuman[- ]like\b'

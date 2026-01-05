@@ -1,0 +1,8 @@
+extends: existence
+message: "Accessibility claims must define scope (UI surface, platform, or component set)."
+level: warning
+
+tokens:
+  - '\baccessible (to|for) everyone\b'
+  - '\bworks for all screen readers\b'
+  - '\bkeyboard accessible\b(?!.*(scope|for|in|on|across))'

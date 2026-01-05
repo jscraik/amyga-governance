@@ -348,11 +348,28 @@ async function main() {
 	}
 
 	if (command === 'packs') {
-		// List packs logic...
-		// ... (omitted for brevity, assume simple listing logic can be inline or helper)
-		if (positionalOutput === 'list') {
-			// ... list logic ...
-			console.log('Available packs: logic pending extraction');
+		const action = parsed.positionals ? parsed.positionals[0] : null;
+
+		if (action === 'list') {
+			console.log('Available packs command not fully implemented yet.');
+		} else if (action === 'apply') {
+			const packId = parsed.positionals && parsed.positionals[1];
+			if (!packId) {
+				console.error('[brAInwav] Missing pack ID. Usage: packs apply <pack-id>');
+				process.exit(1);
+			}
+			try {
+				await applyPackCommands(global.root, packId, {
+					dryRun: flags.dryRun,
+					force: flags.force
+				});
+			} catch (e) {
+				console.error(`[brAInwav] Apply failed: ${e.message}`);
+				process.exit(1);
+			}
+		} else {
+			console.error('[brAInwav] Unknown packs action. Use: list, apply');
+			process.exit(1);
 		}
 		return;
 	}

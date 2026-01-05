@@ -1,0 +1,63 @@
+schema_version: "1.0.0"
+pack_id: "swift-swiftui"
+
+tools:
+  - name: "swiftlint"
+    verify: "swiftlint version"
+  - name: "swift-format"
+    verify: "swift format --version"
+  - name: "swift"
+    verify: "swift --version"
+
+waiver_model:
+  type: "uniform"
+  path: ".agentic-governance/waivers/"
+
+targets:
+  - name: "swift:lint"
+    description: "SwiftLint strict lint."
+    executor: "nx:run-commands"
+    command: "swiftlint lint --strict"
+    cache: true
+    inputs:
+      - "{workspaceRoot}/**/*.swift"
+      - "{workspaceRoot}/swiftlint.yml"
+    ci:
+      required: true
+      stage: "lint"
+
+  - name: "swift:format:check"
+    description: "swift-format lint/check (no rewrite in CI)."
+    executor: "nx:run-commands"
+    command: "swift-format lint --configuration swift-format.json --recursive ."
+    cache: true
+    inputs:
+      - "{workspaceRoot}/**/*.swift"
+      - "{workspaceRoot}/swift-format.json"
+    ci:
+      required: true
+      stage: "lint"
+
+  - name: "swift:test"
+    description: "Swift unit tests (SPM default)."
+    executor: "nx:run-commands"
+    command: "swift test"
+    cache: true
+    inputs:
+      - "{workspaceRoot}/**/*.swift"
+      - "{workspaceRoot}/Package.swift"
+    ci:
+      required: true
+      stage: "test"
+
+  - name: "swift:actor:bench"
+    description: "Actor performance budget test (repo-defined thresholds)."
+    executor: "nx:run-commands"
+    command: "swift test"
+    cache: true
+    env:
+      ACTOR_BENCH_MESSAGES: "200000"
+      ACTOR_MIN_MPS: "80000"
+    ci:
+      required: false
+      stage: "budgets"

@@ -1,0 +1,10 @@
+extends: existence
+message: "WCAG claim must be specific (e.g., 'targets WCAG 2.2 AA') and avoid absolute compliance language."
+level: error
+
+tokens:
+  - '\bWCAG compliant\b'
+  - '\bfully WCAG\b'
+  - '\b100% accessible\b'
+  - '\bfully accessible\b'
+  - '\baccessibility guaranteed\b'

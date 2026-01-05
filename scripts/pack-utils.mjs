@@ -175,7 +175,8 @@ export function loadPackManifestFromPath(filePath, packId) {
 		ci: data.ci ?? { runner: 'ubuntu-latest', permissions: { contents: 'read' } },
 		render: data.render ?? {},
 		checks: data.checks ?? { validate: [], doctor: [] },
-		inputs: data.inputs ?? { required: [], optional: {} }
+		inputs: data.inputs ?? { required: [], optional: {} },
+		commands: data.commands
 	};
 }
 

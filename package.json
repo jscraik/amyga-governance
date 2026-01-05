@@ -103,14 +103,27 @@
     "test:cli": "node scripts/cli-tests.mjs",
     "test:fixtures": "node scripts/fixture-tests.mjs",
     "build": "pnpm run docs:validate",
-    "governance:validate-agents": "node scripts/validate-agents.mjs"
+    "governance:validate-agents": "node scripts/validate-agents.mjs",
+    "docs:coverage": "tsx scripts/check-doc-coverage.ts",
+    "docs:coverage:swift": "rg \"^(public|open)\" --glob '*.swift' | rg -v \"///\"",
+    "api:ts:report": "api-extractor run --local",
+    "api:ts:report:affected": "pnpm tsx scripts/run-api-extractor-affected.ts",
+    "api:ts:verify:affected": "pnpm tsx scripts/run-api-extractor-affected.ts --verify-clean",
+    "api:swift:snapshot": "pnpm tsx scripts/swift-api-snapshot.ts",
+    "gate:adr:api": "pnpm tsx scripts/gate-adr-on-public-api-change.ts",
+    "gate:model:docs": "pnpm tsx scripts/gate-model-docs.ts"
   },
   "dependencies": {
+    "ajv": "^8.17.1",
     "yaml": "^2.8.2"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.55.2",
     "eslint": "^9.39.2",
     "eslint-plugin-jsdoc": "^50.8.0",
+    "nx": "^22.3.3",
+    "ts-morph": "^27.0.2",
+    "tsx": "^4.21.0",
     "typescript": "5.9.3",
     "typescript-eslint": "^8.51.0"
   }

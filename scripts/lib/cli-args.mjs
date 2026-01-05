@@ -315,7 +315,9 @@ export function parseArgs(argv) {
         flags,
         specFlags,
         loopFlags,
+        loopFlags,
         positionalOutput: positionalOutput.length > 0 ? positionalOutput[0] : null,
+        positionals: positionalOutput,
         unknown
     };
 }

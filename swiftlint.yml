@@ -1,0 +1,54 @@
+# swiftlint.yml — canonical governance baseline
+
+strict: true
+reporter: xcode
+
+opt_in_rules:
+  - explicit_init
+  - explicit_self
+  - closure_spacing
+  - unneeded_parentheses_in_closure_argument
+  - redundant_nil_coalescing
+  - sorted_imports
+  - unavailable_function
+  - vertical_whitespace_between_cases
+
+disabled_rules:
+  - trailing_whitespace        # handled by swift-format
+  - line_length                # SwiftUI DSL readability
+  - function_body_length       # handled by governance limits
+  - type_body_length           # SwiftUI views grow naturally
+
+analyzer_rules:
+  - unused_import
+  - unused_declaration
+
+force_cast: error
+force_try: error
+
+identifier_name:
+  min_length: 2
+  excluded:
+    - id
+    - x
+    - y
+    - z
+
+custom_rules:
+  actor_required_for_shared_state:
+    name: "Shared mutable state must be actor-isolated"
+    regex: "(class|struct)\\s+\\w+\\s*\\{[\\s\\S]*?var\\s+\\w+\\s*:"
+    message: "Shared mutable state must be isolated via actor or @MainActor."
+    severity: warning
+
+  no_global_mutable_state:
+    name: "No global mutable state"
+    regex: "^(?!.*(actor|@MainActor)).*var\\s+\\w+\\s*=.*$"
+    message: "Global mutable state requires actor isolation and ADR."
+    severity: error
+
+  unchecked_sendable_requires_adr:
+    name: "@unchecked Sendable forbidden without ADR"
+    regex: "@unchecked\\s+Sendable"
+    message: "Use actor isolation or provide ADR + proof."
+    severity: error

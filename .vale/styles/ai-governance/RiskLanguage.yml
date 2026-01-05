@@ -1,0 +1,8 @@
+extends: existence
+message: "Risk language must be explicit and non-absolute."
+level: error
+
+tokens:
+  - '\bzero risk\b'
+  - '\bfailsafe\b'
+  - '\bno possibility of\b'

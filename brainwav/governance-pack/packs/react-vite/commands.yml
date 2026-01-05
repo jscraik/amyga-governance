@@ -1,0 +1,86 @@
+schema_version: "1.0.0"
+pack_id: "react-vite"
+
+tools:
+  - name: "biome"
+    verify: "pnpm exec biome --version"
+  - name: "eslint"
+    verify: "pnpm exec eslint --version"
+  - name: "typescript"
+    verify: "pnpm exec tsc -v"
+  - name: "vitest"
+    verify: "pnpm exec vitest --version"
+  - name: "vite"
+    verify: "pnpm exec vite --version"
+
+waiver_model:
+  type: "uniform"
+  path: ".agentic-governance/waivers/"
+
+targets:
+  - name: "web:lint"
+    description: "Biome format/lint + ESLint policy lint (type-aware)."
+    executor: "nx:run-commands"
+    command: "pnpm -s biome check . && pnpm -s eslint ."
+    cache: true
+    inputs:
+      - "{projectRoot}/**/*"
+      - "biome.json"
+      - "eslint.config.*"
+      - "tsconfig*.json"
+    ci:
+      required: true
+      stage: "lint"
+
+  - name: "web:typecheck"
+    description: "TypeScript typecheck (no emit)."
+    executor: "nx:run-commands"
+    command: "pnpm -s tsc -p tsconfig.json --noEmit"
+    cache: true
+    inputs:
+      - "{projectRoot}/**/*.ts"
+      - "{projectRoot}/**/*.tsx"
+      - "{projectRoot}/tsconfig*.json"
+    ci:
+      required: true
+      stage: "typecheck"
+
+  - name: "web:test"
+    description: "Unit/integration tests via Vitest."
+    executor: "nx:run-commands"
+    command: "pnpm -s vitest run"
+    cache: true
+    inputs:
+      - "{projectRoot}/**/*"
+      - "{workspaceRoot}/vitest.config.*"
+    outputs:
+      - "{projectRoot}/coverage"
+    ci:
+      required: true
+      stage: "test"
+
+  - name: "web:build"
+    description: "Production build via Vite."
+    executor: "nx:run-commands"
+    command: "pnpm -s vite build"
+    cache: true
+    inputs:
+      - "{projectRoot}/**/*"
+      - "{workspaceRoot}/vite.config.*"
+    outputs:
+      - "{projectRoot}/dist"
+    ci:
+      required: true
+      stage: "build"
+
+  - name: "web:bundle:budget"
+    description: "Bundle size/time budgets (repo-defined script)."
+    executor: "nx:run-commands"
+    command: "pnpm -s bundle:budget"
+    cache: true
+    inputs:
+      - "{projectRoot}/dist/**"
+      - "{workspaceRoot}/scripts/**"
+    ci:
+      required: false
+      stage: "budgets"

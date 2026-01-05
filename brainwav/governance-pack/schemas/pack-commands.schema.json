@@ -1,0 +1,142 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://brainwav.local/schemas/pack-commands.schema.json",
+    "title": "Governance Pack Commands Manifest",
+    "type": "object",
+    "required": [
+        "schema_version",
+        "pack_id",
+        "targets"
+    ],
+    "properties": {
+        "schema_version": {
+            "type": "string",
+            "pattern": "^1\\.\\d+\\.\\d+$"
+        },
+        "pack_id": {
+            "type": "string",
+            "minLength": 1
+        },
+        "tools": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "version_hint": {
+                        "type": "string"
+                    },
+                    "install_hint": {
+                        "type": "string"
+                    },
+                    "verify": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false
+            }
+        },
+        "waiver_model": {
+            "type": "object",
+            "required": [
+                "type",
+                "path"
+            ],
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "uniform"
+                    ]
+                },
+                "path": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            },
+            "additionalProperties": false
+        },
+        "targets": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "executor",
+                    "command"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "executor": {
+                        "type": "string",
+                        "enum": [
+                            "nx:run-commands"
+                        ]
+                    },
+                    "command": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "cwd": {
+                        "type": "string"
+                    },
+                    "cache": {
+                        "type": "boolean",
+                        "default": true
+                    },
+                    "inputs": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "outputs": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "env": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "depends_on": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "ci": {
+                        "type": "object",
+                        "properties": {
+                            "required": {
+                                "type": "boolean",
+                                "default": true
+                            },
+                            "stage": {
+                                "type": "string"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "additionalProperties": false
+            }
+        }
+    },
+    "additionalProperties": false
+}

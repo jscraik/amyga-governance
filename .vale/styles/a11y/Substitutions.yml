@@ -1,0 +1,8 @@
+extends: substitution
+message: "Prefer precise accessibility language: '%s' → '%s'."
+level: warning
+
+swap:
+  "WCAG compliant": "targets WCAG 2.2 AA (evidence in CI/a11y report)"
+  "screen-reader friendly": "screen-reader tested (state which SRs) and keyboard operable"
+  "fully accessible": "targets WCAG 2.2 AA for defined scope"
