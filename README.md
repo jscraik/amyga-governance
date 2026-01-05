@@ -1,10 +1,10 @@
-# brAInwav Agentic Governance Framework
+# AMYGA Governance Framework
 
-> **Neutral, portable governance for AI-assisted delivery teams**
+> **Agentic Monitoring, Yielding Governance & Assurance**
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
-The brAInwav framework packages policies, workflows, templates, and automation for governing human + AI collaboration. It is intentionally project-neutral: copy it into any repository to inherit ArcTDD gates, Cortex-Aegis oversight, reuse-first delivery checks, and SHA-pinned policy validation.
+AMYGA (formerly brAInwav Agentic Governance) packages policies, workflows, templates, and automation for governing human + AI collaboration. It is intentionally project-neutral: copy it into any repository to inherit ArcTDD gates, Cortex-Aegis oversight, reuse-first delivery checks, and SHA-pinned policy validation.
 
 ---
 
@@ -47,7 +47,7 @@ The brAInwav framework packages policies, workflows, templates, and automation f
 
 ```bash
 # 1. Clone the framework
-git clone https://github.com/jscraik/brainwav-agentic-governance.git
+git clone https://github.com/jscraik/amyga-governance.git
 
 # 2. Install dependencies + security tools
 pnpm install
@@ -71,17 +71,17 @@ Pointer mode is the default, canonical-only adoption path. Use the install/upgra
 
 1. From this repo: `pnpm install` (Node 24.11.x, pnpm 10.26.x).  
 2. Recommended install path (devDependency + pnpm exec):  
-   `pnpm add -D @brainwav/brainwav-agentic-governance`  
+   `pnpm add -D @brainwav/amyga-governance`  
    `pnpm exec brainwav-governance install --root /path/to/consumer-repo --mode pointer --profile delivery [--packs a11y,supply-chain]`  
 3. Bootstrap-only path (not the standard):  
-   `pnpm dlx @brainwav/brainwav-agentic-governance@<version> brainwav-governance install --root /path/to/consumer-repo --mode pointer --profile delivery [--packs a11y,supply-chain]`  
-   - **Private package notice:** `@brainwav/brainwav-agentic-governance` is private to the `@brainwav` org.
+   `pnpm dlx @brainwav/amyga-governance@<version> brainwav-governance install --root /path/to/consumer-repo --mode pointer --profile delivery [--packs a11y,supply-chain]`  
+   - **Private package notice:** `@brainwav/amyga-governance` is private to the `@brainwav` org.
      Consumers and CI must be authenticated (Trusted Publishing or `NODE_AUTH_TOKEN`)
      before running `pnpm add` / `pnpm exec` installs.
    - Default profile is `delivery`. CI should use `release` for gold-standard gating.
    - Default install mode is `pointer` (canonical-only distribution). Use `full` only for air-gapped or exceptional cases.
    - `full` copies AGENTS, CODESTYLE, SECURITY, `brainwav/governance/**`, and the GitHub Actions workflow.  
-   - `pointer` writes pointer stubs + `.agentic-governance/pointer.json` and expects a lockfile-pinned `@brainwav/brainwav-agentic-governance` dependency.
+   - `pointer` writes pointer stubs + `.agentic-governance/pointer.json` and expects a lockfile-pinned `@brainwav/amyga-governance` dependency.
    - **Supported CLI:** `brainwav-governance` is the only stable public entrypoint. `brainwav-agentic-governance` is a legacy alias.
 4. In the consumer repo, run:  
    `pnpm exec brainwav-governance validate --root .` (checks required tokens + Step Budget ≤7 + overlay rules)  
@@ -176,6 +176,8 @@ Customize `AGENTS.md`, `brainwav/governance/00-core/constitution.md`, and templa
 - Include verification commands (`governance:validate`, `governance:sync-hashes:check`) so readers can confirm success.
 - Keep steps copy/pasteable and ordered; mark optional steps clearly.
 - Link enforcement to CI templates so readers know what’s automated vs manual.
+- Apply brand rules for root READMEs and assets (see `docs/references/BRAND_GUIDELINES.md`).
+- Run `vale README.md docs/packs.md` to validate writing style against `.vale.ini`.
 
 ---
 
@@ -239,6 +241,21 @@ Local profile selection (creative/delivery/release) lives in `.agentic-governanc
 2) **Containerized tooling:** single tools image for scanners and SBOM/provenance.  
 3) **Full local install:** all scanners and governance tools installed locally.
 
+---
+
+<img
+  src="./brand/brand-mark.webp"
+  srcset="./brand/brand-mark.webp 1x, ./brand/brand-mark@2x.webp 2x"
+  alt="brAInwav"
+  height="28"
+  align="left"
+/>
+
+<br clear="left" />
+
+**AMYGA**
+_Agentic Monitoring, Yielding Governance & Assurance_
+
 ## Governance Commands
 
 The framework ships executable commands under `brainwav/governance/commands/`. Run them with Node.js:
@@ -273,7 +290,7 @@ INCIDENT_ID=INC-742 node brainwav/governance/commands/incident-review.mjs
 ## Release Process (Maintainers)
 
 - Releases are automated on tag push matching `v0.x.y`.
-- npm is the canonical distribution source (private package `@brainwav/brainwav-agentic-governance`).
+- npm is the canonical distribution source (private package `@brainwav/amyga-governance`).
 - CI publish requires `NPM_TOKEN` with access to the `@brainwav` org (restricted scope).
 - A draft GitHub Release attaches the packed tarball, SBOM, provenance, and signatures generated in CI; it is published after npm + canary succeed.
 - Release gating runs `pnpm lint:ci`, `pnpm test:cli`, and `pnpm test:fixtures`.
@@ -400,4 +417,4 @@ tasks/<slug>/
 ## License & Maintainer
 
 - License: [Apache 2.0](LICENSE)
-- Maintainer: [@jamiescottcraik](https://github.com/jamiescottcraik) · brAInwav
+- Maintainer: [@jamiescottcraik](https://github.com/jamiescottcraik) · AMYGA

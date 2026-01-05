@@ -180,7 +180,7 @@ function writeConfigFile(destRoot, profile, mode, overlays = [], packs, packOpti
 	const configDir = path.dirname(configPath);
 	if (!dryRun) fs.mkdirSync(configDir, { recursive: true });
 	const schemaPath = mode === 'pointer'
-		? 'node_modules/@brainwav/brainwav-agentic-governance/brainwav/governance/90-infra/agentic-config.schema.json'
+		? 'node_modules/@brainwav/amyga-governance/brainwav/governance/90-infra/agentic-config.schema.json'
 		: 'brainwav/governance/90-infra/agentic-config.schema.json';
 	const configPayload = {
 		$schema: schemaPath,
@@ -316,13 +316,13 @@ function writePointerFiles(destRoot, profile, { force, dryRun, actions }) {
 	const pointerPayload = {
 		mode: 'pointer',
 		profile,
-		package: '@brainwav/brainwav-agentic-governance',
+		package: '@brainwav/amyga-governance',
 		version: packageJson.version,
-		packageRoot: 'node_modules/@brainwav/brainwav-agentic-governance',
-		governanceRoot: 'node_modules/@brainwav/brainwav-agentic-governance/brainwav/governance',
+		packageRoot: 'node_modules/@brainwav/amyga-governance',
+		governanceRoot: 'node_modules/@brainwav/amyga-governance/brainwav/governance',
 		governanceIndexPath:
-			'node_modules/@brainwav/brainwav-agentic-governance/brainwav/governance/90-infra/governance-index.json',
-		agentsPath: 'node_modules/@brainwav/brainwav-agentic-governance/AGENTS.md',
+			'node_modules/@brainwav/amyga-governance/brainwav/governance/90-infra/governance-index.json',
+		agentsPath: 'node_modules/@brainwav/amyga-governance/AGENTS.md',
 		installedAt: new Date().toISOString()
 	};
 	const pointerPath = path.join(pointerDir, 'pointer.json');
@@ -354,7 +354,7 @@ function writePointerFiles(destRoot, profile, { force, dryRun, actions }) {
 				codeStylePath,
 				`${buildPointerStub(
 					'CODESTYLE',
-					'node_modules/@brainwav/brainwav-agentic-governance/CODESTYLE.md',
+					'node_modules/@brainwav/amyga-governance/CODESTYLE.md',
 					pointerPayload
 				)}\n`
 			);
@@ -370,7 +370,7 @@ function writePointerFiles(destRoot, profile, { force, dryRun, actions }) {
 				securityPath,
 				`${buildPointerStub(
 					'SECURITY',
-					'node_modules/@brainwav/brainwav-agentic-governance/SECURITY.md',
+					'node_modules/@brainwav/amyga-governance/SECURITY.md',
 					pointerPayload
 				)}\n`
 			);
@@ -687,7 +687,7 @@ export function runGovernanceInstall({
 	if (mode === 'full') {
 		const instructionsPath = path.join(destRoot, '.agentic-governance', 'instructions.md');
 		const pointerPayload = {
-			package: '@brainwav/brainwav-agentic-governance',
+			package: '@brainwav/amyga-governance',
 			version: packageJson.version
 		};
 		if (shouldWrite(instructionsPath, force)) {
@@ -823,7 +823,7 @@ function main() {
 		);
 		if (mode === 'pointer') {
 			console.log(
-				'[brAInwav] Pointer mode: add @brainwav/brainwav-agentic-governance as a dev dependency and pin its version in the lockfile.'
+				'[brAInwav] Pointer mode: add @brainwav/amyga-governance as a dev dependency and pin its version in the lockfile.'
 			);
 		}
 	} catch (error) {

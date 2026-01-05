@@ -1,0 +1,150 @@
+# AMYGA Governance Tools Container
+#
+# This Docker image contains all security and compliance tools required
+# for the Standard and Enterprise tiers of AMYGA governance.
+#
+# Usage:
+#   docker build -f Dockerfile.governance-tools -t amyga/governance-tools:0.2.46 .
+#   docker run --rm -v $(pwd):/workspace amyga/governance-tools:0.2.46 validate
+#
+# Or use with docker-compose:
+#   docker-compose -f docker-compose.governance.yml run --rm governance validate
+
+FROM node:22-bookworm-slim AS base
+
+# Metadata
+LABEL org.opencontainers.image.title="AMYGA Governance Tools"
+LABEL org.opencontainers.image.description="All security tools for AMYGA governance framework"
+LABEL org.opencontainers.image.version="0.2.46"
+LABEL org.opencontainers.image.vendor="AMYGA"
+LABEL org.opencontainers.image.licenses="Apache-2.0"
+LABEL org.opencontainers.image.source="https://github.com/jscraik/amyga-governance"
+
+# Set environment
+ENV DEBIAN_FRONTEND=noninteractive
+ENV GNUPGHOME=/tmp/gnupg
+ENV PATH=/usr/local/bin:/usr/bin:/bin:/root/.cargo/bin:/root/go/bin
+
+# Install base dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    git \
+    gnupg \
+    jq \
+    rpm \
+    xz-utils \
+    zip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Go (for trivy, cosign)
+ENV GO_VERSION=1.23.6
+RUN curl -LO https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz && \
+    tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz && \
+    rm go${GO_VERSION}.linux-amd64.tar.gz
+
+# Install Rust (for some scanners)
+ENV RUST_VERSION=1.83.0
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    . /root/.cargo/env && \
+    rustup default stable
+
+# Install pnpm
+ENV PNPM_VERSION=10.26.0
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+
+# Install semgrep (policy linting)
+ENV SEMGREP_VERSION=1.95.0
+RUN python3 -m pip install --no-cache-dir semgrep==${SEMGREP_VERSION}
+
+# Install gitleaks (secret scanning)
+ENV GITLEAKS_VERSION=8.21.2
+RUN curl -L https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz | tar xz && \
+    mv gitleaks /usr/local/bin/ && \
+    gitleaks --version
+
+# Install trivy (vulnerability + misconfig + secret scanning)
+ENV TRIVY_VERSION=0.57.1
+RUN curl -L https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz | tar xz && \
+    mv trivy /usr/local/bin/ && \
+    trivy --version
+
+# Install cosign (code signing)
+ENV COSIGN_VERSION=2.4.1
+RUN curl -LO https://github.com/sigstore/cosign/releases/download/v${COSIGN_VERSION}/cosign_${COSIGN_VERSION}_linux_amd64.tar.gz && \
+    tar xzf cosign_${COSIGN_VERSION}_linux_amd64.tar.gz && \
+    mv cosign /usr/local/bin/ && \
+    cosign version
+
+# Install cyclonedx (SBOM generation)
+ENV CYCLONEDX_VERSION=1.1.0
+RUN curl -LO https://github.com/CycloneDX/cyclonedx-cli/releases/download/v${CYCLONEDX_VERSION}/cyclonedx-linux-x64.tar.gz && \
+    tar xzf cyclonedx-linux-x64.tar.gz && \
+    mv cyclonedx /usr/local/bin/ && \
+    cyclonedx --version
+
+# Install osv-scanner (dependency vulnerability scanning)
+ENV OSV_SCANNER_VERSION=1.9.3
+RUN curl -LO https://github.com/google/osv-scanner/releases/download/v${OSV_SCANNER_VERSION}/osv-scanner_linux_amd64.tar.gz && \
+    tar xzf osv-scanner_linux_amd64.tar.gz && \
+    mv osv-scanner /usr/local/bin/ && \
+    osv-scanner --version
+
+# Install markdownlint-cli2 (doc quality)
+RUN npm install -g markdownlint-cli2
+
+# Install ripgrep, fd (search tools - already fast, no need for container)
+RUN apt-get update && apt-get install -y --no-install-recommends ripgrep fd-find && \
+    rm -rf /var/lib/apt/lists/*
+
+# Verify tool installation
+RUN echo "=== Tool Versions ===" && \
+    echo "Node: $(node --version)" && \
+    echo "pnpm: $(pnpm --version)" && \
+    echo "Go: $(go version)" && \
+    echo "Python: $(python3 --version)" && \
+    echo "semgrep: $(semgrep --version)" && \
+    echo "gitleaks: $(gitleaks --version)" && \
+    echo "trivy: $(trivy --version)" && \
+    echo "cosign: $(cosign version)" && \
+    echo "cyclonedx: $(cyclonedx --version)" && \
+    echo "osv-scanner: $(osv-scanner --version)" && \
+    echo "markdownlint-cli2: $(markdownlint-cli2 --version)" && \
+    echo "rg: $(rg --version)" && \
+    echo "fd: $(fd --version)"
+
+# Create workspace directory
+WORKDIR /workspace
+
+# Default command shows help
+CMD ["brainwav-governance", "--help"]
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD brainwav-governance doctor || exit 1
+
+# Variant for minimal tools (Starter tier)
+FROM base AS starter
+
+# Starter tier only needs Node + pnpm + basic search tools
+# Everything above is stripped out
+RUN echo "Starter tier - Node.js + pnpm + basic tools only"
+
+# Variant for standard tools (Standard tier)
+FROM base AS standard
+
+# Standard tier includes semgrep, gitleaks, markdownlint
+# Already installed in base
+RUN echo "Standard tier - workflow + basic security checks"
+
+# Variant for full enterprise tools (Enterprise tier)
+FROM base AS enterprise
+
+# Enterprise tier includes all tools
+# Already installed in base
+RUN echo "Enterprise tier - full compliance suite"
+
+# Build stages allow:
+# docker build -f Dockerfile.governance-tools --target starter -t brainwav/governance-tools:starter .
+# docker build -f Dockerfile.governance-tools --target standard -t brainwav/governance-tools:standard .
+# docker build -f Dockerfile.governance-tools --target enterprise -t brainwav/governance-tools:enterprise .

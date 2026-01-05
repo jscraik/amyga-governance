@@ -2,14 +2,14 @@
 
 <div align="center">
 
-[![CI](https://github.com/jscraik/brainwav-agentic-governance/actions/workflows/ci.yml/badge.svg)](https://github.com/jscraik/brainwav-agentic-governance/actions/workflows/ci.yml)
-[![GitHub Issues](https://img.shields.io/github/issues/jscraik/brainwav-agentic-governance)](https://github.com/jscraik/brainwav-agentic-governance/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/jscraik/brainwav-agentic-governance)](https://github.com/jscraik/brainwav-agentic-governance/pulls)
+[![CI](https://github.com/jscraik/amyga-governance/actions/workflows/ci.yml/badge.svg)](https://github.com/jscraik/amyga-governance/actions/workflows/ci.yml)
+[![GitHub Issues](https://img.shields.io/github/issues/jscraik/amyga-governance)](https://github.com/jscraik/amyga-governance/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/jscraik/amyga-governance)](https://github.com/jscraik/amyga-governance/pulls)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 </div>
 
-This directory is the **single source of truth** for the agentic governance pack—policies, workflows, and validation rules.
+This directory is the **single source of truth** for the AMYGA governance pack—policies, workflows, and validation rules.
 
 ## Authority Chain
 

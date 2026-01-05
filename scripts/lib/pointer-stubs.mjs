@@ -5,7 +5,7 @@
 
 const STUB_MARKER = 'BRAINWAV_GOVERNANCE_STUB';
 const INSTRUCTIONS_MARKER = 'BRAINWAV_GOVERNANCE_INSTRUCTIONS';
-const REPO_URL = 'https://github.com/jscraik/brainwav-agentic-governance';
+const REPO_URL = 'https://github.com/jscraik/amyga-governance';
 
 function resolveTag(version) {
 	if (!version || version === 'unknown') return 'main';

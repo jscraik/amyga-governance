@@ -127,7 +127,7 @@ export function resolvePackManifestPath(rootPath, packId) {
 			const pointer = readJson(pointerPath);
 			const packageRoot = pointer?.packageRoot
 				? path.resolve(rootPath, pointer.packageRoot)
-				: path.join(rootPath, 'node_modules', '@brainwav', 'brainwav-agentic-governance');
+				: path.join(rootPath, 'node_modules', '@brainwav', 'amyga-governance');
 			const pointerJson = path.join(packageRoot, 'brainwav', 'governance-pack', 'packs', packId, 'pack.json');
 			const pointerYaml = path.join(packageRoot, 'brainwav', 'governance-pack', 'packs', `${packId}.pack.yaml`);
 			if (fs.existsSync(pointerJson)) return pointerJson;

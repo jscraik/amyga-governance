@@ -20,6 +20,7 @@ import { resolveGovernanceDocPath } from './lib/governance-docs.mjs';
 import { isPrettyJson } from './lib/json-format.mjs';
 import { resolvePacks, loadPackManifestFromRoot, PRESETS } from './pack-utils.mjs';
 import { runAgentLoop } from '../brainwav/governance/tools/agent-loop.mjs';
+import { runInitWizard } from './init-wizard.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
@@ -1180,7 +1181,7 @@ function collectAegisEvidence(rootPath) {
  */
 function checkPortfolioDrift(rootPath, pointer) {
 	if (!pointer || pointer.mode !== 'pointer') return [];
-	const packageName = pointer.package || '@brainwav/brainwav-agentic-governance';
+	const packageName = pointer.package || '@brainwav/amyga-governance';
 	const pointerVersion = typeof pointer.version === 'string' ? pointer.version.trim() : null;
 	const pkgJson = readPackageJson(rootPath);
 	const depVersion = readDependencyVersion(pkgJson, packageName);
@@ -3205,7 +3206,19 @@ async function main() {
 		return;
 	}
 
-	if (command === 'install' || command === 'init') {
+	if (command === 'init') {
+		// Run the interactive init wizard for new project setup
+		try {
+			await runInitWizard(process.argv.slice(2));
+			exitWithCode(0);
+		} catch (error) {
+			console.error(`[brAInwav] Init wizard failed: ${error.message}`);
+			exitWithCode(1);
+		}
+		return;
+	}
+
+	if (command === 'install') {
 		const selectedPacks = resolvePacksSafe(flags.packs);
 		if (!selectedPacks) return;
 		if (selectedPacks.length === 0 && (normalizedProfile === 'delivery' || normalizedProfile === 'release')) {

@@ -269,7 +269,7 @@ export function runGovernanceUpgrade({
 		resolvedPacks,
 		packOptions
 	);
-	const packageName = readPointerPackage(destRoot) ?? '@brainwav/brainwav-agentic-governance';
+	const packageName = readPointerPackage(destRoot) ?? '@brainwav/amyga-governance';
 	const version = resolvePackageVersion();
 	if (!dryRun) {
 		updateDependency(destRoot, packageName, version);

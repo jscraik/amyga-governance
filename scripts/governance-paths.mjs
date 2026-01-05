@@ -42,7 +42,7 @@ export function resolveGovernancePaths(repoRoot) {
 	}
 
 	const pointer = readJson(pointerPath);
-	const packageName = pointer.package || '@brainwav/brainwav-agentic-governance';
+	const packageName = pointer.package || '@brainwav/amyga-governance';
 	const resolvePointerPath = (value) => {
 		if (!value) return null;
 		return path.isAbsolute(value) ? value : path.resolve(repoRoot, value);

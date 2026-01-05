@@ -1,9 +1,9 @@
 {
-  "name": "@brainwav/brainwav-agentic-governance",
+  "name": "@brainwav/amyga-governance",
   "version": "0.2.46",
   "private": false,
   "type": "module",
-  "description": "Governance automation scripts and MCP helpers",
+  "description": "AMYGA: Agentic Monitoring, Yielding Governance & Assurance",
   "engines": {
     "node": ">=24.11.0 <25",
     "pnpm": ">=10.26.0 <11"
@@ -12,7 +12,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jscraik/brainwav-agentic-governance.git"
+    "url": "git+https://github.com/jscraik/amyga-governance.git"
   },
   "publishConfig": {
     "access": "restricted",
@@ -23,7 +23,9 @@
     "CODESTYLE.md",
     "SECURITY.md",
     "README.md",
+    ".vale.ini",
     "docs/packs.md",
+    "docs/references/**",
     "brainwav/README.md",
     "brainwav/governance/00-core/**",
     "brainwav/governance/10-flow/**",
@@ -42,6 +44,7 @@
     "brainwav/governance/tools/**",
     "brainwav/governance/README.md",
     "brainwav/governance-pack/**",
+    "brand/**",
     "scripts/governance-cli.mjs",
     "scripts/ensure-tools.mjs",
     "scripts/cortex-governance-bootstrap.mjs",
@@ -55,9 +58,11 @@
     "scripts/upgrade-governance.mjs",
     "scripts/governance-paths.mjs",
     "scripts/pack-utils.mjs",
-    "scripts/lib/**"
+    "scripts/lib/**",
+    "styles/**"
   ],
   "bin": {
+    "amyga": "scripts/governance-cli.mjs",
     "brainwav-governance": "scripts/governance-cli.mjs",
     "brainwav-agentic-governance": "scripts/governance-cli.mjs",
     "ensure-tools": "scripts/ensure-tools.mjs",

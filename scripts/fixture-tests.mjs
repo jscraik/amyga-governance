@@ -68,7 +68,7 @@ function runCli(args, cwd, allowedStatuses = [0], reportPath = null) {
 function installLocalGovernancePackage(repoRootPath) {
 	const nodeModules = path.join(repoRootPath, 'node_modules');
 	const scopeDir = path.join(nodeModules, '@brainwav');
-	const target = path.join(scopeDir, 'brainwav-agentic-governance');
+	const target = path.join(scopeDir, 'amyga-governance');
 	fs.mkdirSync(scopeDir, { recursive: true });
 	if (fs.existsSync(target)) {
 		fs.rmSync(target, { recursive: true, force: true });

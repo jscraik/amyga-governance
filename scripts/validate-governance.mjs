@@ -280,7 +280,7 @@ function checkPointerStubs(pointer, targetRoot, indexPath) {
 	const instructionsPath = path.join(pointerDir, 'instructions.md');
 
 	const canonicalVersion = pointer.version || 'unknown';
-	const canonicalPackage = pointer.package || '@brainwav/brainwav-agentic-governance';
+	const canonicalPackage = pointer.package || '@brainwav/amyga-governance';
 	const pointerPayload = {
 		...pointer,
 		package: canonicalPackage,
@@ -294,7 +294,7 @@ function checkPointerStubs(pointer, targetRoot, indexPath) {
 			'CODESTYLE.md',
 			buildPointerStub(
 				'CODESTYLE',
-				'node_modules/@brainwav/brainwav-agentic-governance/CODESTYLE.md',
+				'node_modules/@brainwav/amyga-governance/CODESTYLE.md',
 				pointerPayload
 			)
 		],
@@ -302,7 +302,7 @@ function checkPointerStubs(pointer, targetRoot, indexPath) {
 			'SECURITY.md',
 			buildPointerStub(
 				'SECURITY',
-				'node_modules/@brainwav/brainwav-agentic-governance/SECURITY.md',
+				'node_modules/@brainwav/amyga-governance/SECURITY.md',
 				pointerPayload
 			)
 		],
